@@ -2,15 +2,17 @@ package client;
 
 import client.landingpage.LandingPageController;
 import client.landingpage.LandingPageView;
-import shared.interfaces.Authentication;
-import shared.interfaces.StudentProcessors;
-import shared.interfaces.AdminProcessors;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import shared.interfaces.Authentication;
+import shared.interfaces.StudentProcessors;
+import shared.interfaces.AdminProcessors;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.NotBoundException;
@@ -28,6 +30,7 @@ public class ClientMain extends Application {
     private static Authentication authService;
     private static StudentProcessors studentProcessors;
     private static AdminProcessors adminProcessors;
+    private static Stage primaryStage; // Reference to the main window
 
     public static void main(String[] args) {
         System.out.println("=====================================================");
@@ -35,12 +38,17 @@ public class ClientMain extends Application {
         System.out.println("[Client] Connecting to RMI server at " + SERVER_IP + " on port " + PORT);
         System.out.println("=====================================================");
 
-        connectToRMIServer();
+        // Start reconnection thread before launching GUI
+        new Thread(ClientMain::connectToRMIServer).start();
+
+        // Launch JavaFX GUI
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
+        primaryStage = stage; // Store reference to primary stage
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/landing_page.fxml"));
             Parent root = loader.load();
@@ -64,31 +72,61 @@ public class ClientMain extends Application {
         }
     }
 
-
     /**
-     * Connects to the RMI server.
+     * Connects to the RMI server and retries if the server is down.
      */
     private static void connectToRMIServer() {
-        try {
-            Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+        while (true) {
+            try {
+                Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
 
-            authService = (Authentication) registry.lookup("authentication");
-            studentProcessors = (StudentProcessors) registry.lookup("student_processors");
-            adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
+                authService = (Authentication) registry.lookup("authentication");
+                studentProcessors = (StudentProcessors) registry.lookup("student_processors");
+                adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
 
-            // Get Client IP Address
-            String clientIP = InetAddress.getLocalHost().getHostAddress();
+                String clientIP = InetAddress.getLocalHost().getHostAddress();
+                System.out.println("[Client] Connected to RMI Server. IP Address: " + clientIP);
+                authService.logClientConnection(clientIP);
 
-            // Log client connection immediately after connection
-            System.out.println("[Client] Connected to RMI Server. IP Address: " + clientIP);
-            authService.logClientConnection(clientIP); // Make sure this method exists in Authentication interface
-
-            System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
-        } catch (NotBoundException | IOException e) {
-            System.err.println("[ERROR] Could not connect to RMI services: " + e.getMessage());
+                System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
+                return; // Exit loop when connection succeeds
+            } catch (NotBoundException | java.rmi.ConnectException e) {
+                System.err.println("[ERROR] Server is down. Retrying in 5 seconds...");
+                showServerDownMessage();
+                sleep(5000);  // Retry after 5 seconds
+            } catch (Exception e) {
+                System.err.println("[ERROR] " + e.getMessage());
+                sleep(5000);  // Retry after 5 seconds
+            }
         }
     }
 
+    /**
+     * Displays a popup message when the server is down, ensuring it appears above the main GUI.
+     */
+    private static void showServerDownMessage() {
+        Platform.runLater(() -> {
+            if (primaryStage != null) {
+                primaryStage.toFront(); // Bring main window to front before showing JOptionPane
+            }
+            JOptionPane.showMessageDialog(null,
+                    "The server is currently down. Reconnecting...",
+                    "Server Down",
+                    JOptionPane.WARNING_MESSAGE);
+        });
+    }
+
+    /**
+     * Pauses execution for a given time.
+     * @param millis Duration in milliseconds.
+     */
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     public static Authentication getAuthService() {
         return authService;
