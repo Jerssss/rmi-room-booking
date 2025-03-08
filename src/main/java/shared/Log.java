@@ -1,13 +1,30 @@
 package shared;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Log {
-    private String userID;
+    @Expose
+    @SerializedName("UserID")
+    private Object userID; // Can be Integer or String
+
+    @Expose
+    @SerializedName("UserType")
     private String userType;
+
+    @Expose
+    @SerializedName("Action")
     private String action;
+
+    @Expose
+    @SerializedName("Date")
     private String date;
+
+    @Expose
+    @SerializedName("Time")
     private String time;
 
-    public Log(String userID, String userType, String action, String date, String time) {
+    public Log(Object userID, String userType, String action, String date, String time) {
         this.userID = userID;
         this.userType = userType;
         this.action = action;
@@ -15,7 +32,7 @@ public class Log {
         this.time = time;
     }
 
-    public String getUserID() {
+    public Object getUserID() {
         return userID;
     }
 
@@ -38,11 +55,11 @@ public class Log {
     @Override
     public String toString() {
         return "Log{" +
-                "userID='" + userID + '\'' +
-                ", userType='" + userType + '\'' +
-                ", action='" + action + '\'' +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
+                "UserID=" + userID +
+                ", UserType='" + userType + '\'' +
+                ", Action='" + action + '\'' +
+                ", Date='" + date + '\'' +
+                ", Time='" + time + '\'' +
                 '}';
     }
 }

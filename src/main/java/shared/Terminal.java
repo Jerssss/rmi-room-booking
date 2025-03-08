@@ -1,12 +1,35 @@
 package shared;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Terminal {
+    @Expose
+    @SerializedName("terminal_id")
     private String terminalID;
+
+    @Expose
+    @SerializedName("terminal_room")
     private String room;
+
+    @Expose
+    @SerializedName("terminal_os")
     private String os;
+
+    @Expose
+    @SerializedName("terminal_status")
     private String status;
+
+    @Expose
+    @SerializedName("reservation_date")
     private String reservationDate;
+
+    @Expose
+    @SerializedName("start_time")
     private String startTime;
+
+    @Expose
+    @SerializedName("end_time")
     private String endTime;
 
     public Terminal(String terminalID, String room, String os, String status, String reservationDate, String startTime, String endTime) {
@@ -60,4 +83,3 @@ public class Terminal {
                 '}';
     }
 }
-

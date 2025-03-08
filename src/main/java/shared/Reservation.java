@@ -1,13 +1,39 @@
 package shared;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Reservation {
+    @Expose
+    @SerializedName("reservation_id")
     private String reservationID;
+
+    @Expose
+    @SerializedName("user_id")
     private String userID;
+
+    @Expose
+    @SerializedName("terminal_id")
     private String terminalID;
+
+    @Expose
+    @SerializedName("room_id")
     private String roomID;
+
+    @Expose
+    @SerializedName("reservation_date")
     private String reservationDate;
+
+    @Expose
+    @SerializedName("start_time")
     private String startTime;
+
+    @Expose
+    @SerializedName("end_time")
     private String endTime;
+
+    @Expose
+    @SerializedName("status")
     private String status;
 
     public Reservation(String reservationID, String userID, String terminalID, String roomID,
@@ -68,4 +94,3 @@ public class Reservation {
                 '}';
     }
 }
-
