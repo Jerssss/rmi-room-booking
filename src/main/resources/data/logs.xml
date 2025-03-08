@@ -658,4 +658,11 @@
         <Date>2025-03-05</Date>
         <Time>23:15:37</Time>
     </Log>
+    <Log>
+        <UserID>1</UserID>
+        <UserType>Admin</UserType>
+        <Action>Login</Action>
+        <Date>2025-03-08</Date>
+        <Time>13:09:17</Time>
+    </Log>
 </Logs>

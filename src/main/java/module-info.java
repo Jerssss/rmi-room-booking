@@ -9,6 +9,7 @@ module Lendify {
     exports client;
     exports client.utility;
     exports shared;
+    exports shared.interfaces;
 
     opens shared to java.rmi;
     opens client.landingpage to javafx.fxml;
