@@ -1,0 +1,46 @@
+
+
+.text-field {
+    -fx-border-color: transparent;
+    -fx-background-color: #BDD1E8;
+    -fx-padding: 5 0 5 28;
+    -fx-prompt-text-fill: #8988b1;
+}
+
+
+.background-pane {
+    -fx-background-image: url("../images/client/paper.png");
+    -fx-background-repeat: repeat;
+    -fx-background-size: auto;
+}
+
+
+.userTypePicker {
+    -fx-prompt-text-fill: #8988b1;
+}
+
+.date-picker .text-field {
+    -fx-alignment: left; 
+    -fx-padding: 0 0 0 5px;
+}
+
+.text-field2 {
+	-fx-alignment: left; 
+    -fx-padding: 0 0 0 5px;
+}
+*.text-field2 {
+    -fx-alignment: CENTER_LEFT;
+}
+
+
+*.date-picker *.text-field {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.highlighted-button {
+    -fx-effect: dropshadow(gaussian, white, 10, 0.0, 0, 1);
+}
+
+.highlighted-button .text {
+    -fx-effect: dropshadow(gaussian, #3d5c9e, 3, 0.0, 0, 1);
+}

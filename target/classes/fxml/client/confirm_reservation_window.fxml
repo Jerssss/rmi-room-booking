@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="241.0" prefWidth="330.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.admin.view.ModifyTerminalStatusView">
+    <top>
+        <HBox prefHeight="41.0" prefWidth="388.0" style="-fx-background-color: #0d3073;" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="388.0">
+                    <children>
+                        <Label alignment="CENTER" prefHeight="41.0" prefWidth="219.0" style="-fx-font-family: &quot;Trebuchet MS&quot;, Helvetica, sans-serif &quot;Trebuchet MS&quot;, Helvetica, sans-serif;" text="Confirm Reservation?" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="21.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+            </children>
+            <effect>
+                <DropShadow radius="4.75" width="0.0" />
+            </effect>
+        </HBox>
+    </top>
+    <center>
+        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="144.0" prefWidth="288.0" style="-fx-background-color: white;">
+                    <children>
+                        <HBox prefHeight="28.0" prefWidth="330.0">
+                            <children>
+                                <Label text="Room No.: " textFill="#0d3073">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="roomNoLabel" text="#" textFill="#0d3073">
+                                    <font>
+                                        <Font size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="9.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox prefHeight="28.0" prefWidth="330.0">
+                            <children>
+                                <Label text="Terminal No.: " textFill="#0d3073">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="terminalNoLabel" text="#" textFill="#0d3073">
+                                    <font>
+                                        <Font size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="9.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox prefHeight="28.0" prefWidth="330.0">
+                            <children>
+                                <Label text="Date: " textFill="#0d3073">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="dateLabel" text="#" textFill="#0d3073">
+                                    <font>
+                                        <Font size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="9.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox prefHeight="28.0" prefWidth="330.0">
+                            <children>
+                                <Label text="Time: " textFill="#0d3073">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="timeLabel" text="#" textFill="#0d3073">
+                                    <font>
+                                        <Font size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="9.0" />
+                            </VBox.margin>
+                        </HBox>
+                    </children>
+                    <effect>
+                        <DropShadow offsetX="-9.0" offsetY="7.0">
+                            <color>
+                                <Color opacity="0.04198473319411278" />
+                            </color>
+                        </DropShadow>
+                    </effect>
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
+                </VBox>
+            </children>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="44.0" prefWidth="330.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
+                <Button fx:id="confirmButton" mnemonicParsing="false" text="Confirm" />
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

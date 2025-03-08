@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Admins>
+    <Admin>
+        <Admin_ID>1</Admin_ID>
+        <Name>Admin Test</Name>
+        <Type>Admin</Type>
+        <Password>1</Password>
+        <FacultyType>Faculty</FacultyType>
+    </Admin>
+    <Admin>
+        <Admin_ID>2250004</Admin_ID>
+        <Name>Dionela Marilag</Name>
+        <Type>Admin</Type>
+        <Password>2250004</Password>
+        <FacultyType>Faculty</FacultyType>
+    </Admin>
+    <Admin>
+        <Admin_ID>2250003</Admin_ID>
+        <Name>Katkat Samcis</Name>
+        <Type>Admin</Type>
+        <Password>2250003</Password>
+        <FacultyType>Faculty</FacultyType>
+    </Admin>
+    <Admin>
+        <Admin_ID>666</Admin_ID>
+        <Name>666</Name>
+        <Type>Admin</Type>
+        <Password>666</Password>
+        <FacultyType>666</FacultyType>
+    </Admin>
+    <Admin>
+        <Admin_ID>2250002</Admin_ID>
+        <Name>Tony Fowler</Name>
+        <Type>Admin</Type>
+        <Password>2250002</Password>
+        <FacultyType>Faculty</FacultyType>
+    </Admin>
+    <Admin>
+        <Admin_ID>2250001</Admin_ID>
+        <Name>Dina Matuto</Name>
+        <Type>Admin</Type>
+        <Password>2250001</Password>
+        <FacultyType>Faculty</FacultyType>
+    </Admin>
+</Admins>
