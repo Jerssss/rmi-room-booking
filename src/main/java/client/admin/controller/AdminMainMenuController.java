@@ -1,6 +1,7 @@
 package client.admin.controller;
 
 import client.admin.model.AdminMainMenuModel;
+import client.admin.view.AdminMainMenuView;
 import client.login.LoginController;
 import client.login.LoginModel;
 import client.login.LoginView;

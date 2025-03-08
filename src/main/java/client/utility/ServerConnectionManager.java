@@ -1,7 +1,7 @@
 package client.utility;
 
 import client.ClientMain;
-import shared.RMIServer;
+import shared.interfaces.RMIServer;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 

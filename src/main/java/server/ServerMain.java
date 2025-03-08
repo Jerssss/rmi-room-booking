@@ -1,6 +1,6 @@
 package server;
 
-import shared.RMIServer;
+import shared.interfaces.RMIServer;
 import server.RMIServerImpl;
 
 import java.rmi.registry.LocateRegistry;

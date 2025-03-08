@@ -2,7 +2,8 @@ package server;
 
 import server.landingpage.LoginProcessor;
 import server.landingpage.SignUpProcessor;
-import shared.RMIServer;
+import shared.interfaces.RMIServer;
+
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
