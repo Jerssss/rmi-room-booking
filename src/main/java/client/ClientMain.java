@@ -2,28 +2,41 @@ package client;
 
 import client.landingpage.LandingPageController;
 import client.landingpage.LandingPageView;
-import client.utility.ClientView;
-import client.utility.ServerConnectionManager;
+import shared.interfaces.Authentication;
+import shared.interfaces.StudentProcessors;
+import shared.interfaces.AdminProcessors;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.Date;
 
+/**
+ * ClientMain initializes the client application and connects to the RMI server.
+ */
 public class ClientMain extends Application {
-    private static String SERVER_IP = null;
-    private static final int SERVER_DISCOVERY_PORT = 12345;
+    public static final String SERVER_IP = "192.168.5.38"; // Change this IP when switching PCs
+    private static final int PORT = 1099;
+
+    private static Authentication authService;
+    private static StudentProcessors studentProcessors;
+    private static AdminProcessors adminProcessors;
 
     public static void main(String[] args) {
-        requestServerAddress(); // Find the server IP before starting UI
-        launch(args); // Launch the GUI
+        System.out.println("=====================================================");
+        System.out.println("[Client] Starting client at " + new Date());
+        System.out.println("[Client] Connecting to RMI server at " + SERVER_IP + " on port " + PORT);
+        System.out.println("=====================================================");
+
+        connectToRMIServer();
+        launch(args);
     }
 
     @Override
@@ -33,14 +46,18 @@ public class ClientMain extends Application {
             Parent root = loader.load();
 
             LandingPageView landingPageView = loader.getController();
-
-            new LandingPageController(landingPageView); // Pass the view
+            if (landingPageView == null) {
+                System.err.println("[ERROR] LandingPageView is NULL after FXML load!");
+            } else {
+                new LandingPageController(landingPageView);
+            }
 
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.centerOnScreen();
             stage.show();
 
+            System.out.println("[Client] GUI successfully loaded.");
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("[ERROR] Could not load landing_page.fxml");
@@ -48,33 +65,44 @@ public class ClientMain extends Application {
     }
 
 
-    public static void requestServerAddress() {
-        if (SERVER_IP != null) return; // Skip if already found
+    /**
+     * Connects to the RMI server.
+     */
+    private static void connectToRMIServer() {
+        try {
+            Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
 
-        try (DatagramSocket socket = new DatagramSocket()) {
-            System.out.println("Broadcasting server discovery request...");
-            socket.setBroadcast(true);
+            authService = (Authentication) registry.lookup("authentication");
+            studentProcessors = (StudentProcessors) registry.lookup("student_processors");
+            adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
 
-            byte[] sendData = "DISCOVER_SERVER_REQUEST".getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
-                    InetAddress.getByName("255.255.255.255"), SERVER_DISCOVERY_PORT);
-            socket.send(sendPacket);
+            // Get Client IP Address
+            String clientIP = InetAddress.getLocalHost().getHostAddress();
 
-            byte[] receiveData = new byte[1024];
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            socket.receive(receivePacket);
+            // Log client connection immediately after connection
+            System.out.println("[Client] Connected to RMI Server. IP Address: " + clientIP);
+            authService.logClientConnection(clientIP); // Make sure this method exists in Authentication interface
 
-            SERVER_IP = receivePacket.getAddress().getHostAddress();
-            System.out.println("Server found at IP: " + SERVER_IP);
-        } catch (IOException e) {
-            System.err.println("Error during server discovery: " + e.getMessage());
+            System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
+        } catch (NotBoundException | IOException e) {
+            System.err.println("[ERROR] Could not connect to RMI services: " + e.getMessage());
         }
     }
 
+
+    public static Authentication getAuthService() {
+        return authService;
+    }
+
+    public static StudentProcessors getStudentProcessors() {
+        return studentProcessors;
+    }
+
+    public static AdminProcessors getAdminProcessors() {
+        return adminProcessors;
+    }
+    // Getter for SERVER_IP
     public static String getServerIP() {
-        if (SERVER_IP == null) {
-            requestServerAddress();
-        }
         return SERVER_IP;
     }
 }

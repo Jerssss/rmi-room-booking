@@ -1,6 +1,10 @@
 package client.utility;
 
-import shared.*;
+import shared.Admin;
+import shared.Student;
+import shared.Reservation;
+import shared.Terminal;
+import shared.Log;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,23 +17,10 @@ public class ClientModel {
     private List<Reservation> reservations;
 
     public ClientModel() {
-        adminList = null;
-        studentList = null;
-        logs = null;
-        terminals = null;
-        reservations = null;
+        adminList = new HashMap<>();
+        studentList = new HashMap<>();
     }
 
-    public ClientModel(HashMap<String, Admin> adminList, HashMap<String, Student> studentList,
-                       List<Log> logs, List<Terminal> terminals, List<Reservation> reservations) {
-        this.adminList = adminList;
-        this.studentList = studentList;
-        this.logs = logs;
-        this.terminals = terminals;
-        this.reservations = reservations;
-    }
-
-    // ** GETTERS ** //
     public HashMap<String, Admin> getAdminList() {
         return adminList;
     }
@@ -38,19 +29,6 @@ public class ClientModel {
         return studentList;
     }
 
-    public List<Log> getLogs() {
-        return logs;
-    }
-
-    public List<Terminal> getTerminals() {
-        return terminals;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    // ** SETTERS ** //
     public void setAdminList(HashMap<String, Admin> adminList) {
         this.adminList = adminList;
     }
@@ -58,17 +36,4 @@ public class ClientModel {
     public void setStudentList(HashMap<String, Student> studentList) {
         this.studentList = studentList;
     }
-
-    public void setLogs(List<Log> logs) {
-        this.logs = logs;
-    }
-
-    public void setTerminals(List<Terminal> terminals) {
-        this.terminals = terminals;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
 }
-

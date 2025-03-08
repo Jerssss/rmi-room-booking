@@ -1,5 +1,6 @@
 package client.signup;
 
+import client.ClientMain;
 import client.admin.view.AdminMainMenuView;
 import client.login.LoginController;
 import client.login.LoginModel;
@@ -16,6 +17,8 @@ import javafx.event.ActionEvent;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 
 public class SignUpController {
     private final SignUpView signUpView;
@@ -35,6 +38,8 @@ public class SignUpController {
                 handleSignUp(event);
             } catch (ParserConfigurationException e) {
                 throw new RuntimeException(e);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
         });
     }
@@ -45,7 +50,14 @@ public class SignUpController {
             Parent root = loader.load();
 
             LoginView loginView = loader.getController();
-            new LoginController(loginView, new LoginModel(), new AdminMainMenuView());
+            if (loginView == null) {
+                System.err.println("[ERROR] LoginView is NULL! Check FXML file.");
+                return;
+            }
+
+            // Use static method to get authentication service
+            LoginModel loginModel = new LoginModel(ClientMain.getAuthService());
+            new LoginController(loginView, loginModel);
 
             switchScene(event, root);
         } catch (IOException ioe) {
@@ -54,7 +66,7 @@ public class SignUpController {
         }
     }
 
-    private void handleSignUp(ActionEvent event) throws ParserConfigurationException {
+    private void handleSignUp(ActionEvent event) throws ParserConfigurationException, RemoteException {
 
         // Store field and dropdown contents
         String userID = signUpView.getIDField().getText();

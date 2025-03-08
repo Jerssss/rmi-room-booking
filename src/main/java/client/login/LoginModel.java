@@ -1,70 +1,62 @@
 package client.login;
 
-import client.utility.ServerConnectionManager;
-import client.utility.ServerConnection;
-import javafx.application.Platform;
+import shared.interfaces.Authentication;
+import util.exception.AccountAlreadyLoggedIn;
+import util.exception.InvalidCredentialsException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.rmi.NotBoundException;
 
-import javax.swing.JOptionPane;
-
+/**
+ * Handles login authentication via RMI.
+ */
 public class LoginModel {
-    private ServerConnection serverConnection;
+    private final Authentication authService;
     private String sessionToken;
     private String loggedInUserName;
 
-    public LoginModel() {
-        serverConnection = ServerConnectionManager.getConnection();
+    /**
+     * Constructor accepts an Authentication service instance.
+     * @param authService RMI Authentication service.
+     */
+    public LoginModel(Authentication authService) {
+        this.authService = authService;
     }
 
     /**
      * Authenticates the user and retrieves their name if successful.
+     *
      * @param userID   The user ID
      * @param password The password
      * @param userType The user type ("Admin" or "Student")
      * @return The user's name if authentication is successful, otherwise null.
+     * @throws IOException              If communication with the server fails.
+     * @throws NotBoundException        If the authentication service is not found in the registry.
+     * @throws InvalidCredentialsException If the credentials are incorrect.
+     * @throws AccountAlreadyLoggedIn   If the account is already logged in.
      */
-    public String authenticateAndGetName(String userID, String password, String userType) {
-        if (serverConnection == null) {
-            showErrorDialog("Server is not available. Please try again later.");
-            return null;
-        }
+    public String authenticate(String userID, String password, String userType)
+            throws IOException, NotBoundException, InvalidCredentialsException, AccountAlreadyLoggedIn {
 
-        try {
-            // Call the RMI login method
-            String response = serverConnection.login(userID, password, userType);
-            System.out.println("[LOGIN] Server response: " + response); // Debugging output
+        String clientIP = InetAddress.getLocalHost().getHostAddress();  // Get client IP
+        Object[] serverResponse = authService.login(userID, password, userType, clientIP);
 
-            // Extract session token and user name
-            this.sessionToken = extractField(response, "<SessionToken>", "</SessionToken>");
-            this.loggedInUserName = extractField(response, "<Name>", "</Name>");
+        // Parse the response
+        String status = (String) serverResponse[0];
+        sessionToken = (String) serverResponse[1];
+        loggedInUserName = (String) serverResponse[2];
 
-            // Validate login status
-            String status = extractField(response, "<Status>", "</Status>");
-            if ("SUCCESS".equalsIgnoreCase(status)) {
-                serverConnection.setLoggedInUserId(userID); // Store user ID in active session
+        switch (status) {
+            case "SUCCESS":
                 return loggedInUserName;
-            } else if ("ALREADY_LOGGED_IN".equalsIgnoreCase(status)) {
-                showErrorDialog("Account is already logged in.");
-            } else {
-                showErrorDialog("Invalid credentials. Please try again.");
-            }
-        } catch (Exception e) {
-            showErrorDialog("Lost connection to the server.");
-            e.printStackTrace();
+            case "ALREADY_LOGGED_IN":
+                throw new AccountAlreadyLoggedIn("Account is already logged in.");
+            default:
+                throw new InvalidCredentialsException("Invalid username or password.");
         }
-        return null;
     }
 
     public String getSessionToken() {
         return this.sessionToken;
-    }
-
-    private String extractField(String xml, String startTag, String endTag) {
-        int start = xml.indexOf(startTag);
-        int end = xml.indexOf(endTag, start);
-        return (start >= 0 && end > start) ? xml.substring(start + startTag.length(), end).trim() : null;
-    }
-
-    private void showErrorDialog(String message) {
-        Platform.runLater(() -> JOptionPane.showMessageDialog(null, message, "Connection Error", JOptionPane.ERROR_MESSAGE));
     }
 }

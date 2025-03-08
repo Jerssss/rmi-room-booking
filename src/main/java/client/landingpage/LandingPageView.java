@@ -4,78 +4,100 @@ import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+public class LandingPageView {
 
-public class LandingPageView implements Initializable {
     @FXML
     private Button landingPageLogInButton;
     @FXML
     private Button landingPageSignUpButton;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize() {
+        System.out.println("[DEBUG] Initializing LandingPageView...");
+
         if (landingPageLogInButton == null) {
-            System.err.println("[ERROR] landingPageLogInButton is NULL! Check FXML.");
+            System.err.println("[ERROR] landingPageLogInButton is NULL! Check FXML fx:id.");
         }
         if (landingPageSignUpButton == null) {
-            System.err.println("[ERROR] landingPageSignUpButton is NULL! Check FXML.");
+            System.err.println("[ERROR] landingPageSignUpButton is NULL! Check FXML fx:id.");
         }
     }
 
     public void setActionSignInButton(EventHandler<ActionEvent> event) {
         if (landingPageLogInButton != null) {
             landingPageLogInButton.setOnAction(event);
+            System.out.println("[DEBUG] Log In button action assigned.");
         } else {
-            System.err.println("[ERROR] landingPageLogInButton is NULL! Check FXML file.");
+            System.err.println("[ERROR] landingPageLogInButton is NULL! Cannot set action.");
         }
     }
 
     public void setActionSignUpButton(EventHandler<ActionEvent> event) {
         if (landingPageSignUpButton != null) {
             landingPageSignUpButton.setOnAction(event);
+            System.out.println("[DEBUG] Sign Up button action assigned.");
         } else {
-            System.err.println("[ERROR] landingPageSignUpButton is NULL! Check FXML file.");
+            System.err.println("[ERROR] landingPageSignUpButton is NULL! Cannot set action.");
         }
     }
 
-    public void signUpButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageSignUpButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    public void signUpButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageSignUpButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    public void logInButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageLogInButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
+    // Hover effect for Log In Button
+    @FXML
     public void logInButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageLogInButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
+        if (landingPageLogInButton != null) {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageLogInButton);
+            st.setToX(0.9);
+            st.setToY(0.9);
+            st.setCycleCount(1);
+            st.setAutoReverse(false);
+            st.play();
+        } else {
+            System.err.println("[ERROR] landingPageLogInButton is NULL!");
+        }
+    }
+
+    @FXML
+    public void logInButtonExited() {
+        if (landingPageLogInButton != null) {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageLogInButton);
+            st.setToX(1.0);
+            st.setToY(1.0);
+            st.setCycleCount(1);
+            st.setAutoReverse(false);
+            st.play();
+        } else {
+            System.err.println("[ERROR] landingPageLogInButton is NULL!");
+        }
+    }
+
+    // Hover effect for Sign Up Button
+    @FXML
+    public void signUpButtonHovered() {
+        if (landingPageSignUpButton != null) {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageSignUpButton);
+            st.setToX(0.9);
+            st.setToY(0.9);
+            st.setCycleCount(1);
+            st.setAutoReverse(false);
+            st.play();
+        } else {
+            System.err.println("[ERROR] landingPageSignUpButton is NULL!");
+        }
+    }
+
+    @FXML
+    public void signUpButtonExited() {
+        if (landingPageSignUpButton != null) {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), landingPageSignUpButton);
+            st.setToX(1.0);
+            st.setToY(1.0);
+            st.setCycleCount(1);
+            st.setAutoReverse(false);
+            st.play();
+        } else {
+            System.err.println("[ERROR] landingPageSignUpButton is NULL!");
+        }
     }
 }

@@ -12,40 +12,55 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>23.0.1</javafx.version>
     </properties>
 
     <dependencies>
+        <!-- JavaFX Dependencies -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>23.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>23.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>23.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>23.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
+
+        <!-- Gson for JSON Processing (FIXED: Removed `provided` scope) -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.9</version>
-            <scope>provided</scope>
+            <version>2.10.1</version>
         </dependency>
     </dependencies>
 
-
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.css</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
+            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -56,17 +71,23 @@
                 </configuration>
             </plugin>
 
+            <!-- JavaFX Maven Plugin (FIXED: Added module path) -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>client.ClientSide</mainClass>
+                    <mainClass>client.ClientMain</mainClass>
+                    <options>
+                        <option>--module-path</option>
+                        <!--suppress UnresolvedMavenProperty -->
+                        <option>${javafx.platform.classpath}</option>
+                        <option>--add-modules</option>
+                        <option>javafx.controls,javafx.fxml</option>
+                    </options>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
 
 </project>

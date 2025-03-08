@@ -13,14 +13,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+import util.exception.AccountAlreadyLoggedIn;
+import util.exception.InvalidCredentialsException;
 import java.io.IOException;
+import java.rmi.NotBoundException;
 
 public class LoginController {
     private final LoginView loginView;
     private final LoginModel loginModel;
 
-    public LoginController(LoginView loginView, LoginModel loginModel, AdminMainMenuView adminMainMenuView) {
+    public LoginController(LoginView loginView, LoginModel loginModel) {
         this.loginView = loginView;
         this.loginModel = loginModel;
 
@@ -39,22 +41,33 @@ public class LoginController {
             return;
         }
 
-        String userName = loginModel.authenticateAndGetName(userID, password, userType);
-        if (userName != null) {
-            loginView.setPromptLabel("Login successful!");
-            loginView.setPromptLabelVisible(true);
+        try {
+            String userName = loginModel.authenticate(userID, password, userType);
 
-            String sessionToken = loginModel.getSessionToken();
-            SessionManager.createSession(sessionToken, userID);
+            if (userName != null) {
+                loginView.setPromptLabel("Login successful!");
+                loginView.setPromptLabelVisible(true);
 
-            if ("Student".equalsIgnoreCase(userType)) {
-                // redirectToStudentMainMenu(event, userName, sessionToken);
-            } else {
-                redirectToAdminMainMenu(event, userName);
+                String sessionToken = loginModel.getSessionToken();
+                SessionManager.createSession(sessionToken, userID);
+
+                if ("Student".equalsIgnoreCase(userType)) {
+                    // Redirect to student main menu
+                } else {
+                    redirectToAdminMainMenu(event, userName);
+                }
             }
-        } else {
+        } catch (InvalidCredentialsException e) {
             loginView.setPromptLabel("Invalid credentials. Please try again.");
             loginView.setPromptLabelVisible(true);
+        } catch (AccountAlreadyLoggedIn e) {
+            loginView.setPromptLabel("Account already logged in.");
+            loginView.setPromptLabelVisible(true);
+        } catch (NotBoundException e) {
+            loginView.setPromptLabel("Server error: Authentication service not found.");
+            loginView.setPromptLabelVisible(true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -68,7 +81,6 @@ public class LoginController {
             changeScene(event, root);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error loading Admin Main Menu GUI: " + e.getMessage());
         }
     }
 
@@ -82,7 +94,6 @@ public class LoginController {
             changeScene(event, root);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error loading Sign-Up GUI: " + e.getMessage());
         }
     }
 

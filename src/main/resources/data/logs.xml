@@ -665,4 +665,11 @@
         <Date>2025-03-08</Date>
         <Time>13:09:17</Time>
     </Log>
+    <Log>
+        <UserID>Admin Test</UserID>
+        <UserType>Admin</UserType>
+        <Action>Logout</Action>
+        <Date>2025-03-08</Date>
+        <Time>21:59:27</Time>
+    </Log>
 </Logs>

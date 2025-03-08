@@ -1,5 +1,6 @@
 package client.landingpage;
 
+import client.ClientMain;
 import client.admin.view.AdminMainMenuView;
 import client.login.LoginController;
 import client.login.LoginModel;
@@ -7,8 +8,6 @@ import client.login.LoginView;
 import client.signup.SignUpController;
 import client.signup.SignUpModel;
 import client.signup.SignUpView;
-import client.utility.ServerConnection;
-import client.utility.ServerConnectionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -21,29 +20,32 @@ import javafx.application.Platform;
 import java.io.IOException;
 
 public class LandingPageController {
-    private final ServerConnection serverConnection;
 
     public LandingPageController(LandingPageView view) {
-        serverConnection = ServerConnectionManager.getConnection();
-
         if (view == null) {
-            System.err.println("[ERROR] LandingPageView is NULL! Controller is not receiving the view.");
+            System.err.println("[ERROR] LandingPageView is NULL! Button handlers will not be assigned.");
             return;
         }
 
+        System.out.println("[DEBUG] LandingPageView successfully loaded.");
         view.setActionSignInButton(this::handleSignIn);
         view.setActionSignUpButton(this::handleSignUp);
     }
 
     private void handleSignIn(ActionEvent event) {
+        System.out.println("[DEBUG] Sign-in button clicked!");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
             Parent root = loader.load();
 
             LoginView loginView = loader.getController();
-            System.out.println("[DEBUG] LoginView loaded: " + (loginView != null));
+            if (loginView == null) {
+                System.err.println("[ERROR] LoginView is NULL after loading FXML!");
+                return;
+            }
 
-            new LoginController(loginView, new LoginModel(), new AdminMainMenuView());
+            System.out.println("[DEBUG] LoginView successfully loaded.");
+            new LoginController(loginView, new LoginModel(ClientMain.getAuthService())); // Removed extra argument
 
             switchScene(event, root);
         } catch (IOException ioe) {
@@ -52,13 +54,20 @@ public class LandingPageController {
         }
     }
 
-    private void handleSignUp(ActionEvent event) {
 
+    private void handleSignUp(ActionEvent event) {
+        System.out.println("[DEBUG] Sign-up button clicked!");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/sign_up_page.fxml"));
             Parent root = loader.load();
 
             SignUpView signUpView = loader.getController();
+            if (signUpView == null) {
+                System.err.println("[ERROR] SignUpView is NULL after loading FXML!");
+                return;
+            }
+
+            System.out.println("[DEBUG] SignUpView successfully loaded.");
             new SignUpController(signUpView, new SignUpModel());
 
             switchScene(event, root);
