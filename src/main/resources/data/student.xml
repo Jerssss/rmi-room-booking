@@ -1,0 +1,56 @@
+<Students>
+    <Student>
+        <Student_ID>2240000</Student_ID>
+        <Name>ANG-ANGCO, JEREMIAH</Name>
+        <Password>2240000</Password>
+        <CourseYear>BSCS 2</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240001</Student_ID>
+        <Name>Tester</Name>
+        <Password>2240001</Password>
+        <CourseYear>BSIT 1</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240002</Student_ID>
+        <Name>ESPERANZATE, ANJELO</Name>
+        <Password>2240002</Password>
+        <CourseYear>BSIT 2</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240003</Student_ID>
+        <Name>FLORES, GABRIEL ALYSON</Name>
+        <Password>2240003</Password>
+        <CourseYear>BSIT 2</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240004</Student_ID>
+        <Name>GRABANZOR, GIANA KRISTY</Name>
+        <Password>2240004</Password>
+        <CourseYear>BSIT 2</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240005</Student_ID>
+        <Name>MOLINA, BERNARDO SEBASTHIAN</Name>
+        <Password>2240005</Password>
+        <CourseYear>BSIT 2</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240006</Student_ID>
+        <Name>TENORIO, KRISTELLE MAYE</Name>
+        <Password>2240006</Password>
+        <CourseYear>BSIT 2</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>1</Student_ID>
+        <Name>Test Student</Name>
+        <Password>1</Password>
+        <CourseYear>BSIT 1</CourseYear>
+    </Student>
+    <Student>
+        <Student_ID>2240028</Student_ID>
+        <Name>oilioil</Name>
+        <Password>hatdog</Password>
+        <CourseYear>3</CourseYear>
+    </Student>
+</Students>
