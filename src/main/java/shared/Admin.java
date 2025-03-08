@@ -1,10 +1,27 @@
 package shared;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Admin {
+    @Expose
+    @SerializedName("Admin_ID")
     private String id;
+
+    @Expose
+    @SerializedName("Name")
     private String name;
+
+    @Expose
+    @SerializedName("Type")
     private String type;
+
+    @Expose
+    @SerializedName("Password")
     private String password;
+
+    @Expose
+    @SerializedName("FacultyType")
     private String facultyType;
 
     public Admin(String id, String name, String type, String password, String facultyType) {
@@ -15,34 +32,20 @@ public class Admin {
         this.facultyType = facultyType;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getFacultyType() {
-        return facultyType;
-    }
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public String getPassword() { return password; }
+    public String getFacultyType() { return facultyType; }
 
     @Override
     public String toString() {
         return "Admin{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", type='" + type + '\'' +
-                ", facultyType='" + facultyType + '\'' +
+                "Admin_ID='" + id + '\'' +
+                ", Name='" + name + '\'' +
+                ", Type='" + type + '\'' +
+                ", Password='" + password + '\'' +
+                ", FacultyType='" + facultyType + '\'' +
                 '}';
     }
 }
-

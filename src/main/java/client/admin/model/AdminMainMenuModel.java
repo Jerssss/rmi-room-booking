@@ -1,24 +1,60 @@
 package client.admin.model;
 
-import client.utility.ServerConnection;
-import client.utility.ServerConnectionManager;
+import shared.interfaces.RMIServer;
+import client.ClientMain;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
+/**
+ * Model for Admin Main Menu, handling server interactions.
+ */
 public class AdminMainMenuModel {
-    private ServerConnection serverConnection;
+    private RMIServer server;
 
+    /**
+     * Constructor that initializes the connection to the RMI server.
+     */
     public AdminMainMenuModel() {
-        serverConnection = ServerConnectionManager.getConnection();
-        if (serverConnection == null) {
-            System.err.println("ERROR: Server connection is NULL! Check RMI registry.");
+        connectToServer(); // Attempt to establish the connection
+    }
+
+    /**
+     * Tries to connect to the RMI server once.
+     */
+    private void connectToServer() {
+        try {
+            String serverIP = ClientMain.getServerIP();
+            Registry registry = LocateRegistry.getRegistry(serverIP, 1099);
+
+            // Attempt to lookup the RMIServer object
+            server = (RMIServer) registry.lookup("RMIServer");
+
+            System.out.println("[RMI] Connected to RMIServer at " + serverIP);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Could not connect to RMIServer: " + e.getMessage());
+            server = null;
         }
     }
 
+    /**
+     * Sends a message to the RMI server.
+     * @param name    The sender's name.
+     * @param message The message content.
+     * @return XML response from the server.
+     */
     public String sendMessageToServer(String name, String message) {
-        if (serverConnection == null) {
-            System.err.println("ERROR: Cannot send message, server connection is NULL.");
+        if (server == null) {
+            System.err.println("[ERROR] Cannot send message, RMI server is NULL. Reconnecting...");
+            connectToServer();
+        }
+
+        try {
+            return server != null ? server.sendMessage(message)
+                    : "<Response><Status>ERROR</Status></Response>";
+        } catch (RemoteException e) {
+            System.err.println("[ERROR] RMI sendMessage error: " + e.getMessage());
             return "<Response><Status>ERROR</Status></Response>";
         }
-        return serverConnection.sendMessage(name, message);
     }
 }
-
