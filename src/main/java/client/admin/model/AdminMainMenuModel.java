@@ -5,6 +5,7 @@ import client.ClientMain;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Arrays;
 
 /**
  * Model for Admin Main Menu, handling server interactions.
@@ -27,7 +28,10 @@ public class AdminMainMenuModel {
             String serverIP = ClientMain.getServerIP();
             Registry registry = LocateRegistry.getRegistry(serverIP, 1099);
 
-            // Attempt to lookup the RMIServer object
+            // Debug: Print all registered RMI services
+            System.out.println("[DEBUG] Available RMI services: " + Arrays.toString(registry.list()));
+
+            // Attempt to lookup RMIServer
             server = (RMIServer) registry.lookup("RMIServer");
 
             System.out.println("[RMI] Connected to RMIServer at " + serverIP);
@@ -39,11 +43,8 @@ public class AdminMainMenuModel {
 
     /**
      * Sends a message to the RMI server.
-     * @param name    The sender's name.
-     * @param message The message content.
-     * @return XML response from the server.
      */
-    public String sendMessageToServer(String name, String message) {
+    public String sendMessageToServer(String message) {
         if (server == null) {
             System.err.println("[ERROR] Cannot send message, RMI server is NULL. Reconnecting...");
             connectToServer();

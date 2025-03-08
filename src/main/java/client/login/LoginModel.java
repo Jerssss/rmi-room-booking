@@ -46,15 +46,23 @@ public class LoginModel {
         sessionToken = (String) serverResponse[1];
         loggedInUserName = (String) serverResponse[2];
 
-        switch (status) {
-            case "SUCCESS":
-                return loggedInUserName;
-            case "ALREADY_LOGGED_IN":
-                throw new AccountAlreadyLoggedIn("Account is already logged in.");
-            default:
-                throw new InvalidCredentialsException("Invalid username or password.");
+        if ("SUCCESS".equals(status)) {
+            // Print login success details on the CLIENT console
+            System.out.println("=====================================================");
+            System.out.println("[Client] Login successful!");
+            System.out.println("[Client] User: " + loggedInUserName + " (ID: " + userID + ")");
+            System.out.println("[Client] User Type: " + userType);
+            System.out.println("[Client] IP Address: " + clientIP);
+            System.out.println("[Client] Session Token: " + sessionToken);
+            System.out.println("=====================================================");
+            return loggedInUserName;
+        } else if ("ALREADY_LOGGED_IN".equals(status)) {
+            throw new AccountAlreadyLoggedIn("Account is already logged in.");
+        } else {
+            throw new InvalidCredentialsException("Invalid username or password.");
         }
     }
+
 
     public String getSessionToken() {
         return this.sessionToken;

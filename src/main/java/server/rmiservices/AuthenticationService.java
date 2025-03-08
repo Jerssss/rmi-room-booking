@@ -121,7 +121,11 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         // Log the client connection
         ServerMain.logClientConnection(clientIP);
 
-        System.out.println("[LOGIN] Admin logged in: " + admin.getName() + " from IP: " + clientIP);
+        // Print login details on the SERVER console
+        System.out.println("=====================================================");
+        System.out.println("[SERVER] Admin logged in: " + admin.getName() + " (ID: " + userID + ")");
+        System.out.println("[SERVER] IP Address: " + clientIP);
+        System.out.println("=====================================================");
 
         return new Object[]{"SUCCESS", generateSessionToken(), admin.getName()};
     }
@@ -147,7 +151,11 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         // Log the client connection
         ServerMain.logClientConnection(clientIP);
 
-        System.out.println("[LOGIN] Student logged in: " + student.getName() + " from IP: " + clientIP);
+        // Print login details on the SERVER console
+        System.out.println("=====================================================");
+        System.out.println("[SERVER] Student logged in: " + student.getName() + " (ID: " + userID + ")");
+        System.out.println("[SERVER] IP Address: " + clientIP);
+        System.out.println("=====================================================");
 
         return new Object[]{"SUCCESS", generateSessionToken(), student.getName()};
     }

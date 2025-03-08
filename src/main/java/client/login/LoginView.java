@@ -76,7 +76,6 @@ public class LoginView {
     public void setActionSignInButton(EventHandler<ActionEvent> event) {
         if (logInPageLogInButton != null) {
             logInPageLogInButton.setOnAction(event);
-            System.out.println("[DEBUG] Sign In button action set.");
         } else {
             System.err.println("[ERROR] logInPageLogInButton is NULL! Check FXML.");
         }
@@ -88,7 +87,6 @@ public class LoginView {
     public void setActionSignUpButton(EventHandler<ActionEvent> event) {
         if (logInPageSignUpButton != null) {
             logInPageSignUpButton.setOnAction(event);
-            System.out.println("[DEBUG] Sign Up button action set.");
         } else {
             System.err.println("[ERROR] logInPageSignUpButton is NULL! Check FXML.");
         }
