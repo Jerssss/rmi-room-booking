@@ -13,9 +13,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import server.utility.LogsXMLHandler;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 public class StudentMainMenuController {
     private final StudentMainMenuView view;
@@ -36,48 +36,31 @@ public class StudentMainMenuController {
     }
 
 
-
     /** Handles Logout and logs the action. */
     private void handleLogout(ActionEvent event) {
         if (loggedInUserName != null) {
-            LogsXMLHandler.logLogout(loggedInUserName, "Student");
-        }
+            try {
+                System.out.println("=====================================================");
+                System.out.println("[CLIENT] Requesting logout for student: " + loggedInUserName);
+                System.out.println("=====================================================");
 
-        try {
-            System.out.println("[DEBUG] Logging out and loading Login Page...");
+                // Call logout on the server
+                ClientMain.getAuthService().logout(loggedInUserName);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
-            Parent root = loader.load();
-
-            LoginView loginView = loader.getController();
-            if (loginView == null) {
-                System.err.println("[ERROR] LoginView is NULL! Check FXML file.");
-                return;
+                System.out.println("[CLIENT] Successfully logged out from server.");
+            } catch (RemoteException e) {
+                System.err.println("[ERROR] Logout failed: " + e.getMessage());
             }
-
-            // Get authentication service
-            LoginModel loginModel = new LoginModel(ClientMain.getAuthService());
-            new LoginController(loginView, loginModel); // Removed AdminMainMenuView
-
-            Platform.runLater(() -> {
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                if (stage == null) {
-                    System.err.println("[ERROR] Stage is NULL! Cannot change scene.");
-                    return;
-                }
-
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.centerOnScreen();
-                stage.show();
-                System.out.println("[DEBUG] Successfully switched to Login Page!");
-            });
-
-        } catch (IOException e) {
-            System.err.println("[ERROR] Failed to load login page: " + e.getMessage());
-            e.printStackTrace();
+        } else {
+            System.err.println("[ERROR] No logged-in user found!");
         }
+
+        // Switch back to login screen
+        switchScene(event, "/fxml/client/login_page.fxml", "Login Page");
     }
+
+
+
 
     private void switchScene(ActionEvent event, String fxmlPath, String title) {
         try {

@@ -33,7 +33,6 @@ public class AdminMainMenuController {
     private final AdminMainMenuModel model;
     private final String loggedInUserName;
     private Thread serverThread;
-    private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
 
     public AdminMainMenuController(AdminMainMenuView view, AdminMainMenuModel model, String loggedInUserName) {
         this.view = view;
@@ -127,33 +126,31 @@ public class AdminMainMenuController {
         System.out.println("Navigating to Reservation Approval");
     }
 
+    /** Handles Logout and logs the action. */
     private void handleLogout(ActionEvent event) {
         if (loggedInUserName != null) {
             try {
                 System.out.println("=====================================================");
-                System.out.println("[SERVER] Admin logging out: " + loggedInUserName);
+                System.out.println("[CLIENT] Requesting logout for admin: " + loggedInUserName);
                 System.out.println("=====================================================");
 
-                ClientMain.getAuthService().logout(loggedInUserName);  // Calls the server-side logout method
+                // Call logout on the server
+                ClientMain.getAuthService().logout(loggedInUserName);
+
+                System.out.println("[CLIENT] Successfully logged out from server.");
             } catch (RemoteException e) {
                 System.err.println("[ERROR] Logout failed: " + e.getMessage());
             }
+        } else {
+            System.err.println("[ERROR] No logged-in user found!");
         }
+
+        // Switch back to login screen
+        switchScene(event, "/fxml/client/login_page.fxml", "Login Page");
     }
 
-    /**
-     * Logs a logout action into logs.json.
-     */
-    private void logLogoutToJson(String userID, String userType) {
-        List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
 
-        String date = LocalDate.now().toString();
-        String time = LocalTime.now().toString();
 
-        logs.add(new Log(userID, userType, "Logout", date, time));
-
-        JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
-    }
 
     private void switchScene(ActionEvent event, String fxmlPath, String title) {
         try {

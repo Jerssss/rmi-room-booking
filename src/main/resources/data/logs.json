@@ -126,6 +126,20 @@
         "Action": "Logout",
         "Date": "2025-03-10",
         "Time": "01:39:23.768319600"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "02:00:00.384061700"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Student",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "02:04:28.082156100"
       }
     ]
   }

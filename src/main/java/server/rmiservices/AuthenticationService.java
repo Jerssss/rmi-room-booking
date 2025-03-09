@@ -177,11 +177,27 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
             System.err.println("[ERROR] Logout failed: UserID is null or empty.");
             return;
         }
-        // Log the logout action in logs.json
-        logAction(userID, "Session", "Logout");
+
+        // Determine user type (Admin or Student)
+        String userType;
+        if (JSONUtility.loadAdmins(ADMIN_JSON_FILE).containsKey(userID)) {
+            userType = "Admin";
+        } else if (JSONUtility.loadStudents(STUDENT_JSON_FILE).containsKey(userID)) {
+            userType = "Student";
+        } else {
+            System.err.println("[ERROR] Logout failed: UserID not found.");
+            return;
+        }
 
         System.out.println("=====================================================");
-        System.out.println("[LOGOUT] Admin logged out: " + userID);
+        System.out.println("[SERVER] " + userType + " logging out: " + userID);
+        System.out.println("=====================================================");
+
+        // Log the logout action in logs.json
+        logAction(userID, userType, "Logout");
+
+        System.out.println("=====================================================");
+        System.out.println("[LOGOUT] " + userType + " logged out: " + userID);
         System.out.println("=====================================================");
     }
 
