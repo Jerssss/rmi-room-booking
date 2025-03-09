@@ -56,6 +56,13 @@
         "Type": "Admin",
         "Password": "7456",
         "FacultyType": "7456"
+      },
+      {
+        "Admin_ID": "0116",
+        "Name": "Seb",
+        "Type": "Admin",
+        "Password": "123",
+        "FacultyType": "Faculty"
       }
     ]
   }

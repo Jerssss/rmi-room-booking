@@ -2,8 +2,10 @@ package shared;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;  // ✅ Add this import
 
-public class Reservation {
+public class Reservation implements Serializable {  //Implement Serializable
+
     @Expose
     @SerializedName("reservation_id")
     private String reservationID;
@@ -48,37 +50,14 @@ public class Reservation {
         this.status = status;
     }
 
-    public String getReservationID() {
-        return reservationID;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public String getTerminalID() {
-        return terminalID;
-    }
-
-    public String getRoomID() {
-        return roomID;
-    }
-
-    public String getReservationDate() {
-        return reservationDate;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
+    public String getReservationID() { return reservationID; }
+    public String getUserID() { return userID; }
+    public String getTerminalID() { return terminalID; }
+    public String getRoomID() { return roomID; }
+    public String getReservationDate() { return reservationDate; }
+    public String getStartTime() { return startTime; }
+    public String getEndTime() { return endTime; }
+    public String getStatus() { return status; }
 
     @Override
     public String toString() {

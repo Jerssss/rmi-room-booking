@@ -220,9 +220,29 @@ public class JSONUtility {
      * @return a List of Reservation objects
      */
     public static List<Reservation> loadReservations(File filePath) {
+        if (!filePath.exists()) {
+            System.err.println("[ERROR] Reservation file not found: " + filePath.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
         try (FileReader reader = new FileReader(filePath)) {
-            Type type = new TypeToken<List<Reservation>>() {}.getType();
-            return defaultGson.fromJson(reader, type);
+            Type type = new TypeToken<Map<String, Map<String, List<Reservation>>>>() {}.getType();
+            Map<String, Map<String, List<Reservation>>> data = defaultGson.fromJson(reader, type);
+
+            if (data == null || !data.containsKey("Reservations") || !data.get("Reservations").containsKey("Reservation")) {
+                System.err.println("[ERROR] Invalid JSON structure. Expected 'Reservations' -> 'Reservation'.");
+                return new ArrayList<>();
+            }
+
+            List<Reservation> reservations = data.get("Reservations").get("Reservation");
+
+            if (reservations.isEmpty()) {
+                System.out.println("[DEBUG] No reservations found.");
+            } else {
+                System.out.println("[DEBUG] Loaded " + reservations.size() + " reservations.");
+            }
+
+            return reservations;
         } catch (IOException ex) {
             throw new RuntimeException("Error loading reservation data: " + ex.getMessage(), ex);
         }
