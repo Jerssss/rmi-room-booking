@@ -125,7 +125,7 @@ public class StudentMainMenuView {
     public void setActionCreateReservationButton(EventHandler<ActionEvent> event) {
         createReservationButton.setOnAction(event1 -> {
             highlightButton(createReservationButton); //highlight the button when clicked
-            loadView("fxml/client/create_reservation_pane.fxml"); //load the view
+            loadView("/fxml/client/create_reservation_pane.fxml"); //load the view
         });
     }
 
@@ -133,7 +133,7 @@ public class StudentMainMenuView {
     public void setActionViewReservationButton(EventHandler<ActionEvent> event) {
         viewReservationButton.setOnAction(event1 -> {
             highlightButton(viewReservationButton); //highlight the button when clicked
-            loadView("fxml/client/view_reservation_pane.fxml"); //load the view
+            loadView("/fxml/client/view_reservation_pane.fxml"); //load the view
         });
     }
 
@@ -141,7 +141,7 @@ public class StudentMainMenuView {
     public void setActionModifyReservationButton(EventHandler<ActionEvent> event) {
         modifyReservationButton.setOnAction(event1 -> {
             highlightButton(modifyReservationButton); //highlight the button when clicked
-            loadView("fxml/client/modify_reservation_pane.fxml"); //load the view
+            loadView("/fxml/client/modify_reservation_pane.fxml"); //load the view
         });
     }
 

@@ -5,9 +5,7 @@ import client.admin.model.AdminMainMenuModel;
 import client.admin.model.ViewStudentReservationsModel;
 import client.admin.view.AdminMainMenuView;
 import client.admin.view.ViewStudentReservationsView;
-import client.login.LoginController;
-import client.login.LoginModel;
-import client.login.LoginView;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -15,15 +13,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import shared.Log;
-import util.JSONUtility;
 
-import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+
 
 /**
  * Controls the Admin Main Menu actions.
