@@ -1,7 +1,6 @@
 package util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import shared.Admin;
 import shared.Student;
@@ -166,9 +165,21 @@ public class JSONUtility {
      * @return a List of Log objects
      */
     public static List<Log> loadLogs(File filePath) {
+        if (!filePath.exists()) {
+            return new ArrayList<>();
+        }
+
         try (FileReader reader = new FileReader(filePath)) {
-            Type type = new TypeToken<List<Log>>() {}.getType();
-            return defaultGson.fromJson(reader, type);
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+
+            if (jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("Logs")) {
+                JsonObject root = jsonElement.getAsJsonObject();
+                JsonArray logsArray = root.getAsJsonObject("Logs").getAsJsonArray("Log");
+                Type listType = new TypeToken<List<Log>>() {}.getType();
+                return defaultGson.fromJson(logsArray, listType);
+            } else {
+                throw new JsonSyntaxException("Invalid JSON structure in logs.json");
+            }
         } catch (IOException ex) {
             throw new RuntimeException("Error loading log data: " + ex.getMessage(), ex);
         }
@@ -180,8 +191,13 @@ public class JSONUtility {
      * @param filePath the JSON file path
      */
     public static void saveLogs(List<Log> logList, File filePath) {
+        Map<String, Map<String, List<Log>>> nestedStructure = new LinkedHashMap<>();
+        Map<String, List<Log>> logMap = new LinkedHashMap<>();
+        logMap.put("Log", logList);
+        nestedStructure.put("Logs", logMap);
+
         try (FileWriter writer = new FileWriter(filePath)) {
-            defaultGson.toJson(logList, writer);
+            defaultGson.toJson(nestedStructure, writer);
         } catch (IOException ex) {
             throw new RuntimeException("Error saving log data: " + ex.getMessage(), ex);
         }
