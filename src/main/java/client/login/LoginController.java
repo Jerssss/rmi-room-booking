@@ -6,6 +6,7 @@ import client.admin.model.AdminMainMenuModel;
 import client.signup.SignUpController;
 import client.signup.SignUpModel;
 import client.signup.SignUpView;
+import client.student.view.StudentMainMenuView;
 import client.utility.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -52,7 +53,7 @@ public class LoginController {
                 SessionManager.createSession(sessionToken, userID);
 
                 if ("Student".equalsIgnoreCase(userType)) {
-                    // Redirect to student main menu
+                    redirectToStudentMainMenu(event, userName);
                 } else {
                     redirectToAdminMainMenu(event, userName);
                 }
@@ -77,6 +78,19 @@ public class LoginController {
             Parent root = fxmlLoader.load();
             AdminMainMenuView adminMainMenuView = fxmlLoader.getController();
             new AdminMainMenuController(adminMainMenuView, new AdminMainMenuModel(), loggedInUserName);
+
+            changeScene(event, root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void redirectToStudentMainMenu(ActionEvent event, String loggedInUserName) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/client/student_menu_page.fxml"));
+            Parent root = fxmlLoader.load();
+            StudentMainMenuView studentMainMenuView = fxmlLoader.getController();
+           // new StudentMainMenuController(studentMainMenuView, new StudentMainMenuView(), loggedInUserName);
 
             changeScene(event, root);
         } catch (IOException e) {
