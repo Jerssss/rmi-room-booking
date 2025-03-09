@@ -2,7 +2,9 @@ package client.admin.controller;
 
 import client.ClientMain;
 import client.admin.model.AdminMainMenuModel;
+import client.admin.model.ViewStudentReservationsModel;
 import client.admin.view.AdminMainMenuView;
+import client.admin.view.ViewStudentReservationsView;
 import client.login.LoginController;
 import client.login.LoginModel;
 import client.login.LoginView;
@@ -36,7 +38,7 @@ public class AdminMainMenuController {
 
         this.view.setActionAddNewTerminalButton(event -> handleAddNewTerminal(event));
         this.view.setActionModifyTerminalButton(event -> handleModifyTerminal());
-        this.view.setActionShowStudentReservationButton(event -> handleViewStudentReservation());
+        this.view.setActionShowStudentReservationButton(this::handleViewStudentReservation);
         this.view.setActionResApprovalButton(event -> handleReservationApproval());
         this.view.setActionReportsButton(event -> handleReports());
         this.view.setActionToggleButton(event -> handleServerToggleButton());
@@ -70,8 +72,39 @@ public class AdminMainMenuController {
     }
 
 
-    private void handleViewStudentReservation() {
-        System.out.println("Navigating to View Student Reservations...");
+    private void handleViewStudentReservation(ActionEvent event) {
+        System.out.println("[DEBUG] Navigating to View Student Reservations...");
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/student_reservations_pane.fxml"));
+            Parent root = loader.load();
+
+            //  Ensure View is loaded
+            ViewStudentReservationsView reservationsView = loader.getController();
+            if (reservationsView == null) {
+                System.err.println("[ERROR] ViewStudentReservationsView is NULL after FXML load!");
+                return;
+            }
+            System.out.println("[DEBUG] ViewStudentReservationsView successfully loaded.");
+
+            // Create MVC Components
+            ViewStudentReservationsModel reservationsModel = new ViewStudentReservationsModel();
+            ViewStudentReservationsController reservationsController = new ViewStudentReservationsController(reservationsView, reservationsModel);
+
+            // Switch Scene
+            Platform.runLater(() -> {
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setTitle("Student Reservations");
+                stage.centerOnScreen();
+                stage.show();
+            });
+
+        } catch (IOException e) {
+            System.err.println("[ERROR] Failed to load Student Reservations Page: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void handleModifyTerminal() {
