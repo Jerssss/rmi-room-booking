@@ -6,7 +6,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Authentication extends Remote {
-
     boolean signUp(String userID, String name, String password, String userType, String courseYear, String facultyType) throws RemoteException;
 
     /**

@@ -15,9 +15,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import server.utility.LogsXMLHandler;
+import shared.Log;
+import util.JSONUtility;
 
+import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 /**
  * Controls the Admin Main Menu actions.
@@ -27,6 +33,7 @@ public class AdminMainMenuController {
     private final AdminMainMenuModel model;
     private final String loggedInUserName;
     private Thread serverThread;
+    private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
 
     public AdminMainMenuController(AdminMainMenuView view, AdminMainMenuModel model, String loggedInUserName) {
         this.view = view;
@@ -35,6 +42,7 @@ public class AdminMainMenuController {
 
         this.view.setLoggedInUserName(loggedInUserName);
         this.view.initializeDateTime();
+        this.view.setActionLogoutButton(this::handleLogout);
 
         this.view.setActionAddNewTerminalButton(event -> handleAddNewTerminal(event));
         this.view.setActionModifyTerminalButton(event -> handleModifyTerminal());
@@ -42,7 +50,7 @@ public class AdminMainMenuController {
         this.view.setActionResApprovalButton(event -> handleReservationApproval());
         this.view.setActionReportsButton(event -> handleReports());
         this.view.setActionToggleButton(event -> handleServerToggleButton());
-        this.view.setActionLogoutButton(this::handleLogout);
+
     }
 
     /** Handles Server Start/Stop */
@@ -119,46 +127,32 @@ public class AdminMainMenuController {
         System.out.println("Navigating to Reservation Approval");
     }
 
-    /** Handles Logout and logs the action. */
     private void handleLogout(ActionEvent event) {
         if (loggedInUserName != null) {
-            LogsXMLHandler.logLogout(loggedInUserName, "Admin");
-        }
+            try {
+                System.out.println("=====================================================");
+                System.out.println("[SERVER] Admin logging out: " + loggedInUserName);
+                System.out.println("=====================================================");
 
-        try {
-            System.out.println("[DEBUG] Logging out and loading Login Page...");
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
-            Parent root = loader.load();
-
-            LoginView loginView = loader.getController();
-            if (loginView == null) {
-                System.err.println("[ERROR] LoginView is NULL! Check FXML file.");
-                return;
+                ClientMain.getAuthService().logout(loggedInUserName);  // Calls the server-side logout method
+            } catch (RemoteException e) {
+                System.err.println("[ERROR] Logout failed: " + e.getMessage());
             }
-
-            // Get authentication service
-            LoginModel loginModel = new LoginModel(ClientMain.getAuthService());
-            new LoginController(loginView, loginModel); // Removed AdminMainMenuView
-
-            Platform.runLater(() -> {
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                if (stage == null) {
-                    System.err.println("[ERROR] Stage is NULL! Cannot change scene.");
-                    return;
-                }
-
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.centerOnScreen();
-                stage.show();
-                System.out.println("[DEBUG] Successfully switched to Login Page!");
-            });
-
-        } catch (IOException e) {
-            System.err.println("[ERROR] Failed to load login page: " + e.getMessage());
-            e.printStackTrace();
         }
+    }
+
+    /**
+     * Logs a logout action into logs.json.
+     */
+    private void logLogoutToJson(String userID, String userType) {
+        List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
+
+        String date = LocalDate.now().toString();
+        String time = LocalTime.now().toString();
+
+        logs.add(new Log(userID, userType, "Logout", date, time));
+
+        JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
     }
 
     private void switchScene(ActionEvent event, String fxmlPath, String title) {

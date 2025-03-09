@@ -2,35 +2,35 @@
   "Logs": {
     "Log": [
       {
-        "UserID": 2250001,
+        "UserID": 2250001.0,
         "UserType": "Admin",
         "Action": "Login",
         "Date": "2025-02-17",
         "Time": "21:45:57"
       },
       {
-        "UserID": 2250002,
+        "UserID": 2250002.0,
         "UserType": "Admin",
         "Action": "Login",
         "Date": "2025-02-17",
         "Time": "22:03:32"
       },
       {
-        "UserID": 2250003,
+        "UserID": 2250003.0,
         "UserType": "Admin",
         "Action": "Login",
         "Date": "2025-02-17",
         "Time": "22:04:47"
       },
       {
-        "UserID": 2240000,
+        "UserID": 2240000.0,
         "UserType": "Student",
         "Action": "Login",
         "Date": "2025-02-18",
         "Time": "18:08:59"
       },
       {
-        "UserID": 2240001,
+        "UserID": 2240001.0,
         "UserType": "Student",
         "Action": "Login",
         "Date": "2025-02-18",
@@ -42,6 +42,90 @@
         "Action": "Logout",
         "Date": "2025-03-06",
         "Time": "21:10:23"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:01:09.467069900"
+      },
+      {
+        "UserID": "666",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:01:55.465221"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:11:44.605072"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-10",
+        "Time": "01:11:46.632931200"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:19:56.271156100"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-10",
+        "Time": "01:20:05.965895200"
+      },
+      {
+        "UserID": "666",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:20:12.955557100"
+      },
+      {
+        "UserID": "666",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-10",
+        "Time": "01:20:15.035706400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:35:57.608073"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-10",
+        "Time": "01:36:00.820881500"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-10",
+        "Time": "01:39:18.305021400"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-10",
+        "Time": "01:39:23.768319600"
       }
     ]
   }

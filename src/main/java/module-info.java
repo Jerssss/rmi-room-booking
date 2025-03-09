@@ -18,5 +18,4 @@ module Lendify {
     opens client to javafx.fxml;
     opens client.admin.view to javafx.fxml;
     opens client.admin.controller to javafx.fxml;
-    opens server.utility to javafx.base;
 }

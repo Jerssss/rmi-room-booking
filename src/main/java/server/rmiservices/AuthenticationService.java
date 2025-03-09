@@ -2,6 +2,7 @@ package server.rmiservices;
 
 import server.ServerMain;
 import shared.Admin;
+import shared.Log;
 import shared.Student;
 import shared.interfaces.Authentication;
 import util.JSONUtility;
@@ -13,6 +14,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,9 +23,11 @@ import java.util.UUID;
 public class AuthenticationService extends UnicastRemoteObject implements Authentication {
     private static final File ADMIN_JSON_FILE = new File("src/main/resources/data/admin.json");
     private static final File STUDENT_JSON_FILE = new File("src/main/resources/data/student.json");
+    private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
 
     public AuthenticationService() throws RemoteException {
         super();
+
     }
 
     @Override
@@ -127,6 +131,8 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         System.out.println("[SERVER] IP Address: " + clientIP);
         System.out.println("=====================================================");
 
+        logAction(userID, "Admin", "Login");
+
         return new Object[]{"SUCCESS", generateSessionToken(), admin.getName()};
     }
 
@@ -157,8 +163,40 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         System.out.println("[SERVER] IP Address: " + clientIP);
         System.out.println("=====================================================");
 
+        logAction(userID, "Student", "Login");
+
         return new Object[]{"SUCCESS", generateSessionToken(), student.getName()};
     }
+
+    /**
+     * Handles user logout.
+     */
+    @Override
+    public void logout(String userID) throws RemoteException {
+        if (userID == null || userID.isEmpty()) {
+            System.err.println("[ERROR] Logout failed: UserID is null or empty.");
+            return;
+        }
+        // Log the logout action in logs.json
+        logAction(userID, "Session", "Logout");
+
+        System.out.println("=====================================================");
+        System.out.println("[LOGOUT] Admin logged out: " + userID);
+        System.out.println("=====================================================");
+    }
+
+
+    private void logAction(String userID, String userType, String action) {
+        List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
+
+        String date = java.time.LocalDate.now().toString();
+        String time = java.time.LocalTime.now().toString();
+
+        logs.add(new Log(userID, userType, action, date, time));
+        JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
+    }
+
+
 
     @Override
     public void logClientConnection(String clientIP) throws RemoteException {
@@ -172,11 +210,6 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return "SESSION-" + UUID.randomUUID();
     }
 
-    /**
-     * Handles user logout.
-     */
-    @Override
-    public void logout(String sessionToken) throws RemoteException {
-        System.out.println("[LOGOUT] Session ended for token: " + sessionToken);
-    }
+
+
 }
