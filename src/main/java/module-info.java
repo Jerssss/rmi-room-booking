@@ -1,10 +1,10 @@
 module Lendify {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.base;
-    requires java.desktop;
     requires java.rmi;
     requires com.google.gson;
+    requires javafx.graphics;
+    requires java.desktop;
 
     exports client;
     exports client.utility;

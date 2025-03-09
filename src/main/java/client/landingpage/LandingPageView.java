@@ -28,7 +28,6 @@ public class LandingPageView {
     public void setActionSignInButton(EventHandler<ActionEvent> event) {
         if (landingPageLogInButton != null) {
             landingPageLogInButton.setOnAction(event);
-            System.out.println("[DEBUG] Log In button action assigned.");
         } else {
             System.err.println("[ERROR] landingPageLogInButton is NULL! Cannot set action.");
         }
@@ -37,7 +36,6 @@ public class LandingPageView {
     public void setActionSignUpButton(EventHandler<ActionEvent> event) {
         if (landingPageSignUpButton != null) {
             landingPageSignUpButton.setOnAction(event);
-            System.out.println("[DEBUG] Sign Up button action assigned.");
         } else {
             System.err.println("[ERROR] landingPageSignUpButton is NULL! Cannot set action.");
         }

@@ -27,13 +27,11 @@ public class LandingPageController {
             return;
         }
 
-        System.out.println("[DEBUG] LandingPageView successfully loaded.");
         view.setActionSignInButton(this::handleSignIn);
         view.setActionSignUpButton(this::handleSignUp);
     }
 
     private void handleSignIn(ActionEvent event) {
-        System.out.println("[DEBUG] Sign-in button clicked!");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
             Parent root = loader.load();
@@ -56,7 +54,6 @@ public class LandingPageController {
 
 
     private void handleSignUp(ActionEvent event) {
-        System.out.println("[DEBUG] Sign-up button clicked!");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/sign_up_page.fxml"));
             Parent root = loader.load();
