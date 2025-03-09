@@ -24,7 +24,7 @@ import java.util.Date;
  * ClientMain initializes the client application and connects to the RMI server.
  */
 public class ClientMain extends Application {
-    public static final String SERVER_IP = "192.168.5.38"; // Change this IP when switching PCs
+    public static final String SERVER_IP = "172.27.230.169"; // Change this IP when switching PCs
     private static final int PORT = 1099;
 
     private static Authentication authService;

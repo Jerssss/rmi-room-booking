@@ -30,11 +30,28 @@ public class StudentMainMenuController {
         this.view = view;
         this.model = model;
         this.loggedInUserName = loggedInUserName;
-
+        this.view.setActionLogoutButton(this::handleLogout);
+        this.view.setActionCreateReservationButton(event -> handleCreateReservation());
+        this.view.setActionViewReservationButton(event -> handleViewReservation());
+        this.view.setActionModifyReservationButton(event -> handleModifyReservation());
         this.view.setLoggedInUserName(loggedInUserName);
         this.view.initializeDateTime();
     }
 
+
+
+
+    private void handleCreateReservation() {
+        System.out.println("Navigating to Create Reservations...");
+    }
+
+    private void handleViewReservation() {
+        System.out.println("Navigating to View Reservations...");
+    }
+
+    private void handleModifyReservation() {
+        System.out.println("Navigating to Modify Reservations");
+    }
 
     /** Handles Logout and logs the action. */
     private void handleLogout(ActionEvent event) {

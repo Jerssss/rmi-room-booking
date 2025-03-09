@@ -10,6 +10,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -17,6 +19,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
+
+
+
+
+
 
 public class StudentMainMenuView {
 
@@ -45,7 +52,9 @@ public class StudentMainMenuView {
 
     private Button currentlyHighlightedButton;
 
-    /** Load a new view inside the main menu */
+    /**
+     * Load a new view inside the main menu
+     */
     private void loadView(String fxmlFile) {
         try {
             System.out.println("Loading FXML: " + fxmlFile);
@@ -62,12 +71,16 @@ public class StudentMainMenuView {
     }
 
 
-    /** Set the name of the logged-in user */
+    /**
+     * Set the name of the logged-in user
+     */
     public void setLoggedInUserName(String name) {
         headerNameLabel.setText(name);
     }
 
-    /** Initialize the date and time labels */
+    /**
+     * Initialize the date and time labels
+     */
     public void initializeDateTime() {
         updateDateTime();
         Timer timer = new Timer(true);
@@ -79,7 +92,9 @@ public class StudentMainMenuView {
         }, 0, 1000);
     }
 
-    /** Helper method to update the date and time labels */
+    /**
+     * Helper method to update the date and time labels
+     */
     private void updateDateTime() {
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
@@ -94,7 +109,9 @@ public class StudentMainMenuView {
     }
 
 
-    /** Show Error Dialog */
+    /**
+     * Show Error Dialog
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -102,6 +119,45 @@ public class StudentMainMenuView {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
+
+    public void setActionCreateReservationButton(EventHandler<ActionEvent> event) {
+        createReservationButton.setOnAction(event1 -> {
+            highlightButton(createReservationButton); //highlight the button when clicked
+            loadView("fxml/client/create_reservation_pane.fxml"); //load the view
+        });
+    }
+
+    /** Event handler for View Student Reservations Button */
+    public void setActionViewReservationButton(EventHandler<ActionEvent> event) {
+        viewReservationButton.setOnAction(event1 -> {
+            highlightButton(viewReservationButton); //highlight the button when clicked
+            loadView("fxml/client/view_reservation_pane.fxml"); //load the view
+        });
+    }
+
+    /** Event handler for Modify Terminal Button */
+    public void setActionModifyReservationButton(EventHandler<ActionEvent> event) {
+        modifyReservationButton.setOnAction(event1 -> {
+            highlightButton(modifyReservationButton); //highlight the button when clicked
+            loadView("fxml/client/modify_reservation_pane.fxml"); //load the view
+        });
+    }
+
+
+    public void setActionLogoutButton(EventHandler<ActionEvent> event) {
+        logOutButton.setOnAction(event);
+    }
+
+
+
+
+
+
+
+
+
 
     private void highlightButton(Button button) {
         //remove the highlight from the previously highlighted button
@@ -116,6 +172,7 @@ public class StudentMainMenuView {
         //updates the currently highlighted button
         currentlyHighlightedButton = button;
     }
+
     public void logOutButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), logOutButton);
         st.setToX(1.0);
@@ -124,6 +181,7 @@ public class StudentMainMenuView {
         st.setAutoReverse(false);
         st.play();
     }
+
     public void logOutButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), logOutButton);
         st.setToX(0.9);
@@ -133,3 +191,5 @@ public class StudentMainMenuView {
         st.play();
     }
 }
+
+
