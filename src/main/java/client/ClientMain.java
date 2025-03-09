@@ -24,7 +24,7 @@ import java.util.Date;
  * ClientMain initializes the client application and connects to the RMI server.
  */
 public class ClientMain extends Application {
-    public static final String SERVER_IP = "172.27.230.169"; // Change this IP when switching PCs
+    public static final String SERVER_IP = "127.0.0.1"; // Change this IP when switching PCs
     private static final int PORT = 1099;
 
     private static Authentication authService;
@@ -85,6 +85,11 @@ public class ClientMain extends Application {
                 adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
 
                 String clientIP = InetAddress.getLocalHost().getHostAddress();
+                if (!clientIP.equals(SERVER_IP)) {
+                    throw new IOException("IP mismatch detected: Client IP (" + clientIP +
+                            ") differs from Server IP (" + SERVER_IP + ")");
+                }
+
                 System.out.println("[Client] Connected to RMI Server. IP Address: " + clientIP);
                 authService.logClientConnection(clientIP);
 
@@ -92,7 +97,11 @@ public class ClientMain extends Application {
                 return; // Exit loop when connection succeeds
             } catch (NotBoundException | java.rmi.ConnectException e) {
                 System.err.println("[ERROR] Server is down. Retrying in 5 seconds...");
-                showServerDownMessage();
+                showServerDownMessage("The server is currently down. Reconnecting...");
+                sleep(5000);  // Retry after 5 seconds
+            } catch (IOException e) {
+                System.err.println("[ERROR] " + e.getMessage());
+                showServerDownMessage("Server IP and Client IP do not match.\nThe server may be down or unreachable.");
                 sleep(5000);  // Retry after 5 seconds
             } catch (Exception e) {
                 System.err.println("[ERROR] " + e.getMessage());
@@ -101,17 +110,18 @@ public class ClientMain extends Application {
         }
     }
 
+
     /**
      * Displays a popup message when the server is down, ensuring it appears above the main GUI.
      */
-    private static void showServerDownMessage() {
+    private static void showServerDownMessage(String message) {
         Platform.runLater(() -> {
             if (primaryStage != null) {
-                primaryStage.toFront(); // Bring main window to front before showing JOptionPane
+                primaryStage.toFront();
             }
             JOptionPane.showMessageDialog(null,
-                    "The server is currently down. Reconnecting...",
-                    "Server Down",
+                    message,
+                    "Connection Error",
                     JOptionPane.WARNING_MESSAGE);
         });
     }
