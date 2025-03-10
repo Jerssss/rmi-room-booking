@@ -1,7 +1,10 @@
 package shared.interfaces;
 
+import shared.Reservation;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Remote interface for student-related processes.
@@ -22,4 +25,7 @@ public interface StudentProcessors extends Remote {
      * @throws RemoteException If an RMI communication error occurs.
      */
     String getStudentDetails(String studentID) throws RemoteException;
+
+    List<Reservation> getReservation() throws RemoteException;
+
 }
