@@ -2,10 +2,9 @@ package shared;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import java.io.Serializable;  // ✅ Add this import
+import javafx.beans.property.SimpleStringProperty;
 
-public class Reservation implements Serializable {  //Implement Serializable
-
+public class Reservation {
     @Expose
     @SerializedName("reservation_id")
     private String reservationID;
@@ -36,7 +35,7 @@ public class Reservation implements Serializable {  //Implement Serializable
 
     @Expose
     @SerializedName("status")
-    private String status;
+    private SimpleStringProperty status; // Use SimpleStringProperty for status
 
     public Reservation(String reservationID, String userID, String terminalID, String roomID,
                        String reservationDate, String startTime, String endTime, String status) {
@@ -47,17 +46,52 @@ public class Reservation implements Serializable {  //Implement Serializable
         this.reservationDate = reservationDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.status = status;
+        this.status = new SimpleStringProperty(status); // Initialize the property
     }
 
-    public String getReservationID() { return reservationID; }
-    public String getUserID() { return userID; }
-    public String getTerminalID() { return terminalID; }
-    public String getRoomID() { return roomID; }
-    public String getReservationDate() { return reservationDate; }
-    public String getStartTime() { return startTime; }
-    public String getEndTime() { return endTime; }
-    public String getStatus() { return status; }
+    // Getters for all fields
+    public String getReservationID() {
+        return reservationID;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public String getTerminalID() {
+        return terminalID;
+    }
+
+    public String getRoomID() {
+        return roomID;
+    }
+
+    public String getReservationDate() {
+        return reservationDate;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    // Getter for status property
+    public String getStatus() {
+        return status.get();
+    }
+
+    // Setter for status property
+    public void setStatus(String status) {
+        this.status.set(status);
+    }
+
+    // Property accessor for status (required for JavaFX bindings)
+    public SimpleStringProperty statusProperty() {
+        return status;
+    }
 
     @Override
     public String toString() {
@@ -69,7 +103,7 @@ public class Reservation implements Serializable {  //Implement Serializable
                 ", reservationDate='" + reservationDate + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
-                ", status='" + status + '\'' +
+                ", status='" + status.get() + '\'' +
                 '}';
     }
 }
