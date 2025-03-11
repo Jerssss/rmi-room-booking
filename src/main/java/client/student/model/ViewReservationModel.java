@@ -10,10 +10,14 @@ import java.util.List;
 
 public class ViewReservationModel {
     private StudentProcessors studentProcessors;
+    private String studentID; // The logged-in student's ID
 
-    public ViewReservationModel() {
+    public ViewReservationModel(String studentID) {
         this.studentProcessors = ClientMain.getStudentProcessors(); // Get RMI instance
+        this.studentID = studentID; // Store the student ID after login
     }
+
+
     public List<Reservation> fetchReservations() {
         System.out.println("[DEBUG] fetchReservations() method called.");
 
@@ -23,7 +27,7 @@ public class ViewReservationModel {
                 return null;
             }
 
-            List<Reservation> reservations = studentProcessors.getReservation();
+            List<Reservation> reservations = studentProcessors.getReservation(studentID);
 
             if (reservations == null || reservations.isEmpty()) {
                 System.out.println("[DEBUG] No reservations found via RMI.");

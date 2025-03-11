@@ -8,6 +8,7 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * StudentProcessorService handles student-related actions.
@@ -32,22 +33,24 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     }
 
     @Override
-    public List<Reservation> getReservation() throws RemoteException {
+    public List<Reservation> getReservation(String studentID) throws RemoteException {
         try {
-            System.out.println("[AdminProcessorService] Fetching student reservations...");
+            System.out.println("[StudentProcessorService] Fetching reservations for student: " + studentID);
 
-            List<Reservation> reservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
+            List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
-            if (reservations == null || reservations.isEmpty()) {
-                System.out.println("[AdminProcessorService] No reservations found in JSON.");
+            // Filter the reservations based on the student ID.
+            List<Reservation> userReservations = allReservations.stream()
+                    .filter(reservation -> studentID.equals(reservation.getUserID()))
+                    .collect(Collectors.toList());
+
+            if (userReservations == null || userReservations.isEmpty()) {
+                System.out.println("[StudentProcessorService] No reservations found for student " + studentID);
             } else {
-                System.out.println("[AdminProcessorService] Loaded " + reservations.size() + " reservations.");
-                for (Reservation res : reservations) {
-                    System.out.println("[AdminProcessorService] " + res);
-                }
+                System.out.println("[StudentProcessorService] Loaded " + userReservations.size() + " reservations.");
             }
 
-            return reservations;
+            return userReservations;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
             return null;

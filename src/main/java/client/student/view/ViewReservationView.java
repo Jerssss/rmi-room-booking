@@ -2,6 +2,7 @@ package client.student.view;
 
 import client.student.controller.ViewReservationController;
 import client.student.model.ViewReservationModel;
+import client.utility.SessionManager;
 import javafx.animation.ScaleTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -21,8 +22,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-
-
 
 public class ViewReservationView implements Initializable {
     @FXML
@@ -53,35 +52,37 @@ public class ViewReservationView implements Initializable {
     @FXML
     private Button searchButton;
 
-
     private final ObservableList<Reservation> allReservations = FXCollections.observableArrayList();
 
     // Store controller instance
     private ViewReservationController controller;
 
-    /** JavaFX calls this method automatically after loading FXML */
-
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
         System.out.println("[DEBUG] Table columns initialized successfully.");
-
-        // Manually initialize the controller
         initializeController();
     }
 
-    /** Forcefully create and initialize the controller */
+    /**
+     * Initializes the controller.
+     * Note: We retrieve the student ID from SessionManager (or another central location)
+     * so that it can be passed into the model.
+     */
     public void initializeController() {
         System.out.println("[DEBUG] Initializing ViewReservationController...");
-        ViewReservationModel model = new ViewReservationModel();
+        // Retrieve the logged-in student ID (ensure SessionManager has a getter for it)
+        String studentID = SessionManager.getStudentID();
+        if (studentID == null || studentID.isEmpty()) {
+            System.err.println("[ERROR] Student ID is missing from the session.");
+            return;
+        }
+        ViewReservationModel model = new ViewReservationModel(studentID);
         this.controller = new ViewReservationController(this, model);
-        System.out.println("[DEBUG] ViewStudentReservationsController successfully created.");
+        System.out.println("[DEBUG] ViewReservationController successfully created with student ID: " + studentID);
     }
 
-
-    /** Properly initializes TableView columns */
+    /** Initializes TableView columns */
     private void initializeTableColumns() {
         reservationIDColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReservationID()));
         terminalNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
@@ -105,7 +106,7 @@ public class ViewReservationView implements Initializable {
 
     /** Search for reservations based on input */
     public void searchReservations() {
-        String searchText = searchTextField.getText().trim().toLowerCase();
+        String searchText = searchResTextField.getText().trim().toLowerCase();
 
         if (searchText.isEmpty()) {
             viewResTableView.setItems(allReservations);
@@ -124,16 +125,16 @@ public class ViewReservationView implements Initializable {
         viewResTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
-
     /** Sets search button action */
     public void setSearchButtonAction(EventHandler<ActionEvent> event) {
-        searchButton.setOnAction(event1 -> searchReservations());
+        searchButton.setOnAction(e -> searchReservations());
     }
 
     /** Sets refresh button action */
     public void setRefreshButtonAction(EventHandler<ActionEvent> event) {
         refreshButton.setOnAction(event);
     }
+
     public void searchButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
         st.setToX(1.0);
@@ -142,6 +143,7 @@ public class ViewReservationView implements Initializable {
         st.setAutoReverse(false);
         st.play();
     }
+
     public void searchButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
         st.setToX(0.9);
@@ -159,6 +161,7 @@ public class ViewReservationView implements Initializable {
         st.setAutoReverse(false);
         st.play();
     }
+
     public void refreshButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(0.9);

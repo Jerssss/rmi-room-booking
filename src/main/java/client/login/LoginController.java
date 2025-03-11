@@ -75,7 +75,7 @@ public class LoginController {
                 SessionManager.createSession(sessionToken, userID);
 
                 if ("Student".equalsIgnoreCase(userType)) {
-                    redirectToStudentMainMenu(event, userName);
+                    redirectToStudentMainMenu(event, userName,userID);
                 } else {
                     redirectToAdminMainMenu(event, userName);
                 }
@@ -113,21 +113,17 @@ public class LoginController {
         }
     }
 
-    private void redirectToStudentMainMenu(ActionEvent event, String loggedInUserName) {
+    private void redirectToStudentMainMenu(ActionEvent event, String loggedInUserName, String userID) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/client/student_main_menu.fxml"));
             Parent root = fxmlLoader.load();
-
-            // Debugging to check if controller is loaded
             StudentMainMenuView studentMainMenuView = fxmlLoader.getController();
             if (studentMainMenuView == null) {
                 System.err.println("[ERROR] StudentMainMenuView is NULL after loading FXML!");
                 return;
             }
-
             System.out.println("[DEBUG] StudentMainMenuView successfully loaded.");
-
-            new StudentMainMenuController(studentMainMenuView, new StudentMainMenuModel(), loggedInUserName);
+            new StudentMainMenuController(studentMainMenuView, new StudentMainMenuModel(), loggedInUserName, userID);
             changeScene(event, root);
         } catch (IOException e) {
             e.printStackTrace();

@@ -20,8 +20,9 @@ public class StudentMainMenuController {
     private final StudentMainMenuView view;
     private final StudentMainMenuModel model;
     private final String loggedInUserName;
+    private String studentID;
 
-    public StudentMainMenuController(StudentMainMenuView view, StudentMainMenuModel model, String loggedInUserName) {
+    public StudentMainMenuController(StudentMainMenuView view, StudentMainMenuModel model, String loggedInUserName, String studentID) {
 
 
 
@@ -60,7 +61,7 @@ public class StudentMainMenuController {
             System.out.println("[DEBUG] ViewReservationView successfully loaded.");
 
             // Create MVC Components
-            ViewReservationModel reservationModel = new ViewReservationModel();
+            ViewReservationModel reservationModel = new ViewReservationModel(studentID);
             ViewReservationController reservationController = new ViewReservationController(reservationView, reservationModel);
 
             // Switch Scene
