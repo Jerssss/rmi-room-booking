@@ -296,7 +296,11 @@ public class JSONUtility {
      */
     public static void saveReservations(List<Reservation> reservationList, File filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
-            defaultGson.toJson(reservationList, writer);
+            Map<String, Map<String, List<Reservation>>> nestedData = new LinkedHashMap<>();
+            Map<String, List<Reservation>> reservationsMap = new LinkedHashMap<>();
+            reservationsMap.put("Reservation", reservationList);
+            nestedData.put("Reservations", reservationsMap);
+            defaultGson.toJson(nestedData, writer);
         } catch (IOException ex) {
             throw new RuntimeException("Error saving reservation data: " + ex.getMessage(), ex);
         }

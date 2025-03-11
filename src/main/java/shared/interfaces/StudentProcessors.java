@@ -29,5 +29,7 @@ public interface StudentProcessors extends Remote {
 
     List<Reservation> getReservations(String studentID) throws RemoteException;
     List<Terminal> getTerminals() throws RemoteException;
+    boolean updateReservation(Reservation reservation) throws RemoteException;
+    boolean cancelReservation(String reservationID) throws RemoteException;
 
 }
