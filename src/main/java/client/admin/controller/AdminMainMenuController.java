@@ -1,8 +1,10 @@
 package client.admin.controller;
 
 import client.ClientMain;
+import client.admin.model.AddNewTerminalModel;
 import client.admin.model.AdminMainMenuModel;
 import client.admin.model.ViewStudentReservationsModel;
+import client.admin.view.AddNewTerminalView;
 import client.admin.view.AdminMainMenuView;
 import client.admin.view.ViewStudentReservationsView;
 
@@ -15,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import shared.Log;
 import util.JSONUtility;
@@ -47,7 +50,7 @@ public class AdminMainMenuController {
         this.view.initializeDateTime();
         this.view.setActionLogoutButton(this::handleLogout);
 
-        this.view.setActionAddNewTerminalButton(event -> handleAddNewTerminal(event));
+        this.view.setActionAddNewTerminalButton(this::handleAddNewTerminal);
         this.view.setActionModifyTerminalButton(event -> handleModifyTerminal());
         this.view.setActionShowStudentReservationButton(this::handleViewStudentReservation);
         this.view.setActionResApprovalButton(event -> handleReservationApproval());
@@ -79,7 +82,27 @@ public class AdminMainMenuController {
     private void handleAddNewTerminal(ActionEvent event) {
         System.out.println("[DEBUG] Navigating to Add New Terminal...");
 
-        switchScene(event, "/fxml/admin/add_terminal.fxml", "Add New Terminal");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_terminal_pane.fxml"));
+            VBox addTerminalView = loader.load();
+
+            AddNewTerminalView view = loader.getController();
+            if (view == null) {
+                System.err.println("[ERROR] AddNewTerminalView is NULL after FXML load!");
+                return;
+            }
+
+            // Inject Controller
+            new AddNewTerminalController(view, new AddNewTerminalModel());
+
+            // Set new view in the center pane
+            view.getRootPane().setCenter(addTerminalView);
+            System.out.println("[DEBUG] Successfully loaded Add New Terminal view.");
+
+        } catch (IOException e) {
+            System.err.println("[ERROR] Failed to load Add New Terminal: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package server.rmiservices;
 
 import shared.Reservation;
+import shared.Terminal;
 import shared.interfaces.AdminProcessors;
 import util.JSONUtility;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class AdminProcessorService extends UnicastRemoteObject implements AdminProcessors {
 
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
+    private static final File TERMINALS_FILE = new File("src/main/resources/data/terminal.json");
 
     public AdminProcessorService() throws RemoteException {
         super();
@@ -53,4 +55,15 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             return null;
         }
     }
+    @Override
+    public List<Terminal> getAllTerminals() throws RemoteException {
+        try {
+            System.out.println("[AdminProcessorService] Fetching terminal data...");
+            return JSONUtility.loadTerminals(TERMINALS_FILE);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to fetch terminals: " + e.getMessage());
+            return null;
+        }
+    }
+
 }
