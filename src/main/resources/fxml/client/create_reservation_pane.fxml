@@ -29,32 +29,32 @@
                                 <Insets left="9.0" />
                             </HBox.margin>
                         </HBox>
-                  <HBox alignment="CENTER" prefHeight="74.0" prefWidth="241.0" spacing="10.0">
-                     <children>
-                        <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="312.0">
-                           <children>
-                              <TextField fx:id="searchStudResTextField" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
-                              <Button fx:id="searchButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#searchButtonHovered" onMouseExited="#searchButtonExited" prefHeight="26.0" prefWidth="69.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Search" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </StackPane>
-                     </children>
-                  </HBox>
+                        <HBox alignment="CENTER" prefHeight="74.0" prefWidth="241.0" spacing="10.0">
+                            <children>
+                                <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="312.0">
+                                    <children>
+                                        <TextField fx:id="searchStudResTextField" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
+                                        <Button fx:id="searchButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#searchButtonHovered" onMouseExited="#searchButtonExited" prefHeight="26.0" prefWidth="69.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Search" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="11.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                    <HBox.margin>
+                                        <Insets right="5.0" />
+                                    </HBox.margin>
+                                </StackPane>
+                            </children>
+                        </HBox>
                         <HBox alignment="CENTER" prefHeight="74.0" prefWidth="165.0" spacing="10.0">
                             <children>
                                 <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="150.0">
                                     <children>
-                              <Button fx:id="redirectCreateReservationWindowButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#createButtonHovered" onMouseExited="#createButtonExited" prefHeight="26.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Create Reservation" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
+                                        <Button fx:id="redirectCreateReservationWindowButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#createButtonHovered" onMouseExited="#createButtonExited" prefHeight="26.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Create Reservation" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="11.0" />
+                                            </font>
+                                        </Button>
                                     </children>
                                 </StackPane>
                             </children>
@@ -63,11 +63,11 @@
                             <children>
                                 <StackPane prefHeight="74.0" prefWidth="104.0">
                                     <children>
-                              <Button fx:id="refreshButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#refreshButtonHovered" onMouseExited="#refreshButtonExited" prefHeight="26.0" prefWidth="98.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Refresh" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
+                                        <Button fx:id="refreshButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#refreshButtonHovered" onMouseExited="#refreshButtonExited" prefHeight="26.0" prefWidth="98.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Refresh" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="11.0" />
+                                            </font>
+                                        </Button>
                                     </children>
                                 </StackPane>
                             </children>
@@ -78,12 +78,13 @@
         </VBox>
         <TableView fx:id="createReservationTableView" focusTraversable="false" minHeight="-Infinity" prefHeight="477.0" prefWidth="805.0" style="-fx-font-size: 13;" stylesheets="@../../css/tablestyles.css">
             <columns>
-                <TableColumn fx:id="terminalColumn" editable="false" prefWidth="134.0" resizable="false" text="Terminal No." />
-                <TableColumn fx:id="roomNumberColumn" editable="false" prefWidth="134.0" resizable="false" text="Room No." />
-                <TableColumn fx:id="terminalOSColumn" editable="false" prefWidth="134.0" resizable="false" text="Terminal OS" />
-                <TableColumn fx:id="statusColumn" editable="false" prefWidth="134.0" resizable="false" text="Status" />
-                <TableColumn fx:id="startTimeColumn" editable="false" prefWidth="134.0" resizable="false" text="StartTime" />
-                <TableColumn fx:id="endTimeColumn" editable="false" prefWidth="134.0" resizable="false" text="EndTime" />
+                <TableColumn fx:id="terminalColumn" editable="false" prefWidth="104.80001831054688" resizable="false" text="Terminal No." />
+                <TableColumn fx:id="roomNumberColumn" editable="false" prefWidth="99.20004272460938" resizable="false" text="Room No." />
+                <TableColumn fx:id="terminalOSColumn" editable="false" prefWidth="92.79998779296875" resizable="false" text="Terminal OS" />
+                <TableColumn fx:id="statusColumn" editable="false" prefWidth="97.5999755859375" resizable="false" text="Status" />
+                <TableColumn fx:id="startTimeColumn" editable="false" minWidth="2.4000244140625" prefWidth="2.4000244140625" resizable="false" text="StartTime" />
+                <TableColumn fx:id="endTimeColumn" editable="false" minWidth="0.0" prefWidth="123.20001220703125" resizable="false" text="EndTime" />
+                <TableColumn fx:id="reserveColumn" editable="false" prefWidth="153.5999755859375" resizable="false" text="Action" />
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
