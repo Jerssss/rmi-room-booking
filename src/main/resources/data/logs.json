@@ -217,6 +217,104 @@
         "Action": "Login",
         "Date": "2025-03-11",
         "Time": "23:23:19.614978100"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-11",
+        "Time": "23:32:54.185621300"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-11",
+        "Time": "23:32:59.620631200"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-11",
+        "Time": "23:41:49.224940100"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-11",
+        "Time": "23:49:24.364691500"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-11",
+        "Time": "23:49:28.404684900"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-11",
+        "Time": "23:49:32.130390"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-11",
+        "Time": "23:49:49.560297600"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-11",
+        "Time": "23:50:03.022338100"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-11",
+        "Time": "23:53:16.104577600"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-11",
+        "Time": "23:53:25.754805100"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-12",
+        "Time": "00:00:04.198857800"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-12",
+        "Time": "00:00:09.615662"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-12",
+        "Time": "00:00:14.523897400"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-12",
+        "Time": "00:00:26.098293900"
       }
     ]
   }

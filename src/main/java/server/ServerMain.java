@@ -103,14 +103,24 @@ public class ServerMain {
         if (registry != null) {
             try {
                 System.out.println("[Server] Stopping server...");
+
+                // Unbind services before stopping the server
+                registry.unbind("authentication");
+                registry.unbind("student_processors");
+                registry.unbind("admin_processors");
+                registry.unbind("RMIServer");
+
+                // Nullify registry to stop accepting new connections
                 registry = null;
                 running = false;
+
                 System.out.println("[Server] Server stopped.");
             } catch (Exception e) {
                 System.err.println("[Server ERROR] Could not stop: " + e.getMessage());
             }
         }
     }
+
 
     /**
      * Gets the server's actual IP address.
