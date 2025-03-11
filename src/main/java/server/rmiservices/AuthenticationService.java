@@ -27,7 +27,6 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
 
     public AuthenticationService() throws RemoteException {
         super();
-
     }
 
     @Override
@@ -163,44 +162,10 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         System.out.println("[SERVER] IP Address: " + clientIP);
         System.out.println("=====================================================");
 
-        logAction(userID, "Student", "Login");
+        logAction(userID, "Admin", "Login");
 
         return new Object[]{"SUCCESS", generateSessionToken(), student.getName()};
     }
-
-    /**
-     * Handles user logout.
-     */
-    @Override
-    public void logout(String userID) throws RemoteException {
-        if (userID == null || userID.isEmpty()) {
-            System.err.println("[ERROR] Logout failed: UserID is null or empty.");
-            return;
-        }
-
-        // Determine user type (Admin or Student)
-        String userType;
-        if (JSONUtility.loadAdmins(ADMIN_JSON_FILE).containsKey(userID)) {
-            userType = "Admin";
-        } else if (JSONUtility.loadStudents(STUDENT_JSON_FILE).containsKey(userID)) {
-            userType = "Student";
-        } else {
-            System.err.println("[ERROR] Logout failed: UserID not found.");
-            return;
-        }
-
-        System.out.println("=====================================================");
-        System.out.println("[SERVER] " + userType + " logging out: " + userID);
-        System.out.println("=====================================================");
-
-        // Log the logout action in logs.json
-        logAction(userID, userType, "Logout");
-
-        System.out.println("=====================================================");
-        System.out.println("[LOGOUT] " + userType + " logged out: " + userID);
-        System.out.println("=====================================================");
-    }
-
 
     private void logAction(String userID, String userType, String action) {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
@@ -209,9 +174,9 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         String time = java.time.LocalTime.now().toString();
 
         logs.add(new Log(userID, userType, action, date, time));
+
         JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
     }
-
 
 
     @Override
@@ -226,6 +191,12 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return "SESSION-" + UUID.randomUUID();
     }
 
-
-
+    /**
+     * Handles user logout.
+     */
+    @Override
+    public void logout(String sessionToken) throws RemoteException {
+        System.out.println("[LOGOUT] Session ended for token: " + sessionToken);
+        logAction(sessionToken, "Session", "Logout");
+    }
 }

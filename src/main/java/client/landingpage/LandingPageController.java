@@ -42,7 +42,6 @@ public class LandingPageController {
                 return;
             }
 
-            System.out.println("[DEBUG] LoginView successfully loaded.");
             new LoginController(loginView, new LoginModel(ClientMain.getAuthService())); // Removed extra argument
 
             switchScene(event, root);

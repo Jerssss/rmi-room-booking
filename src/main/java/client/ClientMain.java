@@ -24,7 +24,7 @@ import java.util.Date;
  * ClientMain initializes the client application and connects to the RMI server.
  */
 public class ClientMain extends Application {
-    public static final String SERVER_IP = "172.27.230.169"; // Change this IP when switching PCs
+    public static final String SERVER_IP = "192.168.5.38"; // Change this IP when switching PCs
     private static final int PORT = 1099;
 
     private static Authentication authService;
@@ -65,7 +65,7 @@ public class ClientMain extends Application {
             stage.centerOnScreen();
             stage.show();
 
-            System.out.println("[Client] GUI successfully loaded.");
+            System.out.println("[Client] WELCOME TO LENDIFY");
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("[ERROR] Could not load landing_page.fxml");
@@ -90,7 +90,6 @@ public class ClientMain extends Application {
                             ") differs from Server IP (" + SERVER_IP + ")");
                 }
 
-                System.out.println("[Client] Connected to RMI Server. IP Address: " + clientIP);
                 authService.logClientConnection(clientIP);
 
                 System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");

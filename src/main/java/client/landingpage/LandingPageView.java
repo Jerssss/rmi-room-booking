@@ -15,8 +15,6 @@ public class LandingPageView {
     private Button landingPageSignUpButton;
 
     public void initialize() {
-        System.out.println("[DEBUG] Initializing LandingPageView...");
-
         if (landingPageLogInButton == null) {
             System.err.println("[ERROR] landingPageLogInButton is NULL! Check FXML fx:id.");
         }

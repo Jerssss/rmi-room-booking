@@ -50,7 +50,7 @@ public class AdminMainMenuView {
     /** Load a new view inside the main menu */
     private void loadView(String fxmlFile) {
         try {
-            System.out.println("Loading FXML: " + fxmlFile);
+            System.out.println("[SERVER] Loading FXML: " + fxmlFile);
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlFile));
             if (fxmlLoader.getLocation() == null) {
                 throw new IllegalStateException("FXML file not found: " + fxmlFile);
