@@ -58,6 +58,45 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return null;
         }
     }
+    @Override
+    public boolean updateReservation(Reservation updatedReservation) throws RemoteException {
+        try {
+            List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
+
+            // Find and replace the reservation
+            for (int i = 0; i < allReservations.size(); i++) {
+                if (allReservations.get(i).getReservationID().equals(updatedReservation.getReservationID())) {
+                    allReservations.set(i, updatedReservation);
+                    JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to update reservation: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean cancelReservation(String reservationID) throws RemoteException {
+        try {
+            List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
+
+            // Find and remove the reservation
+            boolean removed = allReservations.removeIf(res ->
+                    res.getReservationID().equals(reservationID)
+            );
+
+            if (removed) {
+                JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+            }
+            return removed;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to cancel reservation: " + e.getMessage());
+            return false;
+        }
+    }
     public List<Terminal> getTerminals() throws RemoteException {
         try {
             System.out.println("[StudentProcessorService] Fetching Terminals...");
@@ -83,6 +122,4 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return null;
         }
     }
-
-
 }
