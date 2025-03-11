@@ -14,7 +14,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="371.0" prefWidth="619.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.student.view.ModifyReservationDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="371.0" prefWidth="619.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.student.view.ModifyReservationDialogController">
    <top>
       <VBox prefHeight="44.0" prefWidth="870.0" BorderPane.alignment="CENTER">
          <children>
@@ -266,7 +267,10 @@
                            <children>
                               <HBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="122.0">
                                  <children>
-                                    <Button fx:id="sendRequestButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#handleSendRequest" prefHeight="18.0" prefWidth="96.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Send Request" textFill="WHITE">
+                                    <Button fx:id="sendRequestButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false"
+                                            onAction="#handleSave" prefHeight="18.0" prefWidth="96.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Send Request" textFill="WHITE">
+                                       <Button text="Cancel" onAction="#handleCancel"/>
+                                       <Button text="Delete" onAction="#handleDelete"/>
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
