@@ -2,9 +2,10 @@ package shared;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import javafx.beans.property.SimpleStringProperty;
+import java.io.Serializable;  // ✅ Add this import
 
-public class Reservation {
+public class Reservation implements Serializable {  //Implement Serializable
+
     @Expose
     @SerializedName("reservation_id")
     private String reservationID;
@@ -35,7 +36,7 @@ public class Reservation {
 
     @Expose
     @SerializedName("status")
-    private SimpleStringProperty status; // Use SimpleStringProperty for status
+    private String status;
 
     public Reservation(String reservationID, String userID, String terminalID, String roomID,
                        String reservationDate, String startTime, String endTime, String status) {
@@ -46,52 +47,17 @@ public class Reservation {
         this.reservationDate = reservationDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.status = new SimpleStringProperty(status); // Initialize the property
+        this.status = status;
     }
 
-    // Getters for all fields
-    public String getReservationID() {
-        return reservationID;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public String getTerminalID() {
-        return terminalID;
-    }
-
-    public String getRoomID() {
-        return roomID;
-    }
-
-    public String getReservationDate() {
-        return reservationDate;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    // Getter for status property
-    public String getStatus() {
-        return status.get();
-    }
-
-    // Setter for status property
-    public void setStatus(String status) {
-        this.status.set(status);
-    }
-
-    // Property accessor for status (required for JavaFX bindings)
-    public SimpleStringProperty statusProperty() {
-        return status;
-    }
+    public String getReservationID() { return reservationID; }
+    public String getUserID() { return userID; }
+    public String getTerminalID() { return terminalID; }
+    public String getRoomID() { return roomID; }
+    public String getReservationDate() { return reservationDate; }
+    public String getStartTime() { return startTime; }
+    public String getEndTime() { return endTime; }
+    public String getStatus() { return status; }
 
     @Override
     public String toString() {
@@ -103,7 +69,7 @@ public class Reservation {
                 ", reservationDate='" + reservationDate + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
-                ", status='" + status.get() + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 }
