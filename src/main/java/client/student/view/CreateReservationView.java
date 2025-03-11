@@ -11,11 +11,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import shared.Terminal;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -23,8 +29,6 @@ import java.util.stream.Collectors;
 
 public class CreateReservationView implements Initializable {
 
-    @FXML
-    private Label studResTitleLabel;
     @FXML
     private TextField searchStudResTextField;
     @FXML
@@ -47,6 +51,22 @@ public class CreateReservationView implements Initializable {
     private TableColumn <Terminal, String> startTimeColumn;
     @FXML
     private TableColumn <Terminal, String> endTimeColumn;
+    @FXML
+    public TableColumn <Terminal, String> reserveColumn;
+
+
+
+    public TextField terminalNoTextField;
+    public TextField roomNoTextField;
+    private Stage confirmationStage;
+    @FXML
+    private DatePicker datePicker;
+    @FXML
+    private TextField endTimeTextField;
+    @FXML
+    private TextField startTimeTextField;
+    @FXML
+    private Button saveChangesButton;
 
     private final ObservableList<Terminal> allTerminals = FXCollections.observableArrayList();
 
@@ -61,6 +81,7 @@ public class CreateReservationView implements Initializable {
 
         // Manually initialize the controller
         initializeController();
+
     }
 
     /** Forcefully create and initialize the controller */
@@ -80,6 +101,8 @@ public class CreateReservationView implements Initializable {
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStartTime()));
         endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEndTime()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
+        reserveColumn.setCellFactory(column -> createReservationButtonCellFactory());
+
     }
 
     public void updateTable(List<Terminal> terminals) {
@@ -110,6 +133,63 @@ public class CreateReservationView implements Initializable {
                 .collect(Collectors.toList());
 
         createReservationTableView.setItems(FXCollections.observableArrayList(filteredList));
+    }
+
+    private TableCell<Terminal, String> createReservationButtonCellFactory() {
+        return new TableCell<>() {
+            private final Button reservebutton = new Button("Reserve");
+
+            {
+                reservebutton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
+                reservebutton.setOnAction(event -> {
+                    Terminal terminal = getTableRow().getItem();
+                    if (terminal != null) {
+                        showReservationpane(terminal);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(reservebutton);
+                }
+            }
+        };
+    }
+    private void showReservationpane(Terminal terminal) {
+        Stage localStage = new Stage();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/add_reservation_window.fxml"));
+            BorderPane confirmationPane = loader.load();
+
+            // Lookup the confirm (and cancel) buttons defined in add_reservation_window.fxml.
+            Button confirmButton = (Button) confirmationPane.lookup("#saveChangesButton");
+            Button cancelButton = (Button) confirmationPane.lookup("#cancelButton");
+
+            if (confirmButton != null) {
+                confirmButton.setOnAction(event -> {
+                    controller.confirmButton(terminal);
+                    localStage.close();
+                });
+            } else {
+                System.err.println("[DEBUG] Confirm button not found in the FXML.");
+            }
+
+            if (cancelButton != null) {
+                cancelButton.setOnAction(event -> localStage.close());
+            }
+
+            localStage.initModality(Modality.APPLICATION_MODAL);
+            localStage.setScene(new Scene(confirmationPane));
+            localStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -179,4 +259,21 @@ public class CreateReservationView implements Initializable {
         st.play();
     }
 
+    public void saveChangesButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+
+    public void saveChangesButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
+        st.setToX(0.9);
+        st.setToY(0.9);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
 }

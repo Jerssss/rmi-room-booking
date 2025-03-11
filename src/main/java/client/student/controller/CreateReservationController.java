@@ -39,4 +39,7 @@ public class CreateReservationController {
             System.err.println("[ERROR] Failed to load Terminals.");
         }
     }
+
+    public void confirmButton(Terminal terminal) {
+    }
 }

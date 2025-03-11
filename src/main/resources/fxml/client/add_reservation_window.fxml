@@ -12,12 +12,52 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="253.0" prefWidth="372.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.student.view.CreateReservationView">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="289.0" prefWidth="372.0" styleClass="background-pane" stylesheets="@../../css/styles.css"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <!-- Notice: No fx:controller attribute here -->
    <center>
       <VBox prefHeight="163.0" prefWidth="266.0" BorderPane.alignment="CENTER">
          <children>
             <VBox prefHeight="197.0" prefWidth="310.0">
                <children>
+                  <HBox prefHeight="43.0" prefWidth="310.0" scaleShape="false">
+                     <children>
+                        <StackPane alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="358.0">
+                           <children>
+                              <Label text="Terminal No.:">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="terminalNoTextField" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="29.0" prefWidth="203.0" promptText="Terminal #" stylesheets="@../../css/styles.css" translateX="80.0">
+                                 <styleClass>
+                                    <String fx:value="background-pane" />
+                                    <String fx:value="text-field2" />
+                                 </styleClass>
+                              </TextField>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="43.0" prefWidth="310.0" scaleShape="false">
+                     <children>
+                        <StackPane alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="358.0">
+                           <children>
+                              <Label text="Room No.:">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="roomNoTextField" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="29.0" prefWidth="203.0" promptText="Room #" stylesheets="@../../css/styles.css" translateX="80.0">
+                                 <styleClass>
+                                    <String fx:value="background-pane" />
+                                    <String fx:value="text-field2" />
+                                 </styleClass>
+                              </TextField>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
                   <HBox prefHeight="43.0" prefWidth="310.0">
                      <children>
                         <StackPane alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="387.0">
@@ -82,7 +122,7 @@
    <top>
       <HBox alignment="CENTER" prefHeight="47.0" prefWidth="310.0" style="-fx-background-color: #0d3073;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" prefHeight="41.0" prefWidth="255.0" style="-fx-font-family: &quot;Trebuchet MS&quot;, Helvetica, sans-serif &quot;Trebuchet MS&quot;, Helvetica, sans-serif;" text="Add New Reservation" textFill="WHITE">
+            <Label alignment="CENTER" prefHeight="41.0" prefWidth="255.0" style="-fx-font-family: 'Trebuchet MS', Helvetica, sans-serif;" text="Add New Reservation" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
@@ -91,9 +131,9 @@
       </HBox>
    </top>
    <bottom>
-      <HBox alignment="CENTER" prefHeight="54.0" prefWidth="372.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" prefHeight="54.0" prefWidth="266.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="saveChangesButton" mnemonicParsing="false" onMouseEntered="#saveChangesButtonHovered" onMouseExited="#saveChangesButtonExited" prefHeight="21.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Save Changes" textFill="WHITE">
+            <Button fx:id="saveChangesButton" mnemonicParsing="false" prefHeight="21.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Save Changes" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
