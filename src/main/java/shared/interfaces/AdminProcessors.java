@@ -1,6 +1,8 @@
 package shared.interfaces;
 
 import shared.Reservation;
+import shared.Terminal;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -31,4 +33,12 @@ public interface AdminProcessors extends Remote {
      * @throws RemoteException If an RMI communication error occurs.
      */
     List<Reservation> getAllStudentReservations() throws RemoteException;
+
+    /**
+     * Fetches all Terminals from the system.
+     * @return List of Terminals.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    List<Terminal> getAllTerminals() throws RemoteException;
+
 }
