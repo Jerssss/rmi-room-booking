@@ -33,6 +33,7 @@ public class StudentMainMenuModel {
             server = (RMIServer) registry.lookup("RMIServer");
 
             System.out.println("[RMI] Connected to RMIServer at " + serverIP);
+            System.out.println("=====================================================");
         } catch (Exception e) {
             System.err.println("[ERROR] Could not connect to RMIServer: " + e.getMessage());
             server = null;

@@ -1,32 +1,73 @@
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\server\landingpage\LoginProcessor.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\Student.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\admin\view\AdminMainMenuView.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\utility\ServerConnection.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\interfaces\ClientCallbackInterface.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\admin\controller\AdminMainMenuController.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\server\ServerMain.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\signup\SignUpView.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\Terminal.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\utility\ServerConnectionManager.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\admin\model\AdminMainMenuModel.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\landingpage\LandingPageController.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\utility\ClientView.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\landingpage\LandingPageView.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\login\LoginController.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\login\LoginView.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\utility\ClientController.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\server\RMIServerImpl.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\Reservation.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\Admin.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\util\JSONUtility.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\server\utility\LogsXMLHandler.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\Log.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\signup\SignUpModel.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\module-info.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\signup\SignUpController.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\util\XMLUtility.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\login\LoginModel.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\utility\ClientModel.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\server\landingpage\SignUpProcessor.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\client\ClientMain.java
-C:\Users\jonat\Desktop\Integrative Programming School Projects\MIDTERMS\2025-9444-team1_midproject\src\main\java\shared\interfaces\RMIServer.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\ClientMain.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\RMIServer.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\login\LoginModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\util\exception\InvalidCredentialsException.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\model\StudentMainMenuModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\Authentication.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\ReservationApprovalController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\model\ViewStudentReservationsModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\AddedNotifierView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\landingpage\LandingPageView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\login\LoginController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\callback\Broadcast.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ReportGeneratorView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ReservationApprovalView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\Student.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\ViewReservationView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\AdminProcessors.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ModifyTerminalStatusView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ViewStudentReservationsView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\model\ModifyReservationModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\model\CreateReservationModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\AddNewTerminalView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\model\AdminMainMenuModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\model\ModifyTerminalStatusModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\ModifyTerminalStatusController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\AddNewTerminalController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\DeletedNotifierView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\controller\ViewReservationController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\signup\SignUpController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\signup\SignUpView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\model\ReservationApprovalModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\model\ViewReservationModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\server\rmiservices\RMIServerService.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\utility\SessionManager.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\server\rmiservices\StudentProcessorService.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\ClientCallbackInterface.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ConfirmApprovalsView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\util\exception\AccountAlreadyLoggedIn.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\AdminMainMenuController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\Admin.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\controller\ModifyReservationController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\AdminMainMenuView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\server\rmiservices\AuthenticationService.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\model\AddNewTerminalModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\utility\ClientController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\StudentProcessors.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\Reservation.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\ModifyReservationView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\utility\ClientModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\module-info.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\Log.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\controller\StudentMainMenuController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\util\exception\AccountExistsException.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\ReportGeneratorController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\util\JSONUtility.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ApprovedNotifierView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\signup\SignUpModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\controller\CreateReservationController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\CreateReservationView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\Terminal.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\DuplicateAccountErrorView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\ModifyReservationDialogController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\server\rmiservices\AdminProcessorService.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\landingpage\LandingPageController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\login\LoginView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\model\ReportGeneratorModel.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\ViewStudentReservationsController.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\StudentMainMenuView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\server\ServerMain.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\utility\ClientView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\ConfirmModificationsView.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\utility\ClientCallBack.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\SavedNotifierView.java
