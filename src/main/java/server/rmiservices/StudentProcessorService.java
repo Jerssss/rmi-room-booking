@@ -65,17 +65,21 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             List<Terminal> terminals = JSONUtility.loadTerminals(TERMINALS_FILE);
 
             if (terminals == null || terminals.isEmpty()) {
-                System.out.println("[StudentProcessorService] No reservations found in JSON.");
-            } else {
-                System.out.println("[StudentProcessorService] Loaded " + terminals.size() + " reservations.");
-                for (Terminal ter : terminals) {
-                    System.out.println("[StudentProcessorService] " + ter);
-                }
+                System.out.println("[StudentProcessorService] No terminals found in JSON.");
+                return terminals; // Return empty list
             }
 
-            return terminals;
+            // Filter only active terminals
+            List<Terminal> activeTerminals = terminals.stream()
+                    .filter(ter -> "Active".equalsIgnoreCase(ter.getStatus()))
+                    .collect(Collectors.toList());
+
+            System.out.println("[StudentProcessorService] Loaded " + activeTerminals.size() + " active terminals.");
+            activeTerminals.forEach(ter -> System.out.println("[StudentProcessorService] " + ter));
+
+            return activeTerminals;
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
+            System.err.println("[ERROR] Failed to fetch terminals: " + e.getMessage());
             return null;
         }
     }
