@@ -1,6 +1,7 @@
 package server.rmiservices;
 
 import shared.Reservation;
+import shared.Terminal;
 import shared.interfaces.StudentProcessors;
 import util.JSONUtility;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class StudentProcessorService extends UnicastRemoteObject implements StudentProcessors {
 
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
+    private static final File TERMINALS_FILE = new File("src/main/resources/data/terminal.json");
 
     public StudentProcessorService() throws RemoteException {
         super();
@@ -33,7 +35,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     }
 
     @Override
-    public List<Reservation> getReservation(String studentID) throws RemoteException {
+    public List<Reservation> getReservations(String studentID) throws RemoteException {
         try {
             System.out.println("[StudentProcessorService] Fetching reservations for student: " + studentID);
 
@@ -51,6 +53,27 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             }
 
             return userReservations;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
+            return null;
+        }
+    }
+    public List<Terminal> getTerminals() throws RemoteException {
+        try {
+            System.out.println("[StudentProcessorService] Fetching Terminals...");
+
+            List<Terminal> terminals = JSONUtility.loadTerminals(TERMINALS_FILE);
+
+            if (terminals == null || terminals.isEmpty()) {
+                System.out.println("[StudentProcessorService] No reservations found in JSON.");
+            } else {
+                System.out.println("[StudentProcessorService] Loaded " + terminals.size() + " reservations.");
+                for (Terminal ter : terminals) {
+                    System.out.println("[StudentProcessorService] " + ter);
+                }
+            }
+
+            return terminals;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
             return null;

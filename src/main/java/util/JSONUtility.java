@@ -209,9 +209,29 @@ public class JSONUtility {
      * @return a List of Terminal objects
      */
     public static List<Terminal> loadTerminals(File filePath) {
+        if (!filePath.exists()) {
+            System.err.println("[ERROR] Terminal file not found: " + filePath.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
         try (FileReader reader = new FileReader(filePath)) {
-            Type type = new TypeToken<List<Terminal>>() {}.getType();
-            return defaultGson.fromJson(reader, type);
+            Type type = new TypeToken<Map<String, Map<String, List<Terminal>>>>() {}.getType();
+            Map<String, Map<String, List<Terminal>>> data = defaultGson.fromJson(reader, type);
+
+            if (data == null || !data.containsKey("Terminals") || !data.get("Terminals").containsKey("Terminal")) {
+                System.err.println("[ERROR] Invalid JSON structure. Expected 'Terminals' -> 'Terminal'.");
+                return new ArrayList<>();
+            }
+
+            List<Terminal> terminals = data.get("Terminals").get("Terminal");
+
+            if (terminals.isEmpty()) {
+                System.out.println("[DEBUG] No terminals found.");
+            } else {
+                System.out.println("[DEBUG] Loaded " + terminals.size() + " terminals.");
+            }
+
+            return terminals;
         } catch (IOException ex) {
             throw new RuntimeException("Error loading terminal data: " + ex.getMessage(), ex);
         }
@@ -224,7 +244,12 @@ public class JSONUtility {
      */
     public static void saveTerminals(List<Terminal> terminalList, File filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
-            defaultGson.toJson(terminalList, writer);
+            Map<String, Map<String, List<Terminal>>> nestedData = new LinkedHashMap<>();
+            Map<String, List<Terminal>> terminalsMap = new LinkedHashMap<>();
+            terminalsMap.put("Terminal", terminalList);
+            nestedData.put("Terminals", terminalsMap);
+
+            defaultGson.toJson(nestedData, writer);
         } catch (IOException ex) {
             throw new RuntimeException("Error saving terminal data: " + ex.getMessage(), ex);
         }

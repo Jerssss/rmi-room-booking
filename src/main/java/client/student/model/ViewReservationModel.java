@@ -27,7 +27,7 @@ public class ViewReservationModel {
                 return null;
             }
 
-            List<Reservation> reservations = studentProcessors.getReservation(studentID);
+            List<Reservation> reservations = studentProcessors.getReservations(studentID);
 
             if (reservations == null || reservations.isEmpty()) {
                 System.out.println("[DEBUG] No reservations found via RMI.");

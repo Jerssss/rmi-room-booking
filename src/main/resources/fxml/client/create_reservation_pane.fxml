@@ -82,7 +82,7 @@
                 <TableColumn fx:id="roomNumberColumn" editable="false" prefWidth="134.0" resizable="false" text="Room No." />
                 <TableColumn fx:id="terminalOSColumn" editable="false" prefWidth="134.0" resizable="false" text="Terminal OS" />
                 <TableColumn fx:id="statusColumn" editable="false" prefWidth="134.0" resizable="false" text="Status" />
-            <TableColumn fx:id="startTimeColumn" editable="false" prefWidth="134.0" resizable="false" text="StartTime" />
+                <TableColumn fx:id="startTimeColumn" editable="false" prefWidth="134.0" resizable="false" text="StartTime" />
                 <TableColumn fx:id="endTimeColumn" editable="false" prefWidth="134.0" resizable="false" text="EndTime" />
             </columns>
             <columnResizePolicy>

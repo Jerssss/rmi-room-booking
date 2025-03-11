@@ -3,7 +3,9 @@ package shared;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Terminal {
+import java.io.Serializable;
+
+public class Terminal implements Serializable {
     @Expose
     @SerializedName("terminal_id")
     private String terminalID;
