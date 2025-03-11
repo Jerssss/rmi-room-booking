@@ -56,7 +56,7 @@ public class ViewStudentReservationsView implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
-        System.out.println("[DEBUG] Table columns initialized successfully.");
+        System.out.println("[CLIENT] Table columns initialized successfully.");
 
         // Manually initialize the controller
         initializeController();
@@ -64,10 +64,10 @@ public class ViewStudentReservationsView implements Initializable {
 
     /** Forcefully create and initialize the controller */
     public void initializeController() {
-        System.out.println("[DEBUG] Initializing ViewStudentReservationsController...");
+        System.out.println("[CLIENT] Initializing ViewStudentReservationsController...");
         ViewStudentReservationsModel model = new ViewStudentReservationsModel();
         this.controller = new ViewStudentReservationsController(this, model);
-        System.out.println("[DEBUG] ViewStudentReservationsController successfully created.");
+        System.out.println("[CLIENT] ViewStudentReservationsController successfully created.");
     }
 
 
@@ -86,12 +86,12 @@ public class ViewStudentReservationsView implements Initializable {
     /** Updates TableView with new reservations */
     public void updateTable(List<Reservation> reservations) {
         if (reservations == null || reservations.isEmpty()) {
-            System.out.println("[DEBUG] No data to display in TableView.");
+            System.out.println("[CLIENT] No data to display in TableView.");
             return;
         }
         allReservations.setAll(reservations);
         studResTableView.setItems(allReservations);
-        System.out.println("[DEBUG] Table updated with " + reservations.size() + " reservations.");
+        System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
     }
 
     /** Search for reservations based on input */
