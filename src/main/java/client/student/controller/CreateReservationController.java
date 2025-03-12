@@ -1,11 +1,16 @@
 package client.student.controller;
 
 import client.student.model.CreateReservationModel;
+import client.student.view.CreateReservationDialogController;
 import client.student.view.CreateReservationView;
-import javafx.application.Platform;
-import shared.Reservation;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import shared.Terminal;
 
+import java.io.IOException;
 import java.util.List;
 
 public class CreateReservationController {
@@ -15,31 +20,56 @@ public class CreateReservationController {
     public CreateReservationController(CreateReservationView view, CreateReservationModel model) {
         this.view = view;
         this.model = model;
+        initialize();
 
-        // Load reservations when the page opens
-        loadTerminals();
-
-        // Set button actions
-        this.view.setRefreshButtonAction(event -> loadTerminals());
-        this.view.setSearchButtonAction(event -> view.searchTerminals()); // Add search functionality
     }
 
-    /** Loads reservation data and updates the view */
-    public void loadTerminals() {
-        System.out.println("[DEBUG] loadTerminals() method called."); // Add this
+    private void initialize() {
+        loadTerminals();
 
+        // Set action for Add Reservation button
+        this.view.setAddReservationButtonAction(event -> {
+            Terminal selectedTerminal = view.getSelectedTerminal();
+            if (selectedTerminal != null) {
+                openCreateReservationDialog(selectedTerminal);
+            } else {
+                System.out.println("[ERROR] No terminal selected!");
+            }
+        });
+
+    }
+
+    /** Loads available terminals from the model and updates the view */
+    private void loadTerminals() {
         List<Terminal> terminals = model.fetchTerminals();
-
-        if (terminals != null) {
-            Platform.runLater(() -> {
-                view.updateTable(terminals);
-                System.out.println("[DEBUG] Table updated with " + terminals.size() + " Terminals.");
-            });
+        if (terminals != null && !terminals.isEmpty()) {
+            view.updateTable(terminals);
+            System.out.println("[DEBUG] Terminals loaded successfully.");
         } else {
-            System.err.println("[ERROR] Failed to load Terminals.");
+            System.out.println("[DEBUG] No terminals available.");
         }
     }
 
-    public void confirmButton(Terminal terminal) {
+    /** Opens the reservation dialog with the selected terminal's details */
+    private void openCreateReservationDialog(Terminal terminal) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/add_reservation_window.fxml"));
+            BorderPane reservationPane = loader.load();
+
+            // Pass selected terminal details to the dialog controller
+            CreateReservationDialogController dialogController = loader.getController();
+            dialogController.setTerminalDetails(terminal);
+
+            Stage dialogStage = new Stage();
+            dialogController.setDialogStage(dialogStage);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(reservationPane));
+            dialogStage.showAndWait();
+
+            System.out.println("[DEBUG] Reservation dialog opened successfully.");
+        } catch (IOException e) {
+            System.out.println("[ERROR] Failed to open reservation dialog: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

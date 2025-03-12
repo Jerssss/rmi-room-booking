@@ -1,6 +1,7 @@
 package client.student.model;
 
 import client.ClientMain;
+import shared.Reservation;
 import shared.Terminal;
 import shared.interfaces.StudentProcessors;
 
@@ -23,7 +24,7 @@ public class CreateReservationModel {
                 return null;
             }
 
-            List<Terminal> terminals = studentProcessors.getTerminals();
+            List<Terminal> terminals = studentProcessors.getActiveTerminals();
 
             if (terminals == null || terminals.isEmpty()) {
                 System.out.println("[DEBUG] No terminals found via RMI.");

@@ -18,11 +18,17 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
+import shared.Reservation;
 import shared.Terminal;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -101,7 +107,30 @@ public class CreateReservationView implements Initializable {
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStartTime()));
         endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEndTime()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
-        reserveColumn.setCellFactory(column -> createReservationButtonCellFactory());
+
+        reserveColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button addReservationButton = new Button("Add Reservation");
+
+            {
+                addReservationButton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
+                addReservationButton.setOnAction(event -> {
+                    Terminal terminal = getTableView().getItems().get(getIndex());
+                    if (terminal != null) {
+                        showReservationForm(terminal);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(addReservationButton);
+                }
+            }
+        });
 
     }
 
@@ -135,62 +164,28 @@ public class CreateReservationView implements Initializable {
         createReservationTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
-    private TableCell<Terminal, String> createReservationButtonCellFactory() {
-        return new TableCell<>() {
-            private final Button reservebutton = new Button("Reserve");
-
-            {
-                reservebutton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
-                reservebutton.setOnAction(event -> {
-                    Terminal terminal = getTableRow().getItem();
-                    if (terminal != null) {
-                        showReservationpane(terminal);
-                    }
-                });
-            }
-
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(reservebutton);
-                }
-            }
-        };
-    }
-    private void showReservationpane(Terminal terminal) {
-        Stage localStage = new Stage();
+    private void showReservationForm(Terminal terminal) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/add_reservation_window.fxml"));
-            BorderPane confirmationPane = loader.load();
+            BorderPane reservationPane = loader.load();
 
-            // Lookup the confirm (and cancel) buttons defined in add_reservation_window.fxml.
-            Button confirmButton = (Button) confirmationPane.lookup("#saveChangesButton");
-            Button cancelButton = (Button) confirmationPane.lookup("#cancelButton");
+            CreateReservationDialogController controller = loader.getController();
 
-            if (confirmButton != null) {
-                confirmButton.setOnAction(event -> {
-                    controller.confirmButton(terminal);
-                    localStage.close();
-                });
-            } else {
-                System.err.println("[DEBUG] Confirm button not found in the FXML.");
-            }
 
-            if (cancelButton != null) {
-                cancelButton.setOnAction(event -> localStage.close());
-            }
+            Stage dialogStage = new Stage();
+            controller.setDialogStage(dialogStage);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(reservationPane));
+            dialogStage.showAndWait();
 
-            localStage.initModality(Modality.APPLICATION_MODAL);
-            localStage.setScene(new Scene(confirmationPane));
-            localStage.showAndWait();
-
+        //    if (controller.isReservationCreated()) {
+       //         JOptionPane.showMessageDialog(null, "Reservation successfully created!");
+       //     }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
 
 
@@ -276,4 +271,39 @@ public class CreateReservationView implements Initializable {
         st.setAutoReverse(false);
         st.play();
     }
+
+    /** Sets the action for the "Add Reservation" button */
+    public void setAddReservationButtonAction(EventHandler<ActionEvent> event) {
+        reserveColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button addReservationButton = new Button("Add Reservation");
+
+            {
+                addReservationButton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
+                addReservationButton.setOnAction(e -> {
+                    // Ensure the row is selected so that getSelectedTerminal() works
+                    getTableView().getSelectionModel().select(getIndex());
+                    // Now call the provided event handler
+                    event.handle(e);
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(addReservationButton);
+                }
+            }
+        });
+    }
+
+
+
+    /** Returns the currently selected terminal in the TableView */
+    public Terminal getSelectedTerminal() {
+        return createReservationTableView.getSelectionModel().getSelectedItem();
+    }
+
 }

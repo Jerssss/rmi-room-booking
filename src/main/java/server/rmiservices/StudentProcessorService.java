@@ -58,6 +58,28 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return null;
         }
     }
+
+    @Override
+    public List<Reservation> getAllReservations() throws RemoteException {
+        try {
+            System.out.println("[StudentProcessorService] Fetching all reservations.");
+
+            List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
+
+            if (allReservations == null || allReservations.isEmpty()) {
+                System.out.println("[StudentProcessorService] No reservations found.");
+            } else {
+                System.out.println("[StudentProcessorService] Loaded " + allReservations.size() + " reservations.");
+            }
+
+            return allReservations;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
+            return null;
+        }
+    }
+
+
     @Override
     public boolean updateReservation(Reservation updatedReservation) throws RemoteException {
         try {
@@ -97,7 +119,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return false;
         }
     }
-    public List<Terminal> getTerminals() throws RemoteException {
+    public List<Terminal> getActiveTerminals() throws RemoteException {
         try {
             System.out.println("[StudentProcessorService] Fetching Terminals...");
 
