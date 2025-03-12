@@ -79,6 +79,24 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    @Override
+    public boolean setReservations(Reservation newReservation) throws RemoteException {
+        try {
+            System.out.println("[StudentProcessorService] Attempting to add reservation for user: " + newReservation.getUserID());
+
+            List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
+
+            // Add new reservation
+            allReservations.add(newReservation);
+            JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+
+            System.out.println("[StudentProcessorService] Reservation successfully added.");
+            return true;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to add reservation: " + e.getMessage());
+            return false;
+        }
+    }
 
     @Override
     public boolean updateReservation(Reservation updatedReservation) throws RemoteException {
@@ -119,6 +137,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return false;
         }
     }
+
     public List<Terminal> getActiveTerminals() throws RemoteException {
         try {
             System.out.println("[StudentProcessorService] Fetching Terminals...");

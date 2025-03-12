@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import shared.Reservation;
 import shared.Terminal;
 
 import java.io.IOException;
@@ -21,13 +22,12 @@ public class CreateReservationController {
         this.view = view;
         this.model = model;
         initialize();
-
     }
 
     private void initialize() {
         loadTerminals();
 
-        // Set action for Add Reservation button
+        // Set action for the Add Reservation button
         this.view.setAddReservationButtonAction(event -> {
             Terminal selectedTerminal = view.getSelectedTerminal();
             if (selectedTerminal != null) {
@@ -36,7 +36,6 @@ public class CreateReservationController {
                 System.out.println("[ERROR] No terminal selected!");
             }
         });
-
     }
 
     /** Loads available terminals from the model and updates the view */
@@ -50,7 +49,10 @@ public class CreateReservationController {
         }
     }
 
-    /** Opens the reservation dialog with the selected terminal's details */
+    /**
+     * Opens the reservation dialog with the selected terminal's details.
+     * After the dialog closes, retrieves the created reservation and passes it to the model.
+     */
     private void openCreateReservationDialog(Terminal terminal) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/add_reservation_window.fxml"));
@@ -67,8 +69,20 @@ public class CreateReservationController {
             dialogStage.showAndWait();
 
             System.out.println("[DEBUG] Reservation dialog opened successfully.");
+
+            // After the dialog is closed, retrieve the created reservation
+            Reservation newRes = dialogController.getNewReservation();
+            if (newRes != null) {
+                boolean success = model.addReservation(newRes);
+                if (success) {
+                    System.out.println("[DEBUG] Reservation added successfully.");
+                    // Optionally, refresh the table view or perform additional actions here.
+                } else {
+                    System.err.println("[ERROR] Failed to add the reservation.");
+                }
+            }
         } catch (IOException e) {
-            System.out.println("[ERROR] Failed to open reservation dialog: " + e.getMessage());
+            System.err.println("[ERROR] Failed to open reservation dialog: " + e.getMessage());
             e.printStackTrace();
         }
     }

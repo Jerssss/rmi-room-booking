@@ -41,4 +41,18 @@ public class CreateReservationModel {
             return null;
         }
     }
+
+    /**
+     * Adds a new reservation by calling the RMI service.
+     * @param reservation The reservation object to add.
+     * @return true if the reservation was added successfully, false otherwise.
+     */
+    public boolean addReservation(Reservation reservation) {
+        try {
+            return studentProcessors.setReservations(reservation);
+        } catch (RemoteException e) {
+            System.err.println("[ERROR] Remote exception while adding reservation: " + e.getMessage());
+            return false;
+        }
+    }
 }
