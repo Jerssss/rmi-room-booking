@@ -6,8 +6,10 @@ import shared.interfaces.AdminProcessors;
 import util.JSONUtility;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,8 +38,19 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     @Override
     public List<Reservation> getAllStudentReservations() throws RemoteException {
         try {
-            System.out.println("[AdminProcessorService] Fetching student reservations...");
+            System.out.println("[AdminProcessorService] Fetching student reservations from: " + RESERVATIONS_FILE.getAbsolutePath());
 
+            // Check if file exists
+            if (!RESERVATIONS_FILE.exists()) {
+                System.err.println("[ERROR] JSON file does not exist: " + RESERVATIONS_FILE.getAbsolutePath());
+                return new ArrayList<>();
+            }
+
+            // Read and print JSON file contents
+            String jsonContent = new String(Files.readAllBytes(RESERVATIONS_FILE.toPath()));
+            System.out.println("JSON Content: " + jsonContent);
+
+            // Load reservations from JSON
             List<Reservation> reservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             if (reservations == null || reservations.isEmpty()) {
@@ -63,6 +76,45 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to fetch terminals: " + e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public boolean updateReservations(List<Reservation> updatedReservations) throws RemoteException {
+        try {
+            System.out.println("[AdminProcessorService] Updating reservations...");
+
+            // Load existing reservations
+            List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
+
+            if (allReservations == null) {
+                System.err.println("[ERROR] Failed to load existing reservations.");
+                return false;
+            }
+
+            // Update the reservations
+            for (Reservation updatedReservation : updatedReservations) {
+                boolean found = false;
+                for (int i = 0; i < allReservations.size(); i++) {
+                    if (allReservations.get(i).getReservationID().equals(updatedReservation.getReservationID())) {
+                        allReservations.set(i, updatedReservation);
+                        found = true;
+                        System.out.println("[AdminProcessorService] Updated reservation: " + updatedReservation.getReservationID());
+                        break;
+                    }
+                }
+                if (!found) {
+                    System.err.println("[ERROR] Reservation not found: " + updatedReservation.getReservationID());
+                }
+            }
+
+            // Save the updated reservations to the JSON file
+            JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+            System.out.println("[AdminProcessorService] Reservations saved successfully.");
+            return true;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to update reservations: " + e.getMessage());
+            return false;
         }
     }
 

@@ -41,4 +41,6 @@ public interface AdminProcessors extends Remote {
      */
     List<Terminal> getAllTerminals() throws RemoteException;
 
+    boolean updateReservations(List<Reservation> reservations) throws RemoteException;
+
 }

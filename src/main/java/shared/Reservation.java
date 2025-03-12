@@ -59,6 +59,7 @@ public class Reservation implements Serializable {  //Implement Serializable
     public String getEndTime() { return endTime; }
     public String getStatus() { return status; }
 
+
     public void setReservationDate(String reservationDate) {
         this.reservationDate = reservationDate;
     }
