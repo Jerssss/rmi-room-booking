@@ -12,6 +12,10 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -39,13 +43,62 @@ public class AdminMainMenuView {
     @FXML
     private Label headerTimeLabel;
     @FXML
-    private BorderPane rootPane;
-
-    // 🟡 Add this (fixing the error)
+    private Label offlineLabel;
     @FXML
-    private ToggleButton serverToggleButton;
-
+    private Label onlineLabel;
+    @FXML
+    private BorderPane rootPane;
     private Button currentlyHighlightedButton;
+
+
+    // Timer to periodically check server status
+    private Timer serverStatusTimer;
+
+    /** Initialize the view */
+    public void initialize() {
+        initializeDateTime();
+        startServerStatusChecker();
+    }
+
+    /** Start a timer to periodically check the server status */
+    private void startServerStatusChecker() {
+        serverStatusTimer = new Timer(true);
+        serverStatusTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                boolean isServerOnline = checkServerStatus();
+                updateServerStatusLabels(isServerOnline);
+            }
+        }, 0, 5000); // Check every 5 seconds
+    }
+
+    /** Check if the server is online */
+    private boolean checkServerStatus() {
+        try {
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            registry.lookup("authentication"); // Try to lookup a service
+            return true; // Server is online
+        } catch (RemoteException | NotBoundException e) {
+            return false; // Server is offline
+        }
+    }
+
+    /** Update the server status labels */
+    private void updateServerStatusLabels(boolean isServerOnline) {
+        javafx.application.Platform.runLater(() -> {
+            if (isServerOnline) {
+                onlineLabel.setVisible(true);
+                onlineLabel.setManaged(true); // Include in layout
+                offlineLabel.setVisible(false);
+                offlineLabel.setManaged(false); // Exclude from layout
+            } else {
+                onlineLabel.setVisible(false);
+                onlineLabel.setManaged(false); // Exclude from layout
+                offlineLabel.setVisible(true);
+                offlineLabel.setManaged(true); // Include in layout
+            }
+        });
+    }
 
     /** Load a new view inside the main menu */
     private void loadView(String fxmlFile) {
@@ -147,20 +200,6 @@ public class AdminMainMenuView {
         loadView("/fxml/admin/reservation_approval_pane.fxml");
     }
 
-    /** Event handler for Toggle Button */
-    public void setActionToggleButton(EventHandler<ActionEvent> event) {
-        serverToggleButton.setOnAction(event);
-    }
-
-    /** Check if Toggle Button is Selected */
-    public boolean isServerToggleSelected() {
-        return serverToggleButton.isSelected();
-    }
-
-    /** Set Toggle Button Text */
-    public void setToggleText(String text) {
-        serverToggleButton.setText(text);
-    }
 
     /** Show Error Dialog */
     private void showError(String message) {

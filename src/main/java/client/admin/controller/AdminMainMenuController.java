@@ -55,29 +55,9 @@ public class AdminMainMenuController {
         this.view.setActionShowStudentReservationButton(this::handleViewStudentReservation);
         this.view.setActionResApprovalButton(event -> handleReservationApproval());
         this.view.setActionReportsButton(event -> handleReports());
-        this.view.setActionToggleButton(event -> handleServerToggleButton());
 
     }
 
-    /** Handles Server Start/Stop */
-    public void handleServerToggleButton() {
-        if (view.isServerToggleSelected()) {
-            view.setToggleText("STOP");
-
-            if (serverThread == null || !serverThread.isAlive()) {
-                serverThread = new Thread(() -> {
-                    //  ServerMain.startServer();
-                });
-                serverThread.setDaemon(true);
-                serverThread.start();
-                System.out.println("Server Started");
-            }
-        } else {
-            view.setToggleText("START");
-            // ServerMain.stopServer();
-            System.out.println("Server Stopped");
-        }
-    }
 
     private void handleAddNewTerminal(ActionEvent event) {
         System.out.println("[DEBUG] Navigating to Add New Terminal...");

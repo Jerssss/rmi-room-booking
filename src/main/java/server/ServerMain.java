@@ -28,6 +28,13 @@ public class ServerMain {
     private static boolean running = false;
 
     public static void main(String[] args) {
+        //shutdown hook to ensure that the server is entirely dead on 'exit'
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (running) {
+                stopServer();
+            }
+        }));
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Server Commands: [start | stop | exit]");
 
@@ -104,16 +111,22 @@ public class ServerMain {
             try {
                 System.out.println("[Server] Stopping server...");
 
-                // Unbind services before stopping the server
-                registry.unbind("authentication");
-                registry.unbind("student_processors");
-                registry.unbind("admin_processors");
-                registry.unbind("RMIServer");
+                // Unbind all services
+                for (String name : registry.list()) {
+                    registry.unbind(name);
+                    System.out.println("[Server] Unbound service: " + name);
+                }
+
+                //unexport the registry to forcefully release the resources
+                java.rmi.server.UnicastRemoteObject.unexportObject(registry, true);
+                System.out.println("[Server] Unexported RMI registry.");
 
                 // Nullify registry to stop accepting new connections
                 registry = null;
                 running = false;
 
+                // Force garbage collection to clean up RMI resources
+                System.gc();
                 System.out.println("[Server] Server stopped.");
             } catch (Exception e) {
                 System.err.println("[Server ERROR] Could not stop: " + e.getMessage());
