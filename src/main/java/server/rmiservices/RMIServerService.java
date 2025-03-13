@@ -21,23 +21,6 @@ public class RMIServerService extends UnicastRemoteObject implements RMIServer {
         return "[Server Response] " + message;
     }
 
-    @Override
-    public void logout(String sessionToken) throws RemoteException {
-        System.out.println("[RMIServer] Session ended for token: " + sessionToken);
-    }
-
-    @Override
-    public String login(String userID, String password, String userType) throws RemoteException {
-        return "";
-    }
-
-    @Override
-    public boolean signUp(String userID, String name, String password, String userType, String courseYear, String facultyType)
-            throws RemoteException {
-        System.out.println("[RMIServer] Sign-up attempt for: " + name + " (" + userType + ")");
-        return true; // Placeholder logic, replace with actual sign-up process
-    }
-
     /**
      * Returns the server's IP address so clients can dynamically connect.
      * @return The server's actual IP address.
