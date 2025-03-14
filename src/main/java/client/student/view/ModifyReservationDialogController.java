@@ -62,7 +62,17 @@ public class ModifyReservationDialogController {
     }
 
     @FXML
-    private void handleSave() {
+    private void handleSendRequest() {
+        // Check if any changes were made
+        if (!isReservationModified()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No Changes");
+            alert.setHeaderText(null);
+            alert.setContentText("No modifications detected. Nothing to save.");
+            alert.showAndWait();
+            return;
+        }
+
         List<String> errors = validateInput();
         if (!errors.isEmpty()) {
             showErrorDialog(errors);
@@ -70,12 +80,20 @@ public class ModifyReservationDialogController {
         }
 
         updateReservation();
-        changesMade = true;
-        dialogStage.close();
 
-        if (mainController != null && changesMade) {
-            mainController.updateReservation(reservation);
+        // Update the table
+        if (mainController != null) {
+            mainController.setChangesMade(true); // Notify main controller of changes
+            mainController.updateTableWithPendingReservation(reservation);
         }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Action Required");
+        alert.setHeaderText(null);
+        alert.setContentText("Click 'Save Changes' in main window to persist modifications");
+        alert.showAndWait();
+
+        dialogStage.close(); // Close dialog without saving to database
     }
 
     @FXML
@@ -121,11 +139,17 @@ public class ModifyReservationDialogController {
     }
 
     private void updateReservation() {
+        if (!isReservationModified()) {
+            changesMade = false;
+            return;
+        }
+
         reservation.setReservationDate(datePicker.getValue().toString());
         reservation.setStartTime(startTimeTextField.getText());
         reservation.setEndTime(endTimeTextField.getText());
         reservation.setRoomID(roomNumberComboBox.getValue());
         reservation.setTerminalID(terminalNumberTextField.getText());
+        changesMade = true; // Notify the main controller that changes were made
     }
 
     private void showErrorDialog(List<String> errors) {
@@ -134,6 +158,23 @@ public class ModifyReservationDialogController {
             message.append("• ").append(error).append("\n");
         }
         new Alert(Alert.AlertType.ERROR, message.toString()).showAndWait();
+    }
+
+    private void showConfirmationDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait(); // Show the dialog and wait for the user to close it
+    }
+
+    private boolean isReservationModified() {
+        // Compare the current input fields with the original reservation data
+        return !datePicker.getValue().toString().equals(reservation.getReservationDate()) ||
+                !startTimeTextField.getText().equals(reservation.getStartTime()) ||
+                !endTimeTextField.getText().equals(reservation.getEndTime()) ||
+                !roomNumberComboBox.getValue().equals(reservation.getRoomID()) ||
+                !terminalNumberTextField.getText().equals(reservation.getTerminalID());
     }
 
     public boolean isChangesMade() {

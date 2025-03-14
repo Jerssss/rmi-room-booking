@@ -6,8 +6,8 @@
         "user_id": "1",
         "terminal_id": "2",
         "room_id": "D531",
-        "reservation_date": "2025-02-16",
-        "start_time": "08:00",
+        "reservation_date": "2025-02-02",
+        "start_time": "09:40",
         "end_time": "10:00",
         "status": "Approved"
       },
@@ -27,7 +27,7 @@
         "terminal_id": "70",
         "room_id": "D524",
         "reservation_date": "2025-02-18",
-        "start_time": "12:00",
+        "start_time": "12:10",
         "end_time": "12:30",
         "status": "Pending"
       },

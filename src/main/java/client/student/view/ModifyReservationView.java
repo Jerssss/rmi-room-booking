@@ -45,6 +45,13 @@ public class ModifyReservationView implements Initializable {
         initializeController();
     }
 
+    @FXML
+    private void handleSaveChanges() {
+        if (controller != null) {
+            controller.commitChanges();
+        }
+    }
+
     private void initializeController() {
         System.out.println("[DEBUG] Initializing ModifyReservationController...");
         String studentID = SessionManager.getStudentID();

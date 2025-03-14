@@ -6,6 +6,7 @@ import client.student.view.ModifyReservationView;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.Reservation;
@@ -16,6 +17,8 @@ import java.util.List;
 public class ModifyReservationController {
     private final ModifyReservationView view;
     private final ModifyReservationModel model;
+    private Reservation pendingReservation;
+    private boolean changesMade = false;
 
     public ModifyReservationController(ModifyReservationView view, ModifyReservationModel model) {
         this.view = view;
@@ -28,9 +31,9 @@ public class ModifyReservationController {
     public void loadReservations() {
         List<Reservation> reservations = model.fetchReservations();
         if (reservations != null) {
+            pendingReservation = null;
+            changesMade = false;
             view.updateTable(reservations);
-        } else {
-            System.err.println("[ERROR] Failed to load reservations.");
         }
     }
 
@@ -50,17 +53,54 @@ public class ModifyReservationController {
             dialogStage.showAndWait();
 
             if (dialogController.isChangesMade()) {
-                updateReservation(reservation);
+                this.pendingReservation = reservation; // Store modified reservation
+                this.changesMade = true; // Set changesMade to true
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateReservation(Reservation reservation) {
-        if (model.updateReservation(reservation)) {
+    public void commitChanges() {
+        if (!changesMade) {
+            showNoChangesAlert();
+            return;
+        }
+
+        if (pendingReservation != null && model.updateReservation(pendingReservation)) {
             loadReservations();
-            System.out.println("Reservation updated successfully!");
+            pendingReservation = null;
+            changesMade = false;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("All changes have been sent to the server");
+            alert.showAndWait();
+        }
+    }
+
+    private void showNoChangesAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("No Changes");
+        alert.setHeaderText(null);
+        alert.setContentText("No modifications detected. Nothing to save.");
+        alert.showAndWait();
+    }
+
+
+    public void setChangesMade(boolean changesMade) {
+        this.changesMade = changesMade;
+    }
+
+    public void updateTableWithPendingReservation(Reservation reservation) {
+        this.pendingReservation = reservation;
+        List<Reservation> reservations = model.fetchReservations();
+        if (reservations != null) {
+            // Replace the old reservation with the updated one
+            reservations.removeIf(r -> r.getReservationID().equals(reservation.getReservationID()));
+            reservations.add(reservation);
+            view.updateTable(reservations);
         }
     }
 
@@ -70,4 +110,5 @@ public class ModifyReservationController {
             System.out.println("Reservation cancelled successfully!");
         }
     }
+
 }
