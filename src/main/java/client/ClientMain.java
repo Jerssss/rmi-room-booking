@@ -25,7 +25,7 @@ import java.util.Scanner;
  * ClientMain initializes the client application and connects to the RMI server.
  */
 public class ClientMain extends Application {
-    private static String SERVER_IP;
+    private static final String SERVER_IP = "172.27.230.169";
     private static final int PORT = 1099;
 
     private static Authentication authService;
@@ -34,17 +34,6 @@ public class ClientMain extends Application {
     private static Stage primaryStage; // Reference to the main window
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Server IP Address: ");
-        String inputServerIP = scanner.nextLine().trim();
-
-        if (inputServerIP.isEmpty()) {
-            System.err.println("[ERROR] No IP address provided. Exiting...");
-            return;
-        }
-
-        SERVER_IP = inputServerIP; // Update the SERVER_IP dynamically
-
         System.out.println("=====================================================");
         System.out.println("[Client] Starting client at " + new Date());
         System.out.println("[Client] Connecting to RMI server at " + SERVER_IP + " on port " + PORT);
