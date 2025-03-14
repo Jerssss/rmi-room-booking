@@ -1,5 +1,6 @@
 package client.admin.view;
 
+
 import javafx.animation.ScaleTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,12 +15,15 @@ import shared.Reservation;
 import client.admin.controller.ViewStudentReservationsController;
 import client.admin.model.ViewStudentReservationsModel;
 
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+
 public class ViewStudentReservationsView implements Initializable {
+
 
     @FXML
     private TableView<Reservation> studResTableView;
@@ -39,7 +43,6 @@ public class ViewStudentReservationsView implements Initializable {
     private TableColumn<Reservation, String> endTimeColumn;
     @FXML
     private TableColumn<Reservation, String> statusColumn;
-
     @FXML
     private TextField searchTextField;
     @FXML
@@ -60,6 +63,7 @@ public class ViewStudentReservationsView implements Initializable {
 
         // Manually initialize the controller
         initializeController();
+        initializeSearchListener();
     }
 
     /** Forcefully create and initialize the controller */
@@ -68,7 +72,6 @@ public class ViewStudentReservationsView implements Initializable {
         ViewStudentReservationsModel model = new ViewStudentReservationsModel();
         this.controller = new ViewStudentReservationsController(this, model);
     }
-
 
     /** Properly initializes TableView columns */
     private void initializeTableColumns() {
@@ -94,12 +97,17 @@ public class ViewStudentReservationsView implements Initializable {
         System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
     }
 
-    /** Search for reservations based on input */
-    public void searchReservations() {
-        String searchText = searchTextField.getText().trim().toLowerCase();
+    /** Real-Time Search for Reservations */
+    public void initializeSearchListener() {
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterReservations(newValue.toLowerCase().trim());
+        });
+    }
 
+    /** Filter Reservations Based on Search Text */
+    private void filterReservations(String searchText) {
         if (searchText.isEmpty()) {
-            studResTableView.setItems(allReservations);
+            studResTableView.setItems(allReservations); // Show all if search is empty
             return;
         }
 
@@ -111,14 +119,7 @@ public class ViewStudentReservationsView implements Initializable {
                         res.getStartTime().toLowerCase().contains(searchText) ||
                         res.getEndTime().toLowerCase().contains(searchText))
                 .collect(Collectors.toList());
-
         studResTableView.setItems(FXCollections.observableArrayList(filteredList));
-    }
-
-
-    /** Sets search button action */
-    public void setSearchButtonAction(EventHandler<ActionEvent> event) {
-        searchButton.setOnAction(event1 -> searchReservations());
     }
 
     /** Sets refresh button action */
