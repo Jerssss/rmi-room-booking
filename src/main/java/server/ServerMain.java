@@ -82,16 +82,15 @@ public class ServerMain {
                 Authentication authentication = new AuthenticationService();
                 StudentProcessors studentProcessors = new StudentProcessorService();
                 AdminProcessors adminProcessors = new AdminProcessorService();
-                RMIServer rmiServer = new RMIServerService(); // Added RMIServer binding
+                RMIServer rmiServer = new RMIServerService();
 
-                // Bind RMI services
                 registry.bind("authentication", authentication);
                 registry.bind("student_processors", studentProcessors);
                 registry.bind("admin_processors", adminProcessors);
-                registry.bind("RMIServer", rmiServer); // Now registering RMIServer
+                registry.bind("RMIServer", rmiServer);
 
                 running = true;
-                String serverIP = getServerIP();
+                String serverIP = getServerIP(); // Display the IP address
                 System.out.println("=====================================================");
                 System.out.println("[Server] RMI Server started successfully on port " + PORT);
                 System.out.println("[Server] Server IP Address: " + serverIP);
@@ -102,6 +101,7 @@ public class ServerMain {
             }
         }).start();
     }
+
 
     /**
      * Stops the RMI server.

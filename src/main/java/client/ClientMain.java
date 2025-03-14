@@ -9,54 +9,55 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import shared.interfaces.Authentication;
-import shared.interfaces.RMIServer;
 import shared.interfaces.StudentProcessors;
 import shared.interfaces.AdminProcessors;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Date;
+import java.util.Scanner;
 
+/**
+ * ClientMain initializes the client application and connects to the RMI server.
+ */
 public class ClientMain extends Application {
+    private static String SERVER_IP;
     private static final int PORT = 1099;
+
     private static Authentication authService;
     private static StudentProcessors studentProcessors;
     private static AdminProcessors adminProcessors;
-    private static RMIServer rmiServer;
-    private static Stage primaryStage;
-    private static boolean connected = false;
-    private static String serverIP;
+    private static Stage primaryStage; // Reference to the main window
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Server IP Address: ");
+        String inputServerIP = scanner.nextLine().trim();
+
+        if (inputServerIP.isEmpty()) {
+            System.err.println("[ERROR] No IP address provided. Exiting...");
+            return;
+        }
+
+        SERVER_IP = inputServerIP; // Update the SERVER_IP dynamically
+
         System.out.println("=====================================================");
         System.out.println("[Client] Starting client at " + new Date());
+        System.out.println("[Client] Connecting to RMI server at " + SERVER_IP + " on port " + PORT);
+        System.out.println("=====================================================");
 
-        retrieveServerIP();
-        waitForServerConnection();
-        connectToRMIServer();
-
+        new Thread(ClientMain::connectToRMIServer).start();
         launch(args);
     }
 
-    private static void retrieveServerIP() {
-        try {
-            Registry tempRegistry = LocateRegistry.getRegistry("localhost", PORT);
-            RMIServer rmiServer = (RMIServer) tempRegistry.lookup("RMIServer");
-            serverIP = rmiServer.getServerIP();
-            System.out.println("[Client] Retrieved Server IP: " + serverIP);
-        } catch (Exception e) {
-            System.err.println("[ERROR] Could not retrieve server IP.");
-            serverIP = "localhost"; // Fallback
-        }
-    }
 
     @Override
     public void start(Stage stage) {
-        primaryStage = stage;
+        primaryStage = stage; // Store reference to primary stage
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/landing_page.fxml"));
@@ -75,89 +76,56 @@ public class ClientMain extends Application {
             stage.show();
 
             System.out.println("[Client] WELCOME TO LENDIFY");
-
-            new Thread(ClientMain::monitorServerStatus).start();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("[ERROR] Could not load landing_page.fxml");
         }
     }
 
+    /**
+     * Connects to the RMI server and retries if the server is down.
+     */
     private static void connectToRMIServer() {
         while (true) {
             try {
-                Registry registry = LocateRegistry.getRegistry(serverIP, PORT);
-                rmiServer = (RMIServer) registry.lookup("RMIServer");
+                Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+
                 authService = (Authentication) registry.lookup("authentication");
                 studentProcessors = (StudentProcessors) registry.lookup("student_processors");
                 adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
 
-                System.out.println("[Client] Successfully connected to the RMI Server.");
-                connected = true;
-                return;
-            } catch (NotBoundException | RemoteException e) {
-                System.err.println("[ERROR] Unable to reach the server. Retrying in 5 seconds...");
-                showServerDownMessage("The server is currently down. Retrying...");
-                sleep(5000);
-            }
-        }
-    }
+                authService.logClientConnection(InetAddress.getLocalHost().getHostAddress());
 
-    private static void waitForServerConnection() {
-        while (true) {
-            try {
-                Registry tempRegistry = LocateRegistry.getRegistry(serverIP, PORT);
-                RMIServer testServer = (RMIServer) tempRegistry.lookup("RMIServer");
-                System.out.println("[Client] Server detected, proceeding with application launch.");
+                System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
                 return;
             } catch (Exception e) {
-                if (!connected) {
-                    showServerDownMessage("The server is down. Trying to reconnect...");
-                    connected = false;
-                }
-                System.err.println("[ERROR] Unable to reach the server. Retrying in 5 seconds...");
+                System.err.println("[ERROR] " + e.getMessage());
+                showServerDownMessage("Server unreachable. Retrying in 5 seconds...");
                 sleep(5000);
             }
         }
     }
 
-    private static void monitorServerStatus() {
-        while (true) {
-            if (connected) {
-                try {
-                    rmiServer.getServerIP();
-                } catch (RemoteException e) {
-                    System.err.println("[ERROR] Lost connection to the server.");
-                    showServerDownMessage("The server is down. Attempting to reconnect...");
-                    connected = false;
 
-                    while (!connected) {
-                        System.err.println("[ERROR] Trying to reconnect...");
-                        connectToRMIServer();
-                        sleep(5000);
-                    }
-
-                    Platform.runLater(() -> JOptionPane.showMessageDialog(null,
-                            "Reconnected to the server!",
-                            "Connection Restored",
-                            JOptionPane.INFORMATION_MESSAGE));
-
-                    System.out.println("[Client] Reconnected to the RMI Server.");
-                }
-            }
-            sleep(5000);
-        }
-    }
-
+    /**
+     * Displays a popup message when the server is down, ensuring it appears above the main GUI.
+     */
     private static void showServerDownMessage(String message) {
         Platform.runLater(() -> {
             if (primaryStage != null) {
                 primaryStage.toFront();
             }
-            JOptionPane.showMessageDialog(null, message, "Connection Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    message,
+                    "Connection Error",
+                    JOptionPane.WARNING_MESSAGE);
         });
     }
 
+    /**
+     * Pauses execution for a given time.
+     * @param millis Duration in milliseconds.
+     */
     private static void sleep(int millis) {
         try {
             Thread.sleep(millis);
@@ -177,9 +145,8 @@ public class ClientMain extends Application {
     public static AdminProcessors getAdminProcessors() {
         return adminProcessors;
     }
-
-
+    // Getter for SERVER_IP
     public static String getServerIP() {
-        return serverIP;
+        return SERVER_IP;
     }
 }
