@@ -27,7 +27,6 @@ public class ModifyReservationView implements Initializable {
     @FXML private Button saveChangesButton;
     @FXML private Button refreshButton;
     @FXML private TableView<Reservation> modResTableView;
-    @FXML private TableColumn<Reservation, String> reservationIDColumn;
     @FXML private TableColumn<Reservation, String> roomNumberColumn;
     @FXML private TableColumn<Reservation, String> terminalIDColumn;
     @FXML private TableColumn<Reservation, String> reservationDateColumn;
@@ -59,7 +58,6 @@ public class ModifyReservationView implements Initializable {
     }
 
     private void initializeTableColumns() {
-        reservationIDColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReservationID()));
         roomNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoomID()));
         terminalIDColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
         reservationDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReservationDate()));
