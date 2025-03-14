@@ -29,6 +29,7 @@ public class ViewStudentReservationsModel {
             if (reservations == null || reservations.isEmpty()) {
                 System.out.println("[SERVER] No reservations found via RMI.");
             } else {
+                System.out.println("=====================================================");
                 System.out.println("[CLIENT] Loaded " + reservations.size() + " reservations via RMI.");
                 for (Reservation res : reservations) {
                     System.out.println("[SERVER] " + res);

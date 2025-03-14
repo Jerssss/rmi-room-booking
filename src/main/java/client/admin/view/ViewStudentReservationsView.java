@@ -64,10 +64,9 @@ public class ViewStudentReservationsView implements Initializable {
 
     /** Forcefully create and initialize the controller */
     public void initializeController() {
-        System.out.println("[CLIENT] Initializing ViewStudentReservationsController...");
+        System.out.println("=====================================================");
         ViewStudentReservationsModel model = new ViewStudentReservationsModel();
         this.controller = new ViewStudentReservationsController(this, model);
-        System.out.println("[CLIENT] ViewStudentReservationsController successfully created.");
     }
 
 
@@ -85,6 +84,7 @@ public class ViewStudentReservationsView implements Initializable {
 
     /** Updates TableView with new reservations */
     public void updateTable(List<Reservation> reservations) {
+        System.out.println("=====================================================");
         if (reservations == null || reservations.isEmpty()) {
             System.out.println("[CLIENT] No data to display in TableView.");
             return;
