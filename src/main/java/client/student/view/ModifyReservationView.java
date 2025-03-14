@@ -11,13 +11,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import shared.Reservation;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ public class ModifyReservationView implements Initializable {
     @FXML private TableColumn<Reservation, String> endTimeColumn;
     @FXML private TableColumn<Reservation, String> statusColumn;
     @FXML private TableColumn<Reservation, String> editColumn;
+    @FXML private TableColumn<Reservation, String> cancelColumn;
 
     private final ObservableList<Reservation> allReservations = FXCollections.observableArrayList();
     private ModifyReservationController controller;
@@ -48,6 +52,16 @@ public class ModifyReservationView implements Initializable {
     @FXML
     private void handleSaveChanges() {
         if (controller != null) {
+            // Remove cancelled rows from the table
+            List<Reservation> reservationsToRemove = new ArrayList<>();
+            for (Reservation reservation : allReservations) {
+                if ("Cancelled".equals(reservation.getStatus())) {
+                    reservationsToRemove.add(reservation);
+                }
+            }
+            allReservations.removeAll(reservationsToRemove);
+
+            // Commit changes to the server
             controller.commitChanges();
         }
     }
@@ -73,6 +87,8 @@ public class ModifyReservationView implements Initializable {
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
         editColumn.setCellValueFactory(param -> new SimpleStringProperty(""));
         editColumn.setCellFactory(createEditButtonCellFactory());
+        cancelColumn.setCellValueFactory(param -> new SimpleStringProperty(""));
+        cancelColumn.setCellFactory(createCancelButtonCellFactory());
     }
 
     public void updateTable(List<Reservation> reservations) {
@@ -82,6 +98,7 @@ public class ModifyReservationView implements Initializable {
         }
         allReservations.setAll(reservations);
         modResTableView.setItems(allReservations);
+        modResTableView.refresh();
         System.out.println("[DEBUG] Table updated with " + reservations.size() + " reservations.");
     }
 
@@ -111,7 +128,7 @@ public class ModifyReservationView implements Initializable {
                 editButton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
                 editButton.setOnAction(event -> {
                     Reservation reservation = getTableRow().getItem();
-                    if (reservation != null) {
+                    if (reservation != null && !"Cancelled".equals(reservation.getStatus())) {
                         controller.showEditDialog(reservation);
                     }
                 });
@@ -123,7 +140,67 @@ public class ModifyReservationView implements Initializable {
                 if (empty) {
                     setGraphic(null);
                 } else {
+                    Reservation reservation = getTableRow().getItem();
+                    if (reservation != null && "Cancelled".equals(reservation.getStatus())) {
+                        editButton.setDisable(true); // Disable the edit button for cancelled reservations
+                    } else {
+                        editButton.setDisable(false); // Enable the edit button for active reservations
+                    }
                     setGraphic(editButton);
+                }
+            }
+        };
+    }
+
+    private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createCancelButtonCellFactory() {
+        return column -> new TableCell<>() {
+            private final Button cancelButton = new Button("Cancel");
+
+            {
+                cancelButton.setStyle("-fx-background-color: #ab1313; -fx-text-fill: white;");
+                cancelButton.setOnAction(event -> {
+                    Reservation reservation = getTableRow().getItem();
+                    if (reservation != null) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirm Cancellation");
+                        alert.setHeaderText("Cancel Reservation");
+                        alert.setContentText("Are you sure you want to cancel this reservation?");
+
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isPresent() && result.get() == ButtonType.OK) {
+                            // Mark the reservation as cancelled
+                            reservation.setStatus("Cancelled");
+
+                            // Add the CSS class to the entire row
+                            getTableRow().getStyleClass().add("cancelled-row");
+
+                            // Disable the cancel button
+                            cancelButton.setDisable(true);
+
+                            // Disable the edit button in the same row
+                            TableRow<Reservation> row = getTableRow();
+                            if (row != null) {
+                                for (Node node : row.getChildrenUnmodifiable()) {
+                                    if (node instanceof TableCell) {
+                                        TableCell<?, ?> cell = (TableCell<?, ?>) node;
+                                        if (cell.getGraphic() instanceof Button && "Edit".equals(((Button) cell.getGraphic()).getText())) {
+                                            cell.getGraphic().setDisable(true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(cancelButton);
                 }
             }
         };
