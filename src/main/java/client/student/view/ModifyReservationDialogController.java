@@ -20,6 +20,11 @@ public class ModifyReservationDialogController {
     @FXML private TextField endTimeTextField;
     @FXML private ComboBox<String> roomNumberComboBox;
     @FXML private TextField terminalNumberTextField;
+    @FXML private Label reservedDateLabel;
+    @FXML private Label startTimeLabel;
+    @FXML private Label endTimeLabel;
+    @FXML private Label reservationRoomNoLabel;
+    @FXML private Label reservationTerminalNoLabel;
 
     private Stage dialogStage;
     private Reservation reservation;
@@ -37,11 +42,19 @@ public class ModifyReservationDialogController {
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
+        // Update input fields
         datePicker.setValue(LocalDate.parse(reservation.getReservationDate()));
         startTimeTextField.setText(reservation.getStartTime());
         endTimeTextField.setText(reservation.getEndTime());
         roomNumberComboBox.setValue(reservation.getRoomID());
         terminalNumberTextField.setText(reservation.getTerminalID());
+
+        // Update labels with original reservation data
+        reservedDateLabel.setText(reservation.getReservationDate());
+        startTimeLabel.setText(reservation.getStartTime());
+        endTimeLabel.setText(reservation.getEndTime());
+        reservationRoomNoLabel.setText(reservation.getRoomID());
+        reservationTerminalNoLabel.setText(reservation.getTerminalID());
     }
 
     public void setMainController(ModifyReservationController mainController) {
