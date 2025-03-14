@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import shared.Reservation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -34,6 +35,19 @@ public class ModifyReservationDialogController {
     @FXML
     public void initialize() {
         roomNumberComboBox.getItems().addAll("D524", "D526", "D426");
+
+        // Set the DatePicker restrictions
+        LocalDate today = LocalDate.now();
+        datePicker.setValue(today);
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item != null && (item.isBefore(today) || item.isAfter(today.plusDays(30)))) {
+                    setDisable(true); // Disable past dates and dates beyond 30 days
+                }
+            }
+        });
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -55,6 +69,38 @@ public class ModifyReservationDialogController {
         endTimeLabel.setText(reservation.getEndTime());
         reservationRoomNoLabel.setText(reservation.getRoomID());
         reservationTerminalNoLabel.setText(reservation.getTerminalID());
+
+        // Check if the reservation can be edited
+        checkEditPermission(reservation);
+    }
+
+    private void checkEditPermission(Reservation reservation) {
+        LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
+        LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime twentyFourHoursFromNow = now.plusHours(24);
+
+        boolean canEdit = "Pending".equals(reservation.getStatus()) && reservationDateTime.isAfter(twentyFourHoursFromNow);
+
+        if (!canEdit) {
+            // Show a confirmation dialog to inform the user
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Edit Not Allowed");
+            alert.setHeaderText(null);
+            alert.setContentText("You can only edit reservations that are Pending and have at least 24 hours before the start time.");
+
+            // Add an OK button to close the dialog
+            alert.getButtonTypes().setAll(ButtonType.OK);
+
+            // Show the dialog and wait for the user to close it
+            alert.showAndWait();
+
+            // Close the dialog stage if editing is not allowed
+            if (dialogStage != null) {
+                dialogStage.close();
+            }
+        }
     }
 
     public void setMainController(ModifyReservationController mainController) {
@@ -158,14 +204,6 @@ public class ModifyReservationDialogController {
             message.append("• ").append(error).append("\n");
         }
         new Alert(Alert.AlertType.ERROR, message.toString()).showAndWait();
-    }
-
-    private void showConfirmationDialog(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait(); // Show the dialog and wait for the user to close it
     }
 
     private boolean isReservationModified() {

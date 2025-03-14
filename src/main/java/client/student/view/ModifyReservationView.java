@@ -18,6 +18,10 @@ import javafx.util.Duration;
 import shared.Reservation;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -128,8 +132,26 @@ public class ModifyReservationView implements Initializable {
                 editButton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
                 editButton.setOnAction(event -> {
                     Reservation reservation = getTableRow().getItem();
-                    if (reservation != null && !"Cancelled".equals(reservation.getStatus())) {
-                        controller.showEditDialog(reservation);
+                    if (reservation != null) {
+                        // Check if the reservation can be edited
+                        LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
+                        LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
+                        LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
+                        LocalDateTime now = LocalDateTime.now();
+                        LocalDateTime twentyFourHoursFromNow = now.plusHours(24);
+
+                        boolean canEdit = "Pending".equals(reservation.getStatus()) && reservationDateTime.isAfter(twentyFourHoursFromNow);
+
+                        if (canEdit) {
+                            controller.showEditDialog(reservation);
+                        } else {
+                            // Show an alert for reservations that are not allowed to be edited
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Edit Not Allowed");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You can only edit reservations that are Pending and have at least 24 hours before the start time.");
+                            alert.showAndWait();
+                        }
                     }
                 });
             }
