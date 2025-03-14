@@ -5,6 +5,7 @@ import client.student.view.CreateReservationDialogController;
 import client.student.view.CreateReservationView;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,7 +27,6 @@ public class CreateReservationController {
 
     private void initialize() {
         loadTerminals();
-
         // Set action for the Add Reservation button
         this.view.setAddReservationButtonAction(event -> {
             Terminal selectedTerminal = view.getSelectedTerminal();
@@ -38,7 +38,6 @@ public class CreateReservationController {
         });
     }
 
-    /** Loads available terminals from the model and updates the view */
     private void loadTerminals() {
         List<Terminal> terminals = model.fetchTerminals();
         if (terminals != null && !terminals.isEmpty()) {
@@ -52,16 +51,16 @@ public class CreateReservationController {
     /**
      * Opens the reservation dialog with the selected terminal's details.
      * After the dialog closes, retrieves the created reservation and passes it to the model.
+     * If the reservation is successfully added, a popup will confirm the success.
      */
     private void openCreateReservationDialog(Terminal terminal) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/add_reservation_window.fxml"));
             BorderPane reservationPane = loader.load();
-
-            // Pass selected terminal details to the dialog controller
             CreateReservationDialogController dialogController = loader.getController();
             dialogController.setTerminalDetails(terminal);
-
+            // Pass the model instance for validations and fetching reservations
+            dialogController.setModel(model);
             Stage dialogStage = new Stage();
             dialogController.setDialogStage(dialogStage);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -76,7 +75,13 @@ public class CreateReservationController {
                 boolean success = model.addReservation(newRes);
                 if (success) {
                     System.out.println("[DEBUG] Reservation added successfully.");
-                    // Optionally, refresh the table view or perform additional actions here.
+                    // Show success popup
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Reservation Successful");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Reservation created successfully!");
+                    alert.showAndWait();
+                    // Optionally refresh the table view here if needed.
                 } else {
                     System.err.println("[ERROR] Failed to add the reservation.");
                 }

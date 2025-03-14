@@ -4,6 +4,7 @@ import client.admin.controller.ViewStudentReservationsController;
 import client.admin.model.ViewStudentReservationsModel;
 import client.student.controller.CreateReservationController;
 import client.student.model.CreateReservationModel;
+import client.utility.SessionManager;
 import javafx.animation.ScaleTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -92,10 +93,17 @@ public class CreateReservationView implements Initializable {
 
     /** Forcefully create and initialize the controller */
     public void initializeController() {
+        String studentID = SessionManager.getStudentID();
+        if (studentID == null || studentID.isEmpty()) {
+            System.err.println("[ERROR] Student ID is missing from the session.");
+            return;
+        }
         System.out.println("[DEBUG] Initializing CreateReservationsController...");
-        CreateReservationModel model = new CreateReservationModel();
+        CreateReservationModel model = new CreateReservationModel(studentID);
         this.controller = new CreateReservationController(this, model);
         System.out.println("[DEBUG] CreateReservationsController successfully created.");
+
+
     }
 
 
