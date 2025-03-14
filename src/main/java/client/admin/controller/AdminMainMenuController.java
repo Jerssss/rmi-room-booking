@@ -60,7 +60,7 @@ public class AdminMainMenuController {
 
 
     private void handleAddNewTerminal(ActionEvent event) {
-        System.out.println("[DEBUG] Navigating to Add New Terminal...");
+        System.out.println("=====================================================");
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_terminal_pane.fxml"));
