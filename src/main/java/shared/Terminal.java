@@ -60,6 +60,10 @@ public class Terminal implements Serializable {
         return status;
     }
 
+    public void setStatus(String stat) {
+        this.status = stat;
+    }
+
     public String getReservationDate() {
         return reservationDate;
     }
