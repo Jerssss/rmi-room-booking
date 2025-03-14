@@ -117,5 +117,15 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             return false;
         }
     }
-
+    @Override
+    public void addNewTerminal(Terminal terminal) throws RemoteException {
+        try {
+            List<Terminal> terminals = JSONUtility.loadTerminals(TERMINALS_FILE);
+            terminals.add(terminal);
+            JSONUtility.saveTerminals(terminals, TERMINALS_FILE);
+            System.out.println("[SERVER] Terminal added successfully.");
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to save terminal: " + e.getMessage());
+        }
+    }
 }

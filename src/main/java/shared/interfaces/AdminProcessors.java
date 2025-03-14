@@ -43,4 +43,10 @@ public interface AdminProcessors extends Remote {
 
     boolean updateReservations(List<Reservation> reservations) throws RemoteException;
 
+    /**
+     * Saves User Terminals from the system.
+     * @return List of Terminals.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    void addNewTerminal(Terminal terminal) throws RemoteException;
 }
