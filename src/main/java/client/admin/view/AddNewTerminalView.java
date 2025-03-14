@@ -57,8 +57,7 @@ public class AddNewTerminalView implements Initializable {
         controller = new AddNewTerminalController(this, new AddNewTerminalModel());
         controller.loadTerminals();  // Fetch & update table on startup
 
-        // Connect search button
-        searchButton.setOnAction(event -> handleSearch());
+        initializeSearchListener();
 
         // Refresh table when refresh button is clicked
         refreshButton.setOnAction(event -> controller.loadTerminals());
@@ -102,29 +101,30 @@ public class AddNewTerminalView implements Initializable {
         // Print after updating
         System.out.println("[CLIENT] allTerminals now contains " + allTerminals.size() + " items.");
     }
+    /** Activates Real-Time Search Listener */
+    public void initializeSearchListener() {
+        searchTerminalTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchTerminals(newValue.toLowerCase().trim());
+        });
+    }
 
-    /** Handles search input */
+    /** Automatically Searches Terminals Based on Input */
     private void handleSearch() {
         String query = searchTerminalTextField.getText().trim().toLowerCase();
-        System.out.println("[CLIENT] Searching for: " + query);
         searchTerminals(query);
     }
 
     /** Searches terminals without modifying the full list. */
     public void searchTerminals(String query) {
-        System.out.println("=====================================================");
-        System.out.println("[CLIENT] Searching for: " + query);
 
         // Prevent searching if allTerminals is empty
         if (allTerminals.isEmpty()) {
-            System.err.println("[ERROR] allTerminals is still empty. Did loadTerminals() run?");
             return;
         }
 
-        // If query is empty, reset table
+        // If query is empty, show all terminals again
         if (query == null || query.isEmpty()) {
-            System.out.println("[CLIENT] Search query empty, showing all terminals.");
-            updateTable(allTerminals);
+            addTerminalTableView.setItems(allTerminals);
             return;
         }
 
@@ -139,9 +139,9 @@ public class AddNewTerminalView implements Initializable {
                         terminal.getEndTime().toLowerCase().contains(query))
                 .collect(Collectors.toList());
 
-        System.out.println("[CLIENT] Found " + filteredList.size() + " matching terminals.");
-        updateTable(filteredList);
+        addTerminalTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
+
     private void openAddTerminalWindow() {
         AddNewTerminalWindowView windowView = new AddNewTerminalWindowView();
         windowView.showWindow();
@@ -164,22 +164,6 @@ public class AddNewTerminalView implements Initializable {
         st.setAutoReverse(false);
         st.play();
     }
-    public void addTerminalButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectAddTerminalWindowButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void addTerminalButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectAddTerminalWindowButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
     public void refreshButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(1.0);
@@ -196,5 +180,20 @@ public class AddNewTerminalView implements Initializable {
         st.setAutoReverse(false);
         st.play();
     }
-
+    public void addTerminalButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectAddTerminalWindowButton);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+    public void addTerminalButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectAddTerminalWindowButton);
+        st.setToX(0.9);
+        st.setToY(0.9);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
 }

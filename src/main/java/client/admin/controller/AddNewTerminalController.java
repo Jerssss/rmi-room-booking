@@ -15,7 +15,9 @@ public class AddNewTerminalController {
         this.model = new AddNewTerminalModel();
     }
 
-    /** Loads terminal data and updates the TableView */
+    /**
+     * Loads terminal data and updates the TableView
+     */
     public void loadTerminals() {
         System.out.println("[CLIENT] Calling fetchTerminals() to get terminal data...");
         List<Terminal> terminals = model.fetchTerminals();
