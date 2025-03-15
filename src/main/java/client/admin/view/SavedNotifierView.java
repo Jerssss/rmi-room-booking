@@ -2,13 +2,31 @@ package client.admin.view;
 
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.io.IOException;
 
 public class SavedNotifierView {
 
     @FXML
     private Button closeButton;
+
+    @FXML
+    public void initialize() {
+        closeButton.setOnAction(event -> closeWindow());
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        stage.close(); // Close the notifier window
+    }
 
     public void closeButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), closeButton);
