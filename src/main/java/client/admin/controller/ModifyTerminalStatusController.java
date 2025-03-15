@@ -1,13 +1,20 @@
 package client.admin.controller;
 
 import client.admin.model.ModifyTerminalStatusModel;
+import client.admin.view.ConfirmModificationsView;
 import client.admin.view.ModifyTerminalStatusView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import shared.Terminal;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +56,33 @@ public class ModifyTerminalStatusController {
 
 
     public void saveChanges() {
+        try {
+            // Load the modification confirmation FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/confirm_modifications_window.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and pass reference
+            ConfirmModificationsView confirmController = loader.getController();
+            confirmController.setModifyTerminalStatusController(this); // Pass the controller reference
+
+            // Create a new modal stage for confirmation
+            Stage confirmationStage = new Stage();
+            confirmationStage.setTitle("Confirm Modifications");
+            confirmationStage.setScene(new Scene(root));
+            confirmationStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with the main window
+            confirmationStage.setResizable(false);
+            confirmationStage.showAndWait(); // Wait for user action
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "Error loading the modification confirmation window.",
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void applyChanges() {
         List<Terminal> modifiedTerminals = terminalData.stream().collect(Collectors.toList());
 
         boolean success = model.saveModifiedTerminals(modifiedTerminals);
@@ -59,14 +93,32 @@ public class ModifyTerminalStatusController {
                     "Failed to modify terminal data.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            return; // Stop saving if any reservation fails to send
+            return;
         } else {
-            JOptionPane.showMessageDialog(null,
-                    "Changes have been successfully saved!",
-                    "Save Successful",
-                    JOptionPane.INFORMATION_MESSAGE);
+            try {
+                // Load the "Saved Notifier" FXML
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/saved_notifier_window.fxml"));
+                Parent root = loader.load();
+
+                // Create a new Stage (pop-up window)
+                Stage notifierStage = new Stage();
+                notifierStage.setTitle("Saved Successfully");
+                notifierStage.setScene(new Scene(root));
+                notifierStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with the main window
+                notifierStage.setResizable(false);
+                notifierStage.showAndWait(); // Wait until the user closes it
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Error loading the saved notification window.",
+                        "Load Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
+
+
 
     public void searchTerminals(ObservableList<Terminal> terminalData, String searchText) {
 

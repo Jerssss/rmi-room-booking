@@ -103,7 +103,6 @@ public class ModifyTerminalStatusView {
         System.out.println("[DEBUG] Terminal data updated. New table size: " + terminalData.size());
     }
 
-
     private Callback<TableColumn<Terminal, String>, TableCell<Terminal, String>> createStyledStatusCellFactory() {
         return column -> new TableCell<Terminal, String>() {
             private final ComboBox<String> statusComboBox = new ComboBox<>();
