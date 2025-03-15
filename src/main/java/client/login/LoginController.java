@@ -148,6 +148,7 @@ public class LoginController {
     private void changeScene(ActionEvent event, Parent root) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.centerOnScreen();
         stage.show();
