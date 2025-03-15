@@ -44,4 +44,12 @@ public interface AdminProcessors extends Remote {
      * @throws RemoteException If an RMI communication error occurs.
      */
     void addNewTerminal(Terminal terminal) throws RemoteException;
+
+    /**
+     * Modifies the status of existing terminals in the system.
+     * @param terminal A list of terminals with updated status information.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    boolean modifyTerminalStatus(List<Terminal> terminal) throws RemoteException;
+
 }

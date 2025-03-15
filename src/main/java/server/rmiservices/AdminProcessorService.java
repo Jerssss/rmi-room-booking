@@ -25,17 +25,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     }
 
     @Override
-    public void processAdminRequest(String adminID) throws RemoteException {
-        System.out.println("Processing request for admin: " + adminID);
-        // Add logic to handle admin requests
-    }
-
-    @Override
-    public String getAdminDetails(String adminID) throws RemoteException {
-        return "";
-    }
-
-    @Override
     public List<Reservation> getAllStudentReservations() throws RemoteException {
         try {
             System.out.println("[AdminProcessorService] Fetching student reservations from: " + RESERVATIONS_FILE.getAbsolutePath());
@@ -128,4 +117,41 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             System.err.println("[ERROR] Failed to save terminal: " + e.getMessage());
         }
     }
+
+    @Override
+    public boolean modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
+        try {
+            System.out.println("[AdminProcessorService] Modifying terminal status...");
+
+            List<Terminal> existingTerminals = JSONUtility.loadTerminals(TERMINALS_FILE);
+
+            if (existingTerminals == null) {
+                existingTerminals = new ArrayList<>();
+            }
+
+            for (Terminal updated : updatedTerminals) {
+                boolean found = false;
+                for (int i = 0; i < existingTerminals.size(); i++) {
+                    if (existingTerminals.get(i).getTerminalID().equals(updated.getTerminalID())) {
+                        existingTerminals.set(i, updated);
+                        found = true;
+                        System.out.println("[AdminProcessorService] Updated terminal: " + updated.getTerminalID());
+                        break;
+                    }
+                }
+                if (!found) {
+                    System.err.println("[ERROR] Terminal not found, adding as new: " + updated.getTerminalID());
+                    existingTerminals.add(updated);
+                }
+            }
+
+            JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
+            System.out.println("[AdminProcessorService] Terminals updated successfully.");
+            return true;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to update terminals: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
