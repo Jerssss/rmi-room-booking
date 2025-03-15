@@ -25,7 +25,7 @@ import java.util.Scanner;
  * ClientMain initializes the client application and connects to the RMI server.
  */
 public class ClientMain extends Application {
-    private static final String SERVER_IP = "172.27.230.169";
+    private static final String SERVER_IP = "172.27.102.14";
     private static final int PORT = 1099;
 
     private static Authentication authService;
@@ -62,6 +62,7 @@ public class ClientMain extends Application {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.centerOnScreen();
+            stage.setResizable(false);
             stage.show();
 
             System.out.println("[Client] WELCOME TO LENDIFY");
