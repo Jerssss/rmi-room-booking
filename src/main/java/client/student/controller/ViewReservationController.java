@@ -18,7 +18,7 @@ public class ViewReservationController {
         loadReservations();
 
         this.view.setRefreshButtonAction(event -> loadReservations());
-        this.view.setSearchButtonAction(event -> view.searchReservations()); // Add search functionality
+
     }
 
     /** Loads reservation data and updates the view */
