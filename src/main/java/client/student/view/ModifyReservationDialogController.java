@@ -45,6 +45,7 @@ public class ModifyReservationDialogController {
                 super.updateItem(item, empty);
                 if (item != null && (item.isBefore(today) || item.isAfter(today.plusDays(30)))) {
                     setDisable(true); // Disable past dates and dates beyond 30 days
+                    setStyle("-fx-background-color: #ffc0cb;");
                 }
             }
         });
