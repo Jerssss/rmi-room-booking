@@ -44,3 +44,12 @@
 .highlighted-button .text {
     -fx-effect: dropshadow(gaussian, #3d5c9e, 3, 0.0, 0, 1);
 }
+
+.cancelled-row {
+    -fx-background-color: #d3d3d3;
+    -fx-opacity: 0.7;
+}
+
+.button:disabled {
+    -fx-opacity: 0.5;
+}

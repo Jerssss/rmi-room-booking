@@ -651,6 +651,433 @@
         "Action": "Login",
         "Date": "2025-03-15",
         "Time": "01:04:03.770606300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "07:23:44.859232"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "07:26:15.911395500"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "07:56:50.178731800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:47:07.218430800"
+      },
+      {
+        "UserID": "0116",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:47:26.000525800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:53:02.271011400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:53:37.541665400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:54:06.777221100"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:55:24.197029700"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "08:56:12.425052400"
+      },
+      {
+        "UserID": "2240005",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:56:54.395374300"
+      },
+      {
+        "UserID": "MOLINA, BERNARDO SEBASTHIAN",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "08:58:23.808986800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:58:46.975063300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "08:59:45.003492200"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:04:59.321213200"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:05:04.820506700"
+      },
+      {
+        "UserID": "2240001",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:05:12.009505700"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:06:06.837145900"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:06:27.365824"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:06:30.562479200"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:06:32.665639500"
+      },
+      {
+        "UserID": "2240001",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:06:45.154907800"
+      },
+      {
+        "UserID": "0116",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:06:54.664458100"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:09:27.092468800"
+      },
+      {
+        "UserID": "Tester",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:10:34.278395900"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:10:49.268072400"
+      },
+      {
+        "UserID": "Seb",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:11:44.064734300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:11:52.658780900"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:12:12.928494700"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:13:02.571208900"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:15:37.936900300"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Session",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:19:59.556366300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:29:18.591644"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:32:35.910956700"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:32:37.314969800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:33:01.421106400"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:33:02.933991300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:33:06.624035700"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:33:08.161152800"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-15",
+        "Time": "09:33:08.895339500"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:36:02.296431500"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:37:15.157452300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:39:29.846647400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:40:02.225034400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:40:43.181660800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:41:05.295340400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:43:37.180936400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:45:32.410739300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:46:24.026583400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:46:42.087540200"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "09:51:29.338965200"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:01:19.744113700"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:01:29.696553300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:02:05.110635900"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:02:31.478717300"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:03:09.456727800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:05:05.061834"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:05:22.869380400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:08:02.939215800"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:09:33.446377400"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-15",
+        "Time": "10:10:17.587228300"
       }
     ]
   }

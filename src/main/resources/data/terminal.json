@@ -189,6 +189,33 @@
         "reservation_date": "2025-02-21",
         "start_time": "08:00",
         "end_time": "16:00"
+      },
+      {
+        "terminal_id": "PC21",
+        "terminal_room": "D524",
+        "terminal_os": "macOS",
+        "terminal_status": "Active",
+        "reservation_date": "2025-03-17",
+        "start_time": "09:30",
+        "end_time": "11:30"
+      },
+      {
+        "terminal_id": "PC22",
+        "terminal_room": "D524",
+        "terminal_os": "Windows",
+        "terminal_status": "Active",
+        "reservation_date": "2025-03-18",
+        "start_time": "09:30",
+        "end_time": "11:30"
+      },
+      {
+        "terminal_id": "PC23",
+        "terminal_room": "D526",
+        "terminal_os": "Windows",
+        "terminal_status": "Active",
+        "reservation_date": "2025-03-18",
+        "start_time": "09:30",
+        "end_time": "11:30"
       }
     ]
   }

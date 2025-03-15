@@ -2,7 +2,7 @@ package server.rmiservices;
 
 import shared.Reservation;
 import shared.Terminal;
-import shared.interfaces.StudentProcessors;
+import shared.interfaces.student.StudentProcessors;
 import util.JSONUtility;
 
 import java.io.File;

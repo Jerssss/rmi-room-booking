@@ -4,7 +4,7 @@ import client.ClientMain;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import shared.Reservation;
-import shared.interfaces.AdminProcessors;
+import shared.interfaces.admin.AdminProcessors;
 
 import java.rmi.RemoteException;
 import java.util.List;

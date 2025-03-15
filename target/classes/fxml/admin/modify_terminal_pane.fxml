@@ -58,13 +58,14 @@
          <children>
             <TableView fx:id="modTerTableView" focusTraversable="false" minHeight="-Infinity" prefHeight="447.0" prefWidth="805.0" style="-fx-font-size: 13;" stylesheets="@../../css/tablestyles.css">
                <columns>
-                  <TableColumn fx:id="roomNumberColumn" editable="false" prefWidth="84.0" resizable="false" text="Room No." />
-                  <TableColumn fx:id="terminalColumn" editable="false" prefWidth="87.0" resizable="false" text="Terminal No." />
-                  <TableColumn fx:id="terminalOSColumn" editable="false" prefWidth="102.0" resizable="false" text="Terminal OS" />
-                  <TableColumn fx:id="startTimeColumn" editable="false" prefWidth="103.0" resizable="false" text="Start Time" />
-                  <TableColumn fx:id="endTimeColumn" editable="false" prefWidth="90.0" resizable="false" text="End Time" />
-                  <TableColumn fx:id="terminalStatusColumn" editable="false" prefWidth="216.0" resizable="false" text="Status" />
-                  <TableColumn fx:id="editColumn" editable="false" minWidth="7.0" prefWidth="122.0" resizable="false" text="" />
+                  <TableColumn fx:id="roomNumberColumn" editable="false" prefWidth="75" resizable="false" text="Room No." />
+                  <TableColumn fx:id="terminalColumn" editable="false" prefWidth="91" resizable="false" text="Terminal No." />
+                  <TableColumn fx:id="terminalOSColumn" editable="false" prefWidth="91" resizable="false" text="Terminal OS" />
+                  <TableColumn fx:id="reservationDateColumn" editable="false" prefWidth="99" resizable="false" text="Date" />
+                  <TableColumn fx:id="startTimeColumn" editable="false" prefWidth="74" resizable="false" text="Start Time" />
+                  <TableColumn fx:id="endTimeColumn" editable="false" prefWidth="74" resizable="false" text="End Time" />
+                  <TableColumn fx:id="terminalStatusColumn" editable="false" prefWidth="195" resizable="false" text="Status" />
+                  <TableColumn fx:id="editColumn" editable="false" minWidth="7.0" prefWidth="105" resizable="false" text="" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

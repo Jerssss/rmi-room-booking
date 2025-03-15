@@ -5,8 +5,8 @@ import server.rmiservices.StudentProcessorService;
 import server.rmiservices.AdminProcessorService;
 import server.rmiservices.RMIServerService;
 import shared.interfaces.Authentication;
-import shared.interfaces.StudentProcessors;
-import shared.interfaces.AdminProcessors;
+import shared.interfaces.student.StudentProcessors;
+import shared.interfaces.admin.AdminProcessors;
 import shared.interfaces.RMIServer;
 
 import java.rmi.AlreadyBoundException;

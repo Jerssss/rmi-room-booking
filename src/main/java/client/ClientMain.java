@@ -9,17 +9,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import shared.interfaces.Authentication;
-import shared.interfaces.StudentProcessors;
-import shared.interfaces.AdminProcessors;
+import shared.interfaces.student.StudentProcessors;
+import shared.interfaces.admin.AdminProcessors;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Date;
-import java.util.Scanner;
 
 /**
  * ClientMain initializes the client application and connects to the RMI server.

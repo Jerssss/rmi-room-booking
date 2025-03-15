@@ -268,7 +268,7 @@
                               <HBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="122.0">
                                  <children>
                                     <Button fx:id="sendRequestButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false"
-                                            onAction="#handleSave" prefHeight="18.0" prefWidth="96.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Send Request" textFill="WHITE">
+                                            onAction="#handleSendRequest" prefHeight="18.0" prefWidth="96.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Send Request" textFill="WHITE">
                                        <Button text="Cancel" onAction="#handleCancel"/>
                                        <Button text="Delete" onAction="#handleDelete"/>
                                        <font>

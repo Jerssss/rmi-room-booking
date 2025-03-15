@@ -20,5 +20,7 @@ module Lendify {
     opens client.admin.controller to javafx.fxml;
     opens client.student.view to javafx.fxml;
     opens client.student.controller to javafx.fxml;
+    exports shared.interfaces.admin;
+    exports shared.interfaces.student;
 
 }

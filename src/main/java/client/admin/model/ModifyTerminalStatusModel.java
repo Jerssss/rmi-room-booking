@@ -2,7 +2,7 @@ package client.admin.model;
 
 import client.ClientMain;
 import shared.Terminal;
-import shared.interfaces.AdminProcessors;
+import shared.interfaces.admin.AdminProcessors;
 
 import java.rmi.RemoteException;
 import java.util.List;

@@ -1,7 +1,9 @@
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\ClientMain.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\RMIServer.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\CreateReservationDialogController.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\login\LoginModel.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\util\exception\InvalidCredentialsException.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\view\AddNewTerminalWindowView.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\model\StudentMainMenuModel.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\interfaces\Authentication.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\ReservationApprovalController.java
@@ -58,6 +60,7 @@ C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\sign
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\controller\CreateReservationController.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\CreateReservationView.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\shared\Terminal.java
+C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\admin\controller\AddNewTerminalWindowController.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\DuplicateAccountErrorView.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\client\student\view\ModifyReservationDialogController.java
 C:\Users\krist\IdeaProjects\2025-9444-team1_midproject\src\main\java\server\rmiservices\AdminProcessorService.java

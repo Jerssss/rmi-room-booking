@@ -35,11 +35,6 @@
                         <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="243.0">
                            <children>
                               <TextField fx:id="searchTextField" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
-                              <Button fx:id="searchButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#searchButtonHovered" onMouseExited="#searchButtonExited" prefHeight="26.0" prefWidth="69.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Search" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
                            </children>
                         </StackPane>
                      </children>

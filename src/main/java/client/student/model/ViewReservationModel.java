@@ -2,8 +2,7 @@ package client.student.model;
 
 import client.ClientMain;
 import shared.Reservation;
-import shared.interfaces.AdminProcessors;
-import shared.interfaces.StudentProcessors;
+import shared.interfaces.student.StudentProcessors;
 
 import java.rmi.RemoteException;
 import java.util.List;

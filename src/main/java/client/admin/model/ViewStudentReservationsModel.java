@@ -1,7 +1,7 @@
 package client.admin.model;
 
 import shared.Reservation;
-import shared.interfaces.AdminProcessors;
+import shared.interfaces.admin.AdminProcessors;
 import client.ClientMain;
 
 import java.rmi.RemoteException;
