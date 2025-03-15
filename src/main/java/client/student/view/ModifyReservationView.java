@@ -49,9 +49,24 @@ public class ModifyReservationView implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
+        initializeRowFactory();
         System.out.println("[DEBUG] Table columns initialized successfully.");
         initializeController();
         initializeSearchListener();
+    }
+
+    private void initializeRowFactory() {
+        modResTableView.setRowFactory(tv -> new TableRow<Reservation>() {
+            @Override
+            protected void updateItem(Reservation reservation, boolean empty) {
+                super.updateItem(reservation, empty);
+                getStyleClass().remove("cancelled-row");
+
+                if (!empty && reservation != null && "Cancelled".equals(reservation.getStatus())) {
+                    getStyleClass().add("cancelled-row");
+                }
+            }
+        });
     }
 
     @FXML
@@ -64,7 +79,7 @@ public class ModifyReservationView implements Initializable {
                     reservationsToRemove.add(reservation);
                 }
             }
-            allReservations.removeAll(reservationsToRemove);
+            allReservations.removeAll(reservationsToRemove); // Remove cancelled reservations from the list
 
             // Commit changes to the server
             controller.commitChanges();
@@ -105,6 +120,7 @@ public class ModifyReservationView implements Initializable {
         modResTableView.setItems(allReservations);
         modResTableView.refresh();
         System.out.println("[DEBUG] Table updated with " + reservations.size() + " reservations.");
+        modResTableView.requestLayout();
     }
 
     public void initializeSearchListener() {
@@ -195,6 +211,21 @@ public class ModifyReservationView implements Initializable {
                 cancelButton.setOnAction(event -> {
                     Reservation reservation = getTableRow().getItem();
                     if (reservation != null) {
+                        LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
+                        LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
+                        LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
+                        LocalDateTime now = LocalDateTime.now();
+
+                        // Check if the reservation is within 24 hours
+                        if (reservationDateTime.isBefore(now.plusHours(24))) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Cancellation Not Allowed");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You cannot cancel a reservation less than 24 hours before the start time.");
+                            alert.showAndWait();
+                            return; // Exit the method if cancellation is not allowed
+                        }
+
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setTitle("Confirm Cancellation");
                         alert.setHeaderText("Cancel Reservation");
@@ -204,14 +235,13 @@ public class ModifyReservationView implements Initializable {
                         if (result.isPresent() && result.get() == ButtonType.OK) {
                             // Mark the reservation as cancelled
                             reservation.setStatus("Cancelled");
+                            controller.cancelReservation(reservation.getReservationID());
 
-                            // Add the CSS class to the entire row
-                            getTableRow().getStyleClass().add("cancelled-row");
+                            // Refresh the table to apply CSS changes
+                            modResTableView.refresh(); // This will now reflect the local change
 
-                            // Disable the cancel button
+                            // Disable buttons
                             cancelButton.setDisable(true);
-
-                            // Disable the edit button in the same row
                             TableRow<Reservation> row = getTableRow();
                             if (row != null) {
                                 for (Node node : row.getChildrenUnmodifiable()) {

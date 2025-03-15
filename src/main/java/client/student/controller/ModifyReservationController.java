@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import shared.Reservation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModifyReservationController {
@@ -20,6 +21,7 @@ public class ModifyReservationController {
     private Reservation pendingReservation;
     private boolean changesMade = false;
     private String query;
+    private List<String> cancelledReservationIDs = new ArrayList<>();
 
     public ModifyReservationController(ModifyReservationView view, ModifyReservationModel model) {
         this.view = view;
@@ -63,22 +65,32 @@ public class ModifyReservationController {
     }
 
     public void commitChanges() {
-        if (!changesMade) {
+        if (cancelledReservationIDs.isEmpty() && !changesMade) {
             showNoChangesAlert();
             return;
         }
 
-        if (pendingReservation != null && model.updateReservation(pendingReservation)) {
-            loadReservations();
-            pendingReservation = null;
-            changesMade = false;
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("All changes have been sent to the server");
-            alert.showAndWait();
+        // Process cancellations
+        for (String id : cancelledReservationIDs) {
+            model.cancelReservation(id); // Send to server
         }
+        cancelledReservationIDs.clear(); // Reset the list
+
+        // Process pending reservation updates (if any)
+        if (pendingReservation != null) {
+            model.updateReservation(pendingReservation);
+            pendingReservation = null;
+        }
+
+        // Refresh data from the server
+        loadReservations();
+
+        // Show success alert
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Changes Saved");
+        alert.setHeaderText(null);
+        alert.setContentText("Your changes have been successfully saved.");
+        alert.showAndWait();
     }
 
     private void showNoChangesAlert() {
@@ -106,9 +118,9 @@ public class ModifyReservationController {
     }
 
     public void cancelReservation(String reservationID) {
-        if (model.cancelReservation(reservationID)) {
-            loadReservations();
-            System.out.println("Reservation cancelled successfully!");
-        }
+        // Add the ID to the list of cancellations
+        cancelledReservationIDs.add(reservationID);
+        changesMade = true;
+
     }
 }
