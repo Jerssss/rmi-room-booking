@@ -2,11 +2,14 @@ package client;
 
 import client.landingpage.LandingPageController;
 import client.landingpage.LandingPageView;
+import client.student.view.ServerErrorWindowView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.interfaces.Authentication;
 import shared.interfaces.student.StudentProcessors;
@@ -30,6 +33,8 @@ public class ClientMain extends Application {
     private static StudentProcessors studentProcessors;
     private static AdminProcessors adminProcessors;
     private static Stage primaryStage; // Reference to the main window
+    private static Stage currentPopupStage; // Reference to the current popup window
+
 
     public static void main(String[] args) {
         System.out.println("=====================================================");
@@ -61,6 +66,13 @@ public class ClientMain extends Application {
             stage.setScene(scene);
             stage.centerOnScreen();
             stage.setResizable(false);
+
+            // Set the close request handler
+            stage.setOnCloseRequest(event -> {
+                System.out.println("[INFO] Close request received. Terminating the application...");
+                terminateApplication();
+            });
+
             stage.show();
 
             System.out.println("[Client] WELCOME TO LENDIFY");
@@ -71,42 +83,145 @@ public class ClientMain extends Application {
     }
 
     /**
-     * Connects to the RMI server and retries if the server is down.
+     * Terminates the application gracefully.
      */
-    private static void connectToRMIServer() {
-        while (true) {
-            try {
-                Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+    private void terminateApplication() {
+        // Terminate all background threads (if any)
+        terminateBackgroundThreads();
 
-                authService = (Authentication) registry.lookup("authentication");
-                studentProcessors = (StudentProcessors) registry.lookup("student_processors");
-                adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
+        // Exit the JavaFX application
+        Platform.exit();
 
-                authService.logClientConnection(InetAddress.getLocalHost().getHostAddress());
+        // Ensure the JVM exits
+        System.exit(0);
+    }
 
-                System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
-                return;
-            } catch (Exception e) {
-                System.err.println("[ERROR] " + e.getMessage());
-                showServerDownMessage("Server unreachable. Retrying in 5 seconds...");
-                sleep(5000);
+    private void terminateBackgroundThreads() {
+        System.out.println("[INFO] Terminating background threads...");
+
+        // Terminate RMI threads (if applicable)
+        try {
+            if (authService != null) {
+                java.rmi.server.UnicastRemoteObject.unexportObject(authService, true);
             }
+            if (studentProcessors != null) {
+                java.rmi.server.UnicastRemoteObject.unexportObject(studentProcessors, true);
+            }
+            if (adminProcessors != null) {
+                java.rmi.server.UnicastRemoteObject.unexportObject(adminProcessors, true);
+            }
+            System.out.println("[INFO] RMI objects unexported.");
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to unexport RMI objects: " + e.getMessage());
         }
     }
 
+    /**
+     * Connects to the RMI server and retries if the server is down.
+     */
+    private static void connectToRMIServer() {
+        final int MAX_RETRIES = 5; // Maximum number of retries
+        final int RETRY_DELAY = 5000; // Delay between retries in milliseconds
+
+        // Run the retry logic on a background thread
+        new Thread(() -> {
+            int retryCount = 0;
+
+            while (retryCount < MAX_RETRIES) {
+                try {
+                    Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+
+                    authService = (Authentication) registry.lookup("authentication");
+                    studentProcessors = (StudentProcessors) registry.lookup("student_processors");
+                    adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
+
+                    authService.logClientConnection(InetAddress.getLocalHost().getHostAddress());
+
+                    System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
+                    return; // Exit the loop on successful connection
+                } catch (Exception e) {
+                    retryCount++;
+                    System.err.println("[ERROR] " + e.getMessage());
+
+                    // Show the error window on the JavaFX Application Thread
+                    int finalRetryCount = retryCount;
+                    Platform.runLater(() -> {
+                        showServerErrorWindow("Server unreachable. Retry attempt " + finalRetryCount + "/" + MAX_RETRIES, finalRetryCount < MAX_RETRIES);
+                    });
+
+                    if (retryCount >= MAX_RETRIES) {
+                        // Show the final error message and exit the application
+                        Platform.runLater(() -> {
+                            showServerErrorWindow("Failed to connect to the server after " + MAX_RETRIES + " attempts. Exiting...", false);
+                            Platform.exit(); // Exit the application
+                        });
+                        return;
+                    }
+
+                    // Wait for user input before retrying
+                    try {
+                        synchronized (ClientMain.class) {
+                            ClientMain.class.wait(); // Pause the thread until notified
+                        }
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("[ERROR] Retry thread interrupted.");
+                        return;
+                    }
+                }
+            }
+        }).start(); // Start the background thread
+    }
 
     /**
-     * Displays a popup message when the server is down, ensuring it appears above the main GUI.
+     * Displays the ServerErrorWindow as a pop-up.
      */
-    private static void showServerDownMessage(String message) {
+    private static void showServerErrorWindow(String message, boolean allowRetry) {
         Platform.runLater(() -> {
-            if (primaryStage != null) {
-                primaryStage.toFront();
+            try {
+                // Close the existing popup if it is open
+                if (currentPopupStage != null) {
+                    currentPopupStage.close();
+                }
+
+                FXMLLoader loader = new FXMLLoader(ClientMain.class.getResource("/fxml/client/server_error_window.fxml"));
+                AnchorPane serverErrorWindow = loader.load();
+
+                // Get the controller
+                ServerErrorWindowView controller = loader.getController();
+
+                // Set up the retry button action
+                if (allowRetry) {
+                    controller.setRetryButtonAction(() -> {
+                        // Notify the retry thread to continue
+                        synchronized (ClientMain.class) {
+                            ClientMain.class.notify();
+                        }
+                        // Close the pop-up window
+                        Stage stage = (Stage) serverErrorWindow.getScene().getWindow();
+                        stage.close();
+                    });
+                } else {
+                    // Disable the retry button if no more retries are allowed
+                    controller.disableRetryButton();
+                }
+
+                // Create a new Stage (pop-up window)
+                currentPopupStage = new Stage();
+                currentPopupStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
+                currentPopupStage.setTitle("Server Error");
+                currentPopupStage.setResizable(false); // Make the pop-up non-resizable
+
+                // Set the FXML content to the Stage
+                Scene scene = new Scene(serverErrorWindow);
+                currentPopupStage.setScene(scene);
+
+                // Show the pop-up
+                currentPopupStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("[ERROR] Could not load server_error_window.fxml");
             }
-            JOptionPane.showMessageDialog(null,
-                    message,
-                    "Connection Error",
-                    JOptionPane.WARNING_MESSAGE);
         });
     }
 

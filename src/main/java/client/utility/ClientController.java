@@ -3,6 +3,7 @@ package client.utility;
 import client.landingpage.LandingPageController;
 import client.landingpage.LandingPageView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class ClientController {
     public ClientController(ClientView view, Stage stage) {
@@ -17,6 +18,31 @@ public class ClientController {
 
         // Pass only the LandingPageView, removing 'stage'
         new LandingPageController(landingPageView);
+
+        // Set the close request handler for the stage
+        stage.setOnCloseRequest(this::handleCloseRequest);
+    }
+
+    private void handleCloseRequest(WindowEvent event) {
+        System.out.println("[INFO] Close request received. Terminating the application...");
+
+        // Terminate all background threads (if any)
+        terminateBackgroundThreads();
+
+        // Exit the JavaFX application
+        javafx.application.Platform.exit();
+
+        // Ensure the JVM exits
+        System.exit(0);
+    }
+
+    private void terminateBackgroundThreads() {
+        // Add logic to terminate any background threads here
+        System.out.println("[INFO] Terminating background threads...");
+
+        // Example: If you have a Timer or ExecutorService, shut it down here
+        // timer.cancel();
+        // executorService.shutdownNow();
     }
 }
 
