@@ -51,6 +51,7 @@ public class ModifyReservationView implements Initializable {
         initializeTableColumns();
         System.out.println("[DEBUG] Table columns initialized successfully.");
         initializeController();
+        initializeSearchListener();
     }
 
     @FXML
@@ -106,9 +107,20 @@ public class ModifyReservationView implements Initializable {
         System.out.println("[DEBUG] Table updated with " + reservations.size() + " reservations.");
     }
 
-    public void searchReservations() {
+    public void initializeSearchListener() {
+        searchStudResTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchReservations(newValue.toLowerCase().trim());
+        });
+    }
+
+    public void searchReservations(String query) {
         String searchText = searchStudResTextField.getText().trim().toLowerCase();
-        if (searchText.isEmpty()) {
+        if (allReservations.isEmpty()) {
+            return;
+        }
+
+        // If query is empty, show all terminals again
+        if (query == null || query.isEmpty()) {
             modResTableView.setItems(allReservations);
             return;
         }

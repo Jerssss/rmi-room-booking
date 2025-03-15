@@ -19,12 +19,13 @@ public class ModifyReservationController {
     private final ModifyReservationModel model;
     private Reservation pendingReservation;
     private boolean changesMade = false;
+    private String query;
 
     public ModifyReservationController(ModifyReservationView view, ModifyReservationModel model) {
         this.view = view;
         this.model = model;
         loadReservations();
-        view.setSearchButtonAction(event -> view.searchReservations());
+        view.setSearchButtonAction(event -> view.searchReservations(query));
         view.setRefreshButtonAction(event -> loadReservations());
     }
 
