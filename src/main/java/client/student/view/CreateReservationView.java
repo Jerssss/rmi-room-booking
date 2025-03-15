@@ -88,6 +88,7 @@ public class CreateReservationView implements Initializable {
 
         // Manually initialize the controller
         initializeController();
+        initializeSearchListener();
 
     }
 
@@ -152,25 +153,31 @@ public class CreateReservationView implements Initializable {
         System.out.println("[DEBUG] Table updated with " + terminals.size() + " Terminals.");
     }
 
-    public void searchTerminals() {
-        String searchText = searchStudResTextField.getText().trim().toLowerCase();
+    public void initializeSearchListener() {
+        searchStudResTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterReservations(newValue.toLowerCase().trim());
+        });
+    }
 
+    /** Filter Reservations Based on Search Text */
+    private void filterReservations(String searchText) {
         if (searchText.isEmpty()) {
-            createReservationTableView.setItems(allTerminals);
+            createReservationTableView.setItems(allTerminals); // Show all if search is empty
             return;
         }
 
         List<Terminal> filteredList = allTerminals.stream()
-                .filter(res -> res.getTerminalID().toLowerCase().contains(searchText) ||
-                        res.getRoom().toLowerCase().contains(searchText) ||
-                        res.getOs().toLowerCase().contains(searchText) ||
-                        res.getStartTime().toLowerCase().contains(searchText) ||
-                        res.getEndTime().toLowerCase().contains(searchText) ||
-                        res.getStatus().toLowerCase().contains(searchText))
+                .filter(ter -> ter.getTerminalID().toLowerCase().contains(searchText) ||
+                        ter.getRoom().toLowerCase().contains(searchText) ||
+                        ter.getOs().toLowerCase().contains(searchText) ||
+                        ter.getStatus().toLowerCase().contains(searchText) ||
+                        ter.getReservationDate().toLowerCase().contains(searchText) ||
+                        ter.getStartTime().toLowerCase().contains(searchText) ||
+                        ter.getEndTime().toLowerCase().contains(searchText))
                 .collect(Collectors.toList());
-
         createReservationTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
+
 
     private void showReservationForm(Terminal terminal) {
         try {
@@ -196,11 +203,6 @@ public class CreateReservationView implements Initializable {
 
 
 
-
-    /** Sets search button action */
-    public void setSearchButtonAction(EventHandler<ActionEvent> event) {
-        searchButton.setOnAction(e -> searchTerminals());
-    }
 
     /** Sets refresh button action */
     public void setRefreshButtonAction(EventHandler<ActionEvent> event) {
