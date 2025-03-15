@@ -52,7 +52,17 @@ public class ModifyTerminalStatusView {
     private ObservableList<Terminal> terminalData = FXCollections.observableArrayList();
 
     public void initialize() {
-        System.out.println("Initializing . . .");
+        initializeTableColumns();
+        System.out.println("[CLIENT] Table columns initialized successfully.");
+        initializeController();
+
+        // Attach the buttons functionality
+        setActionSearchButton(actionEvent -> controller.searchTerminals(terminalData, modTerTextField.getText()));
+        setActionRefreshButton(event -> controller.loadTerminals());
+        setActionSaveChangesButton(event -> controller.saveChanges());
+    }
+
+    public void initializeTableColumns() {
         terminalColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
         roomNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoom()));
         terminalOSColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOs()));
@@ -62,19 +72,11 @@ public class ModifyTerminalStatusView {
         terminalStatusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
         terminalStatusColumn.setCellFactory(createStyledStatusCellFactory());
         editColumn.setCellFactory(column -> createDeleteButtonCellFactory());
-
-        initializeController();
-
-        // Attach the buttons functionality
-        //setActionSearchButton(actionEvent -> controller.searchTerminals(modTerTextField.getText()));
-        //setActionRefreshButton(event -> controller.loadTerminalData());
-        //setActionSaveChangesButton(event -> controller.saveChanges());
     }
 
     public void initializeController() {
         System.out.println("[CLIENT] Initializing ModifyTerminalStatusController...");
-        ModifyTerminalStatusModel model = new ModifyTerminalStatusModel();
-        this.controller = new ModifyTerminalStatusController(this, model);
+        this.controller = new ModifyTerminalStatusController(this);
         System.out.println("[CLIENT] ModifyTerminalStatusController successfully created.");
     }
 
@@ -212,8 +214,7 @@ public class ModifyTerminalStatusView {
 
         // Handle confirm button action
         confirmButton.setOnAction(event -> {
-            System.out.println("Confirm button clicked");
-            //controller.removeTerminal(terminal); // Remove terminal and refresh table
+            controller.removeTerminal(terminal); // Remove terminal and refresh table
             confirmationStage.close();
         });
 
