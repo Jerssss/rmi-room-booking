@@ -55,7 +55,6 @@
          <children>
             <TableView fx:id="viewResTableView" focusTraversable="false" minHeight="-Infinity" prefHeight="472.0" prefWidth="805.0" style="-fx-font-size: 13;" stylesheets="@../../css/tablestyles.css">
                <columns>
-                  <TableColumn fx:id="reservationIDColumn" editable="false" prefWidth="115.0" resizable="false" text="Reservation ID" />
                   <TableColumn fx:id="terminalNumberColumn" editable="false" prefWidth="115.0" resizable="false" text="Terminal No." />
                   <TableColumn fx:id="roomNumberColumn" editable="false" prefWidth="115.0" resizable="false" text="Room No." />
                   <TableColumn fx:id="dateColumn" editable="false" prefWidth="115.0" resizable="false" text="Date" />
