@@ -18,6 +18,7 @@ import shared.interfaces.admin.AdminProcessors;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Date;
@@ -26,7 +27,7 @@ import java.util.Date;
  * ClientMain initializes the client application and connects to the RMI server.
  */
 public class ClientMain extends Application {
-    private static final String SERVER_IP = "172.27.102.14";
+    private static final String SERVER_IP = "localhost";
     private static final int PORT = 1099;
 
     private static Authentication authService;
@@ -36,6 +37,11 @@ public class ClientMain extends Application {
     private static Stage currentPopupStage; // Reference to the current popup window
 
 
+    /**
+     * The main entry point for the client application.
+     *
+     * @param args Command-line arguments passed to the application.
+     */
     public static void main(String[] args) {
         System.out.println("=====================================================");
         System.out.println("[Client] Starting client at " + new Date());
@@ -46,7 +52,11 @@ public class ClientMain extends Application {
         launch(args);
     }
 
-
+    /**
+     * Initializes the JavaFX application and sets up the primary stage.
+     *
+     * @param stage The primary stage for the JavaFX application.
+     */
     @Override
     public void start(Stage stage) {
         primaryStage = stage; // Store reference to primary stage
@@ -83,6 +93,62 @@ public class ClientMain extends Application {
     }
 
     /**
+     * Starts a heartbeat mechanism to periodically check the server's availability.
+     */
+    private static void startHeartbeat() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    // Sleep for a certain period before checking the server status
+                    Thread.sleep(5000); // Check every 5 seconds
+
+                    // Check if the server is reachable
+                    if (authService != null) {
+                        authService.heartbeat(); // Call the heartbeat method on the server
+                    } else {
+                        throw new RemoteException("Server is down");
+                    }
+                } catch (RemoteException e) {
+                    // Server is down, notify the user
+                    System.out.println("[Client] Server is down. Notifying the user...");
+
+                    Platform.runLater(() -> {
+                        // Show the popup window with the retry button enabled
+                        showServerErrorWindow("Server is down. Please try again later.", true);
+                    });
+
+                    // Wait for the server to come back up
+                    while (true) {
+                        try {
+                            Thread.sleep(5000); // Check every 5 seconds
+
+                            // Attempt to reconnect to the server
+                            Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+                            authService = (Authentication) registry.lookup("authentication");
+                            studentProcessors = (StudentProcessors) registry.lookup("student_processors");
+                            adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
+
+                            System.out.println("[Client] Reconnected to the server.");
+
+                            // Close the popup window on successful reconnection
+                            closePopupWindow();
+
+                            // Exit the loop and continue normal operation
+                            break;
+                        } catch (Exception ex) {
+                            System.err.println("[ERROR] " + ex.getMessage());
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("[ERROR] Heartbeat thread interrupted.");
+                    break;
+                }
+            }
+        }).start();
+    }
+
+    /**
      * Terminates the application gracefully.
      */
     private void terminateApplication() {
@@ -96,6 +162,9 @@ public class ClientMain extends Application {
         System.exit(0);
     }
 
+    /**
+     * Terminates all background threads and unexports RMI objects.
+     */
     private void terminateBackgroundThreads() {
         System.out.println("[INFO] Terminating background threads...");
 
@@ -138,6 +207,13 @@ public class ClientMain extends Application {
                     authService.logClientConnection(InetAddress.getLocalHost().getHostAddress());
 
                     System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
+
+                    // Close the popup window on successful reconnection
+                    closePopupWindow();
+
+                    // Start the heartbeat mechanism
+                    startHeartbeat();
+
                     return; // Exit the loop on successful connection
                 } catch (Exception e) {
                     retryCount++;
@@ -173,22 +249,30 @@ public class ClientMain extends Application {
         }).start(); // Start the background thread
     }
 
+
     /**
      * Displays the ServerErrorWindow as a pop-up.
+     *
+     * @param message    The error message to display.
+     * @param allowRetry Whether to allow the user to retry connecting to the server.
      */
     private static void showServerErrorWindow(String message, boolean allowRetry) {
         Platform.runLater(() -> {
             try {
+                System.out.println("[Client] Showing server error window: " + message);
+
                 // Close the existing popup if it is open
                 if (currentPopupStage != null) {
                     currentPopupStage.close();
                 }
 
+                // Load the FXML file
                 FXMLLoader loader = new FXMLLoader(ClientMain.class.getResource("/fxml/client/server_error_window.fxml"));
                 AnchorPane serverErrorWindow = loader.load();
 
                 // Get the controller
                 ServerErrorWindowView controller = loader.getController();
+
 
                 // Set up the retry button action
                 if (allowRetry) {
@@ -201,6 +285,9 @@ public class ClientMain extends Application {
                         Stage stage = (Stage) serverErrorWindow.getScene().getWindow();
                         stage.close();
                     });
+
+                    // Enable the retry button
+                    controller.resetRetryButton();
                 } else {
                     // Disable the retry button if no more retries are allowed
                     controller.disableRetryButton();
@@ -216,11 +303,42 @@ public class ClientMain extends Application {
                 Scene scene = new Scene(serverErrorWindow);
                 currentPopupStage.setScene(scene);
 
+                // Handle the popup window's close event
+                currentPopupStage.setOnCloseRequest(event -> {
+                    // Reissue the popup window if the server is still down
+                    if (authService == null) {
+                        Platform.runLater(() -> {
+                            showServerErrorWindow("Server is down. Please try again later.", true);
+                        });
+                    }
+                });
+
                 // Show the pop-up
                 currentPopupStage.show();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("[ERROR] Could not load server_error_window.fxml");
+            }
+        });
+    }
+
+    /**
+     * Closes the currently open popup window.
+     */
+    private static void closePopupWindow() {
+        Platform.runLater(() -> {
+            if (currentPopupStage != null) {
+                // Get the controller and reset the retry button
+                if (currentPopupStage.getScene() != null && currentPopupStage.getScene().getRoot() != null) {
+                    ServerErrorWindowView controller = (ServerErrorWindowView) currentPopupStage.getScene().getRoot().getProperties().get("controller");
+                    if (controller != null) {
+                        controller.resetRetryButton();
+                    }
+                }
+
+                // Close the popup window
+                currentPopupStage.close();
+                currentPopupStage = null; // Clear the reference
             }
         });
     }
@@ -237,18 +355,39 @@ public class ClientMain extends Application {
         }
     }
 
+    /**
+     * Returns the authentication service instance.
+     *
+     * @return The authentication service.
+     */
     public static Authentication getAuthService() {
         return authService;
     }
 
+    /**
+     * Returns the student processors instance.
+     *
+     * @return The student processors.
+     */
     public static StudentProcessors getStudentProcessors() {
         return studentProcessors;
     }
 
+    /**
+     * Returns the admin processors instance.
+     *
+     * @return The admin processors.
+     */
     public static AdminProcessors getAdminProcessors() {
         return adminProcessors;
     }
-    // Getter for SERVER_IP
+
+
+    /**
+     * Returns the server IP address.
+     *
+     * @return The server IP address.
+     */
     public static String getServerIP() {
         return SERVER_IP;
     }

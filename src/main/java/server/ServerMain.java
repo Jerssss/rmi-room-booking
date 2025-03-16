@@ -27,6 +27,11 @@ public class ServerMain {
     private static Registry registry;
     private static boolean running = false;
 
+    private static Authentication authService;
+    private static StudentProcessors studentProcessors;
+    private static AdminProcessors adminProcessors;
+    private static RMIServer rmiServer;
+
     public static void main(String[] args) {
         //shutdown hook to ensure that the server is entirely dead on 'exit'
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -79,12 +84,12 @@ public class ServerMain {
             try {
                 registry = LocateRegistry.createRegistry(PORT);
 
-                Authentication authentication = new AuthenticationService();
-                StudentProcessors studentProcessors = new StudentProcessorService();
-                AdminProcessors adminProcessors = new AdminProcessorService();
-                RMIServer rmiServer = new RMIServerService();
+                authService = new AuthenticationService();
+                studentProcessors = new StudentProcessorService();
+                adminProcessors = new AdminProcessorService();
+                rmiServer = new RMIServerService();
 
-                registry.bind("authentication", authentication);
+                registry.bind("authentication", authService);
                 registry.bind("student_processors", studentProcessors);
                 registry.bind("admin_processors", adminProcessors);
                 registry.bind("RMIServer", rmiServer);
@@ -117,12 +122,34 @@ public class ServerMain {
                     System.out.println("[Server] Unbound service: " + name);
                 }
 
-                //unexport the registry to forcefully release the resources
+                // Unexport RMI objects
+                if (authService != null) {
+                    java.rmi.server.UnicastRemoteObject.unexportObject(authService, true);
+                    System.out.println("[Server] Unexported authService.");
+                }
+                if (studentProcessors != null) {
+                    java.rmi.server.UnicastRemoteObject.unexportObject(studentProcessors, true);
+                    System.out.println("[Server] Unexported studentProcessors.");
+                }
+                if (adminProcessors != null) {
+                    java.rmi.server.UnicastRemoteObject.unexportObject(adminProcessors, true);
+                    System.out.println("[Server] Unexported adminProcessors.");
+                }
+                if (rmiServer != null) {
+                    java.rmi.server.UnicastRemoteObject.unexportObject(rmiServer, true);
+                    System.out.println("[Server] Unexported RMIServer.");
+                }
+
+                // Unexport the registry
                 java.rmi.server.UnicastRemoteObject.unexportObject(registry, true);
                 System.out.println("[Server] Unexported RMI registry.");
 
-                // Nullify registry to stop accepting new connections
+                // Nullify references
                 registry = null;
+                authService = null;
+                studentProcessors = null;
+                adminProcessors = null;
+                rmiServer = null;
                 running = false;
 
                 // Force garbage collection to clean up RMI resources
@@ -131,6 +158,8 @@ public class ServerMain {
             } catch (Exception e) {
                 System.err.println("[Server ERROR] Could not stop: " + e.getMessage());
             }
+        } else {
+            System.out.println("[Server] Server is already stopped.");
         }
     }
 

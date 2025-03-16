@@ -17,9 +17,9 @@
             <children>
                 <HBox alignment="CENTER_LEFT" prefHeight="78.0" prefWidth="805.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="74.0" prefWidth="326.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="74.0" prefWidth="392.0">
                             <children>
-                                <Label fx:id="studResTitleLabel" text="Create Reservation" textFill="#0d3073">
+                                <Label fx:id="studResTitleLabel" prefHeight="43.0" prefWidth="407.0" text="Create Reservation" textFill="#0d3073">
                                     <font>
                                         <Font name="System Bold" size="29.0" />
                                     </font>
@@ -31,33 +31,17 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="74.0" prefWidth="241.0" spacing="10.0">
                             <children>
-                                <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="312.0">
-                                    <children>
-                                        <TextField fx:id="searchStudResTextField" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
-
-                                    </children>
+                                <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="278.0">
                                     <HBox.margin>
                                         <Insets right="5.0" />
                                     </HBox.margin>
                                 </StackPane>
-                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="74.0" prefWidth="165.0" spacing="10.0">
-                            <children>
-                                <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="150.0">
-                                    <children>
-                                        <Button fx:id="redirectCreateReservationWindowButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#createButtonHovered" onMouseExited="#createButtonExited" prefHeight="26.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Create Reservation" textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="11.0" />
-                                            </font>
-                                        </Button>
-                                    </children>
-                                </StackPane>
+                                  <TextField fx:id="searchStudResTextField" prefHeight="30.0" prefWidth="500.0" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
                             </children>
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="74.0" prefWidth="121.0" spacing="10.0">
                             <children>
-                                <StackPane prefHeight="74.0" prefWidth="104.0">
+                                <StackPane prefHeight="74.0" prefWidth="197.0">
                                     <children>
                                         <Button fx:id="refreshButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#refreshButtonHovered" onMouseExited="#refreshButtonExited" prefHeight="26.0" prefWidth="98.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Refresh" textFill="WHITE">
                                             <font>

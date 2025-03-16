@@ -28,6 +28,8 @@ public class ServerErrorWindowView {
 
     /**
      * Sets the action for the retry button.
+     *
+     * @param retryButtonAction The action to execute when the retry button is clicked.
      */
     public void setRetryButtonAction(Runnable retryButtonAction) {
         this.retryButtonAction = retryButtonAction;
@@ -35,13 +37,21 @@ public class ServerErrorWindowView {
 
     /**
      * Sets the action for the close button.
+     *
+     * @param closeButtonAction The action to execute when the close button is clicked.
      */
     public void setCloseButtonAction(Runnable closeButtonAction) {
         this.closeButtonAction = closeButtonAction;
     }
 
+    /**
+     * Initializes the UI components and sets up event handlers.
+     */
     @FXML
     public void initialize() {
+        // Enable the retry button by default
+        retryButton.setDisable(false);
+
         // Handle the "Close" button action
         closeButton.setOnAction(event -> {
             if (closeButtonAction != null) {
@@ -66,7 +76,7 @@ public class ServerErrorWindowView {
                         retryButtonAction.run(); // Execute the retry button action
                     }
                     // Simulate a delay to ensure the loading indicator is visible
-                    Thread.sleep(20000); // 10 seconds delay
+                    Thread.sleep(2000); // 2 seconds delay
                     return null;
                 }
             };
@@ -82,20 +92,30 @@ public class ServerErrorWindowView {
         });
     }
 
-    // Hover effects for the Close button
+    /**
+     * Resets the hover effect for the Close button.
+     */
     public void closeButtonExited() {
         applyScaleTransition(closeButton, 1.0, 1.0);
     }
 
+    /**
+     * Applies a hover effect to the Close button.
+     */
     public void closeButtonHovered() {
         applyScaleTransition(closeButton, 0.9, 0.9);
     }
 
-    // Hover effects for the Retry button
+    /**
+     * Resets the hover effect for the Retry button.
+     */
     public void retryButtonExited() {
         applyScaleTransition(retryButton, 1.0, 1.0);
     }
 
+    /**
+     * Applies a hover effect to the Retry button.
+     */
     public void retryButtonHovered() {
         applyScaleTransition(retryButton, 0.9, 0.9);
     }
@@ -105,6 +125,13 @@ public class ServerErrorWindowView {
      */
     public void disableRetryButton() {
         retryButton.setDisable(true);
+    }
+
+    /**
+     * Resets the retry button to its default state (enabled).
+     */
+    public void resetRetryButton() {
+        retryButton.setDisable(false);
     }
 
     /**

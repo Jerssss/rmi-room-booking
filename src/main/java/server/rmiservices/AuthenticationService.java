@@ -30,10 +30,27 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     // Stores active user sessions along with their callbacks
     private final ConcurrentHashMap<String, ClientCallbackInterface> activeClients = new ConcurrentHashMap<>();
 
+    /**
+     * Constructs an AuthenticationService instance.
+     *
+     * @throws RemoteException If a communication-related exception occurs during the remote method call.
+     */
     public AuthenticationService() throws RemoteException {
         super();
     }
 
+    /**
+     * Handles user registration (sign-up).
+     *
+     * @param userID      The unique ID of the user.
+     * @param name        The name of the user.
+     * @param password    The password of the user.
+     * @param userType    The type of user (e.g., "Admin" or "Student").
+     * @param courseYear  The course year of the student (if applicable).
+     * @param facultyType The faculty type of the admin (if applicable).
+     * @return True if registration is successful, false otherwise.
+     * @throws RemoteException If a communication-related exception occurs during the remote method call.
+     */
     @Override
     public boolean signUp(String userID, String name, String password, String userType, String courseYear, String facultyType)
             throws RemoteException {
@@ -46,6 +63,15 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return false;
     }
 
+    /**
+     * Registers a new admin user.
+     *
+     * @param id          The unique ID of the admin.
+     * @param name        The name of the admin.
+     * @param password    The password of the admin.
+     * @param facultyType The faculty type of the admin.
+     * @return True if registration is successful, false otherwise.
+     */
     private boolean registerAdmin(String id, String name, String password, String facultyType) {
         // Use LinkedHashMap instead of HashMap to maintain order
         LinkedHashMap<String, Admin> admins = JSONUtility.loadAdmins(ADMIN_JSON_FILE);
@@ -70,6 +96,15 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return true;
     }
 
+    /**
+     * Registers a new student user.
+     *
+     * @param id         The unique ID of the student.
+     * @param name       The name of the student.
+     * @param password   The password of the student.
+     * @param courseYear The course year of the student.
+     * @return True if registration is successful, false otherwise.
+     */
     private boolean registerStudent(String id, String name, String password, String courseYear) {
         // Use LinkedHashMap instead of HashMap to maintain order
         LinkedHashMap<String, Student> students = JSONUtility.loadStudents(STUDENT_JSON_FILE);
@@ -94,6 +129,16 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
 
     /**
      * Handles user authentication (login).
+     *
+     * @param userID          The unique ID of the user.
+     * @param password        The password of the user.
+     * @param userType        The type of user (e.g., "Admin" or "Student").
+     * @param clientIP        The IP address of the client.
+     * @param clientCallback  The callback interface for client notifications.
+     * @return An array containing the login status, session token, and user name.
+     * @throws RemoteException            If a communication-related exception occurs during the remote method call.
+     * @throws InvalidCredentialsException If the provided credentials are invalid.
+     * @throws AccountAlreadyLoggedIn     If the user is already logged in.
      */
     @Override
     public Object[] login(String userID, String password, String userType, String clientIP, ClientCallbackInterface clientCallback)
@@ -117,9 +162,15 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return response;
     }
 
-
     /**
      * Authenticates an Admin user.
+     *
+     * @param userID         The unique ID of the admin.
+     * @param password       The password of the admin.
+     * @param clientIP       The IP address of the client.
+     * @param clientCallback The callback interface for client notifications.
+     * @return An array containing the login status, session token, and user name.
+     * @throws InvalidCredentialsException If the provided credentials are invalid.
      */
     private Object[] authenticateAdmin(String userID, String password, String clientIP, ClientCallbackInterface clientCallback)
             throws InvalidCredentialsException {
@@ -153,9 +204,15 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return new Object[]{"SUCCESS", sessionToken, admin.getName()};
     }
 
-
     /**
      * Authenticates a Student user.
+     *
+     * @param userID         The unique ID of the student.
+     * @param password       The password of the student.
+     * @param clientIP       The IP address of the client.
+     * @param clientCallback The callback interface for client notifications.
+     * @return An array containing the login status, session token, and user name.
+     * @throws InvalidCredentialsException If the provided credentials are invalid.
      */
     private Object[] authenticateStudent(String userID, String password, String clientIP, ClientCallbackInterface clientCallback)
             throws InvalidCredentialsException {
@@ -189,8 +246,13 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return new Object[]{"SUCCESS", sessionToken, student.getName()};
     }
 
-
-
+    /**
+     * Logs an action performed by a user.
+     *
+     * @param userID   The unique ID of the user.
+     * @param userType The type of user (e.g., "Admin" or "Student").
+     * @param action   The action performed by the user.
+     */
     private void logAction(String userID, String userType, String action) {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
 
@@ -202,7 +264,12 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
     }
 
-
+    /**
+     * Logs a client connection.
+     *
+     * @param clientIP The IP address of the client.
+     * @throws RemoteException If a communication-related exception occurs during the remote method call.
+     */
     @Override
     public void logClientConnection(String clientIP) throws RemoteException {
         ServerMain.logClientConnection(clientIP);
@@ -210,6 +277,8 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
 
     /**
      * Generates a session token for authentication.
+     *
+     * @return A unique session token.
      */
     private String generateSessionToken() {
         return "SESSION-" + UUID.randomUUID();
@@ -217,6 +286,9 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
 
     /**
      * Sends a notification to all logged-in clients.
+     *
+     * @param userID  The unique ID of the user triggering the notification.
+     * @param message The notification message.
      */
     private void sendNotification(String userID, String message) {
         for (String client : activeClients.keySet()) {
@@ -233,9 +305,22 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
 
     /**
      * Handles user logout.
+     *
+     * @param sessionToken The session token of the user.
+     * @throws RemoteException If a communication-related exception occurs during the remote method call.
      */
     @Override
     public void logout(String sessionToken) throws RemoteException {
         activeClients.remove(sessionToken);
+    }
+
+    /**
+     * Implements the heartbeat mechanism to check the server's availability.
+     * This method is called periodically to ensure the server is responsive.
+     *
+     * @throws RemoteException If a communication-related exception occurs during the remote method call.
+     */
+    @Override
+    public void heartbeat() throws RemoteException {
     }
 }
