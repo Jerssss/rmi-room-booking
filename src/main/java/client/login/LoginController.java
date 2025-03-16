@@ -1,6 +1,5 @@
 package client.login;
 
-import client.ClientMain;
 import client.admin.controller.AdminMainMenuController;
 import client.admin.view.AdminMainMenuView;
 import client.admin.model.AdminMainMenuModel;
@@ -47,43 +46,22 @@ public class LoginController {
             return;
         }
 
-        // Check if authService is initialized before attempting authentication
-        if (ClientMain.getAuthService() == null) {
-            loginView.setPromptLabel("Server connection error. Please restart the client.");
-            loginView.setPromptLabelVisible(true);
-            JOptionPane.showMessageDialog(null,
-                    "The server is unreachable. Please try again later.",
-                    "Server Connection Error",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
         try {
-            // Retrieve client IP
-            String clientIP = java.net.InetAddress.getLocalHost().getHostAddress();
+            // Call the authenticate method from LoginModel
+            String userName = loginModel.authenticate(userID, password, userType);
 
-            // Call the login method with the correct arguments
-            Object[] loginResponse = ClientMain.getAuthService().login(userID, password, userType, clientIP);
-
-            String loginStatus = (String) loginResponse[0];
-            String sessionToken = (String) loginResponse[1];
-            String userName = (String) loginResponse[2];
-
-            if ("SUCCESS".equals(loginStatus)) {
+            if (userName != null) {
                 loginView.setPromptLabel("Login successful!");
                 loginView.setPromptLabelVisible(true);
-                SessionManager.createSession(sessionToken, userID);
+                SessionManager.createSession(loginModel.getSessionToken(), userID);
 
                 if ("Student".equalsIgnoreCase(userType)) {
-                    redirectToStudentMainMenu(event, userName,userID);
+                    redirectToStudentMainMenu(event, userName, userID);
                 } else {
                     redirectToAdminMainMenu(event, userName);
                 }
-            } else if ("INVALID_CREDENTIALS".equals(loginStatus)) {
-                loginView.setPromptLabel("Invalid credentials. Please try again.");
-                loginView.setPromptLabelVisible(true);
-            } else if ("ALREADY_LOGGED_IN".equals(loginStatus)) {
-                loginView.setPromptLabel("Account already logged in.");
+            } else {
+                loginView.setPromptLabel("Invalid login attempt.");
                 loginView.setPromptLabelVisible(true);
             }
         } catch (InvalidCredentialsException e) {
@@ -97,8 +75,12 @@ public class LoginController {
                     "A network error occurred while logging in. Please try again.",
                     "Login Error",
                     JOptionPane.ERROR_MESSAGE);
+        } catch (NotBoundException e) {
+            throw new RuntimeException(e);
         }
     }
+
+
 
     private void redirectToAdminMainMenu(ActionEvent event, String loggedInUserName) {
         try {

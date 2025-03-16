@@ -1,5 +1,6 @@
 package shared.interfaces;
 
+import shared.callback.ClientCallbackInterface;
 import util.exception.AccountAlreadyLoggedIn;
 import util.exception.InvalidCredentialsException;
 import java.rmi.Remote;
@@ -23,7 +24,7 @@ public interface Authentication extends Remote {
      * @throws InvalidCredentialsException If credentials are incorrect.
      * @throws AccountAlreadyLoggedIn      If the account is already logged in.
      */
-    Object[] login(String userID, String password, String userType, String clientIP)
+    Object[] login(String userID, String password, String userType, String clientIP, ClientCallbackInterface clientCallback)
             throws RemoteException, InvalidCredentialsException, AccountAlreadyLoggedIn;
 
     /**

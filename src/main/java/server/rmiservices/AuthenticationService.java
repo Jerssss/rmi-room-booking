@@ -5,6 +5,7 @@ import shared.Admin;
 import shared.Log;
 import shared.Student;
 import shared.interfaces.Authentication;
+import shared.callback.ClientCallbackInterface;
 import util.JSONUtility;
 import util.exception.AccountAlreadyLoggedIn;
 import util.exception.InvalidCredentialsException;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implements Authentication interface, handles login and registration using JSON.
@@ -24,6 +26,9 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     private static final File ADMIN_JSON_FILE = new File("src/main/resources/data/admin.json");
     private static final File STUDENT_JSON_FILE = new File("src/main/resources/data/student.json");
     private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
+
+    // Stores active user sessions along with their callbacks
+    private final ConcurrentHashMap<String, ClientCallbackInterface> activeClients = new ConcurrentHashMap<>();
 
     public AuthenticationService() throws RemoteException {
         super();
@@ -91,23 +96,33 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
      * Handles user authentication (login).
      */
     @Override
-    public Object[] login(String userID, String password, String userType, String clientIP)
+    public Object[] login(String userID, String password, String userType, String clientIP, ClientCallbackInterface clientCallback)
             throws RemoteException, InvalidCredentialsException, AccountAlreadyLoggedIn {
 
+        if (activeClients.containsKey(userID)) {
+            System.out.println("[DEBUG] User already logged in: " + userID);
+            throw new AccountAlreadyLoggedIn("User is already logged in.");
+        }
+
+        Object[] response;
         if ("Admin".equalsIgnoreCase(userType)) {
-            return authenticateAdmin(userID, password, clientIP);
+            response = authenticateAdmin(userID, password, clientIP, clientCallback);
         } else if ("Student".equalsIgnoreCase(userType)) {
-            return authenticateStudent(userID, password, clientIP);
+            response = authenticateStudent(userID, password, clientIP, clientCallback);
         } else {
             throw new InvalidCredentialsException("Invalid user type.");
         }
+
+        System.out.println("[DEBUG] Returning login response: " + java.util.Arrays.toString(response));
+        return response;
     }
+
 
     /**
      * Authenticates an Admin user.
      */
-    private Object[] authenticateAdmin(String userID, String password, String clientIP)
-            throws InvalidCredentialsException, AccountAlreadyLoggedIn {
+    private Object[] authenticateAdmin(String userID, String password, String clientIP, ClientCallbackInterface clientCallback)
+            throws InvalidCredentialsException {
 
         HashMap<String, Admin> admins = JSONUtility.loadAdmins(ADMIN_JSON_FILE);
 
@@ -121,25 +136,29 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
             throw new InvalidCredentialsException("Incorrect password.");
         }
 
-        // Log the client connection
-        ServerMain.logClientConnection(clientIP);
+        String sessionToken = generateSessionToken();
+        activeClients.put(userID, clientCallback);
 
-        // Print login details on the SERVER console
+        sendNotification(userID, "Admin " + admin.getName() + " has logged in!");
+
+        // Print login success details on the SERVER console
         System.out.println("=====================================================");
-        System.out.println("[SERVER] Admin logged in: " + admin.getName() + " (ID: " + userID + ")");
-        System.out.println("[SERVER] IP Address: " + clientIP);
+        System.out.println("[Server] Login successful!");
+        System.out.println("[Server] User: " + admin.getName() + " (ID: " + userID + ")");
+        System.out.println("[Server] User Type: Admin");
+        System.out.println("[Server] IP Address: " + clientIP);
+        System.out.println("[Server] Session Token: " + sessionToken);
         System.out.println("=====================================================");
 
-        logAction(userID, "Admin", "Login");
-
-        return new Object[]{"SUCCESS", generateSessionToken(), admin.getName()};
+        return new Object[]{"SUCCESS", sessionToken, admin.getName()};
     }
+
 
     /**
      * Authenticates a Student user.
      */
-    private Object[] authenticateStudent(String userID, String password, String clientIP)
-            throws InvalidCredentialsException, AccountAlreadyLoggedIn {
+    private Object[] authenticateStudent(String userID, String password, String clientIP, ClientCallbackInterface clientCallback)
+            throws InvalidCredentialsException {
 
         HashMap<String, Student> students = JSONUtility.loadStudents(STUDENT_JSON_FILE);
 
@@ -153,19 +172,24 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
             throw new InvalidCredentialsException("Incorrect password.");
         }
 
-        // Log the client connection
-        ServerMain.logClientConnection(clientIP);
+        String sessionToken = generateSessionToken();
+        activeClients.put(userID, clientCallback);
 
-        // Print login details on the SERVER console
+        sendNotification(userID, "Student " + student.getName() + " has logged in!");
+
+        // Print login success details on the SERVER console
         System.out.println("=====================================================");
-        System.out.println("[SERVER] Student logged in: " + student.getName() + " (ID: " + userID + ")");
-        System.out.println("[SERVER] IP Address: " + clientIP);
+        System.out.println("[Server] Login successful!");
+        System.out.println("[Server] User: " + student.getName() + " (ID: " + userID + ")");
+        System.out.println("[Server] User Type: Student");
+        System.out.println("[Server] IP Address: " + clientIP);
+        System.out.println("[Server] Session Token: " + sessionToken);
         System.out.println("=====================================================");
 
-        logAction(userID, "Admin", "Login");
-
-        return new Object[]{"SUCCESS", generateSessionToken(), student.getName()};
+        return new Object[]{"SUCCESS", sessionToken, student.getName()};
     }
+
+
 
     private void logAction(String userID, String userType, String action) {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
@@ -192,11 +216,26 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     }
 
     /**
+     * Sends a notification to all logged-in clients.
+     */
+    private void sendNotification(String userID, String message) {
+        for (String client : activeClients.keySet()) {
+            try {
+                if (!client.equals(userID)) { // Don't notify the user logging in
+                    activeClients.get(client).notify(message);
+                }
+            } catch (RemoteException e) {
+                System.err.println("Failed to send notification to " + client);
+                activeClients.remove(client); // Remove inactive client
+            }
+        }
+    }
+
+    /**
      * Handles user logout.
      */
     @Override
     public void logout(String sessionToken) throws RemoteException {
-        System.out.println("[LOGOUT] Session ended for token: " + sessionToken);
-        logAction(sessionToken, "Session", "Logout");
+        activeClients.remove(sessionToken);
     }
 }
