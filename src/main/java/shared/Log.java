@@ -3,7 +3,9 @@ package shared;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Log {
+import java.io.Serializable;
+
+public class Log implements Serializable {
     @Expose
     @SerializedName("UserID")
     private Object userID; // Can be Integer or String

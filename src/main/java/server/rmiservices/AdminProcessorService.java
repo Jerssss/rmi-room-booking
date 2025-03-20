@@ -1,5 +1,6 @@
 package server.rmiservices;
 
+import shared.Log;
 import shared.Reservation;
 import shared.Terminal;
 import shared.callback.Broadcast;
@@ -20,12 +21,24 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
     private static final File TERMINALS_FILE = new File("src/main/resources/data/terminal.json");
+    private static final File LOGS_FILE = new File("src/main/resources/data/logs.json");
 
     // List to store registered callbacks
     private final List<Broadcast> callbacks = new CopyOnWriteArrayList<>();
 
     public AdminProcessorService() throws RemoteException {
         super();
+    }
+
+    @Override
+    public List<Log> getAllLogs() throws RemoteException {
+        try {
+            System.out.println("[AdminProcessorService] Fetching terminal data...");
+            return JSONUtility.loadLogs(LOGS_FILE);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to fetch terminals: " + e.getMessage());
+            return null;
+        }
     }
 
     @Override

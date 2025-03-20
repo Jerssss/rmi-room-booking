@@ -1,5 +1,6 @@
 package shared.interfaces.admin;
 
+import shared.Log;
 import shared.Reservation;
 import shared.Terminal;
 import shared.callback.Broadcast;
@@ -12,7 +13,13 @@ import java.util.List;
  * Remote interface for admin-related processes.
  */
 public interface AdminProcessors extends Remote {
-
+    /**
+     * Retrieves all logs.
+     *
+     * @return A list of all logs.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    List<Log> getAllLogs() throws RemoteException;
     /**
      * Retrieves all student reservations.
      *
