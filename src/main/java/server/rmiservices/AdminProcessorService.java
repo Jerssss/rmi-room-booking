@@ -35,10 +35,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 return new ArrayList<>();
             }
 
-            // Read and print JSON file contents
-            String jsonContent = new String(Files.readAllBytes(RESERVATIONS_FILE.toPath()));
-            System.out.println("JSON Content: " + jsonContent);
-
             // Load reservations from JSON
             List<Reservation> reservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 

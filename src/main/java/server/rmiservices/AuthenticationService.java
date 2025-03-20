@@ -130,18 +130,17 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     /**
      * Handles user authentication (login).
      *
-     * @param userID          The unique ID of the user.
-     * @param password        The password of the user.
-     * @param userType        The type of user (e.g., "Admin" or "Student").
-     * @param clientIP        The IP address of the client.
-     * @param clientCallback  The callback interface for client notifications.
+     * @param userID   The unique ID of the user.
+     * @param password The password of the user.
+     * @param userType The type of user (e.g., "Admin" or "Student").
+     * @param clientIP The IP address of the client.
      * @return An array containing the login status, session token, and user name.
-     * @throws RemoteException            If a communication-related exception occurs during the remote method call.
+     * @throws RemoteException             If a communication-related exception occurs during the remote method call.
      * @throws InvalidCredentialsException If the provided credentials are invalid.
-     * @throws AccountAlreadyLoggedIn     If the user is already logged in.
+     * @throws AccountAlreadyLoggedIn      If the user is already logged in.
      */
     @Override
-    public Object[] login(String userID, String password, String userType, String clientIP, ClientCallbackInterface clientCallback)
+    public Object[] login(String userID, String password, String userType, String clientIP)
             throws RemoteException, InvalidCredentialsException, AccountAlreadyLoggedIn {
 
         if (activeClients.containsKey(userID)) {
@@ -151,9 +150,9 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
 
         Object[] response;
         if ("Admin".equalsIgnoreCase(userType)) {
-            response = authenticateAdmin(userID, password, clientIP, clientCallback);
+            response = authenticateAdmin(userID, password, clientIP);
         } else if ("Student".equalsIgnoreCase(userType)) {
-            response = authenticateStudent(userID, password, clientIP, clientCallback);
+            response = authenticateStudent(userID, password, clientIP);
         } else {
             throw new InvalidCredentialsException("Invalid user type.");
         }
@@ -165,14 +164,13 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     /**
      * Authenticates an Admin user.
      *
-     * @param userID         The unique ID of the admin.
-     * @param password       The password of the admin.
-     * @param clientIP       The IP address of the client.
-     * @param clientCallback The callback interface for client notifications.
+     * @param userID   The unique ID of the admin.
+     * @param password The password of the admin.
+     * @param clientIP The IP address of the client.
      * @return An array containing the login status, session token, and user name.
      * @throws InvalidCredentialsException If the provided credentials are invalid.
      */
-    private Object[] authenticateAdmin(String userID, String password, String clientIP, ClientCallbackInterface clientCallback)
+    private Object[] authenticateAdmin(String userID, String password, String clientIP)
             throws InvalidCredentialsException {
 
         HashMap<String, Admin> admins = JSONUtility.loadAdmins(ADMIN_JSON_FILE);
@@ -188,7 +186,6 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         }
 
         String sessionToken = generateSessionToken();
-        activeClients.put(userID, clientCallback);
 
         sendNotification(userID, "Admin " + admin.getName() + " has logged in!");
 
@@ -207,14 +204,13 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     /**
      * Authenticates a Student user.
      *
-     * @param userID         The unique ID of the student.
-     * @param password       The password of the student.
-     * @param clientIP       The IP address of the client.
-     * @param clientCallback The callback interface for client notifications.
+     * @param userID   The unique ID of the student.
+     * @param password The password of the student.
+     * @param clientIP The IP address of the client.
      * @return An array containing the login status, session token, and user name.
      * @throws InvalidCredentialsException If the provided credentials are invalid.
      */
-    private Object[] authenticateStudent(String userID, String password, String clientIP, ClientCallbackInterface clientCallback)
+    private Object[] authenticateStudent(String userID, String password, String clientIP)
             throws InvalidCredentialsException {
 
         HashMap<String, Student> students = JSONUtility.loadStudents(STUDENT_JSON_FILE);
@@ -230,7 +226,6 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         }
 
         String sessionToken = generateSessionToken();
-        activeClients.put(userID, clientCallback);
 
         sendNotification(userID, "Student " + student.getName() + " has logged in!");
 

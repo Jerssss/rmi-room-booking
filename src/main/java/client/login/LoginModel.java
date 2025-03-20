@@ -44,8 +44,8 @@ public class LoginModel {
         String clientIP = InetAddress.getLocalHost().getHostAddress();
 
         try {
-            ClientCallbackInterface clientCallback = new ClientCallbackImpl();
-            Object[] serverResponse = authService.login(userID, password, userType, clientIP, clientCallback);
+           // ClientCallbackInterface clientCallback = new ClientCallbackImpl();
+            Object[] serverResponse = authService.login(userID, password, userType, clientIP);
 
             if (serverResponse == null || serverResponse.length < 3) {
                 System.out.println("[ERROR] Invalid response from server.");

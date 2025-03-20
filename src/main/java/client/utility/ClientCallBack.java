@@ -34,7 +34,7 @@ public class ClientCallBack extends UnicastRemoteObject implements Broadcast {
     @Override
     public void updateTerminal(List<Terminal> terminals) throws RemoteException {
         System.out.println("[UPDATE] Terminal list updated from server.");
-       // clientModel.setTerminals(terminals);
+        // clientModel.setTerminals(terminals);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ClientCallBack extends UnicastRemoteObject implements Broadcast {
     @Override
     public void updateReservationApproval(List<Reservation> reservations) throws RemoteException {
         System.out.println("[UPDATE] Reservation approvals updated from server.");
-       // clientModel.setReservations(reservations);
+        // clientModel.setReservations(reservations);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ClientCallBack extends UnicastRemoteObject implements Broadcast {
     @Override
     public void updateLogs(List<Log> logs) throws RemoteException {
         System.out.println("[UPDATE] Logs updated from server.");
-      //  clientModel.setLogs(logs);
+        //  clientModel.setLogs(logs);
     }
 
     /**
