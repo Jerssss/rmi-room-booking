@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
+/**1
  * ServerMain initializes the RMI server and handles remote services.
  */
 public class ServerMain {

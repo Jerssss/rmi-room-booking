@@ -4,6 +4,7 @@ import client.ClientMain;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import shared.Reservation;
+import shared.callback.Broadcast;
 import shared.interfaces.admin.AdminProcessors;
 
 import java.rmi.RemoteException;
@@ -85,5 +86,13 @@ public class ReservationApprovalModel {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
             return null;
         }
+    }
+
+    public void registerCallback(Broadcast callback) throws RemoteException {
+        if (adminProcessors == null) {
+            System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
+            return;
+        }
+        adminProcessors.registerCallback(callback);
     }
 }

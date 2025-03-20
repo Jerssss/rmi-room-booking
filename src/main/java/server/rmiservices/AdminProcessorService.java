@@ -2,15 +2,16 @@ package server.rmiservices;
 
 import shared.Reservation;
 import shared.Terminal;
+import shared.callback.Broadcast;
 import shared.interfaces.admin.AdminProcessors;
 import util.JSONUtility;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AdminProcessorService handles admin-related actions.
@@ -19,6 +20,9 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
     private static final File TERMINALS_FILE = new File("src/main/resources/data/terminal.json");
+
+    // List to store registered callbacks
+    private final List<Broadcast> callbacks = new CopyOnWriteArrayList<>();
 
     public AdminProcessorService() throws RemoteException {
         super();
@@ -53,6 +57,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             return null;
         }
     }
+
     @Override
     public List<Terminal> getAllTerminals() throws RemoteException {
         try {
@@ -96,12 +101,17 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             // Save the updated reservations to the JSON file
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
             System.out.println("[AdminProcessorService] Reservations saved successfully.");
+
+            // Notify all registered callbacks about the update
+            notifyReservationUpdate(allReservations);
+
             return true;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to update reservations: " + e.getMessage());
             return false;
         }
     }
+
     @Override
     public void addNewTerminal(Terminal terminal) throws RemoteException {
         try {
@@ -109,6 +119,9 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             terminals.add(terminal);
             JSONUtility.saveTerminals(terminals, TERMINALS_FILE);
             System.out.println("[SERVER] Terminal added successfully.");
+
+            // Notify all registered callbacks about the new terminal
+            notifyTerminalUpdate(terminals);
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to save terminal: " + e.getMessage());
         }
@@ -143,6 +156,10 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
             JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
             System.out.println("[AdminProcessorService] Terminals updated successfully.");
+
+            // Notify all registered callbacks about the update
+            notifyTerminalUpdate(existingTerminals);
+
             return true;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to update terminals: " + e.getMessage());
@@ -150,4 +167,51 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    @Override
+    public void registerCallback(Broadcast callback) throws RemoteException {
+        if (!callbacks.contains(callback)) {
+            callbacks.add(callback);
+            System.out.println("[SERVER] Client callback registered.");
+        }
+    }
+
+    @Override
+    public void unregisterCallback(Broadcast callback) throws RemoteException {
+        callbacks.remove(callback);
+        System.out.println("[SERVER] Client callback unregistered.");
+    }
+
+    /**
+     * Notifies all registered callbacks about a reservation update.
+     *
+     * @param reservations The updated list of reservations.
+     */
+    private void notifyReservationUpdate(List<Reservation> reservations) {
+        for (Broadcast callback : callbacks) {
+            try {
+                callback.updateReservationApproval(reservations);
+            } catch (RemoteException e) {
+                System.err.println("[SERVER] Failed to notify client: " + e.getMessage());
+                // Remove the callback if the client is no longer reachable
+                callbacks.remove(callback);
+            }
+        }
+    }
+
+    /**
+     * Notifies all registered callbacks about a terminal update.
+     *
+     * @param terminals The updated list of terminals.
+     */
+    private void notifyTerminalUpdate(List<Terminal> terminals) {
+        for (Broadcast callback : callbacks) {
+            try {
+                callback.updateTerminal(terminals);
+            } catch (RemoteException e) {
+                System.err.println("[SERVER] Failed to notify client: " + e.getMessage());
+                // Remove the callback if the client is no longer reachable
+                callbacks.remove(callback);
+            }
+        }
+    }
 }
