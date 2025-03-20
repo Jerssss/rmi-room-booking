@@ -143,29 +143,35 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     @Override
     public boolean modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
         try {
-            System.out.println("[AdminProcessorService] Modifying terminal status...");
-
+            System.out.println("[AdminProcessorService] Modifying terminal details...");
             List<Terminal> existingTerminals = JSONUtility.loadTerminals(TERMINALS_FILE);
 
             if (existingTerminals == null) {
                 existingTerminals = new ArrayList<>();
             }
 
-            for (Terminal updated : updatedTerminals) {
+            // Updating terminal status
+            for (int i = 0; i < existingTerminals.size(); i++) {
+                Terminal existing = existingTerminals.get(i);
                 boolean found = false;
-                for (int i = 0; i < existingTerminals.size(); i++) {
+
+                for (Terminal updated : updatedTerminals) {
                     if (existingTerminals.get(i).getTerminalID().equals(updated.getTerminalID())) {
-                        existingTerminals.set(i, updated);
-                        found = true;
+                        existingTerminals.set(i, updated); // Update existing terminal
                         System.out.println("[AdminProcessorService] Updated terminal: " + updated.getTerminalID());
+                        found = true;
                         break;
                     }
                 }
+
+                // Remove terminal if it's not found in updatedTerminals
                 if (!found) {
-                    System.err.println("[ERROR] Terminal not found, adding as new: " + updated.getTerminalID());
-                    existingTerminals.add(updated);
+                    System.err.println("[AdminProcessorService] Removing terminal: " + existing.getTerminalID());
+                    existingTerminals.remove(i);
+                    i--; // Adjust index after removal to avoid skipping elements
                 }
             }
+
 
             JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
             System.out.println("[AdminProcessorService] Terminals updated successfully.");
