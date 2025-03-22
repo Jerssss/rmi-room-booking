@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import shared.Reservation;
 import shared.callback.Broadcast;
+import shared.callback.UpdateTable;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReservationApprovalController {
+public class ReservationApprovalController implements UpdateTable {
 
     private final ReservationApprovalView view;
     private final ReservationApprovalModel model;
@@ -27,7 +28,8 @@ public class ReservationApprovalController {
         this.view = view;
         this.model = model;
         try {
-            this.clientCallBack = new ClientCallBack(this);
+            // Now that the controller implements UpdateTable, the cast will succeed.
+            this.clientCallBack = new ClientCallBack((UpdateTable) this);
             registerCallback();
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -105,11 +107,28 @@ public class ReservationApprovalController {
         System.out.println("[DEBUG] Search completed. Matching results: " + filteredList.size());
     }
 
+    // This method is defined by the UpdateTable interface.
+    @Override
     public void updateReservations(List<Reservation> reservations) {
         Platform.runLater(() -> {
             reservationData.setAll(reservations);
             view.updateTable(reservations);
             System.out.println("[CLIENT] Reservations updated via callback.");
         });
+    }
+
+    // If your design doesn't require terminal updates in this controller,
+    // you can leave the body empty or provide a default implementation.
+    @Override
+    public void updateTerminals(List<shared.Terminal> terminals) {
+        // No implementation needed here, but you must provide a method body.
+        System.out.println("[CLIENT] Terminal update received (not used in this view).");
+    }
+
+    // Similarly for log updates.
+    @Override
+    public void updateLogs(List<shared.Log> logs) {
+        // No implementation needed here, but you must provide a method body.
+        System.out.println("[CLIENT] Log update received (not used in this view).");
     }
 }
