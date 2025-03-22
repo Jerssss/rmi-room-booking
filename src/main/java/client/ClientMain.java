@@ -2,6 +2,9 @@ package client;
 
 import client.landingpage.LandingPageController;
 import client.landingpage.LandingPageView;
+import client.landingpage.pickserver.SetIPController;
+import client.landingpage.pickserver.SetIPModel;
+import client.landingpage.pickserver.SetIPView;
 import client.student.view.ServerErrorWindowView;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -14,6 +17,7 @@ import javafx.stage.Stage;
 import shared.interfaces.Authentication;
 import shared.interfaces.student.StudentProcessors;
 import shared.interfaces.admin.AdminProcessors;
+import shared.interfaces.IPInputHandler;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -26,8 +30,8 @@ import java.util.Date;
 /**
  * ClientMain initializes the client application and connects to the RMI server.
  */
-public class ClientMain extends Application {
-    private static final String SERVER_IP = "10.135.139.229";
+public class ClientMain extends Application implements IPInputHandler {
+    private static String serverIP; // Server IP will be set by the user
     private static final int PORT = 1099;
 
     private static Authentication authService;
@@ -36,60 +40,19 @@ public class ClientMain extends Application {
     private static Stage primaryStage; // Reference to the main window
     private static Stage currentPopupStage; // Reference to the current popup window
 
-
-    /**
-     * The main entry point for the client application.
-     *
-     * @param args Command-line arguments passed to the application.
-     */
     public static void main(String[] args) {
         System.out.println("=====================================================");
         System.out.println("[Client] Starting client at " + new Date());
-        System.out.println("[Client] Connecting to RMI server at " + SERVER_IP + " on port " + PORT);
         System.out.println("=====================================================");
 
-        new Thread(ClientMain::connectToRMIServer).start();
         launch(args);
     }
 
-    /**
-     * Initializes the JavaFX application and sets up the primary stage.
-     *
-     * @param stage The primary stage for the JavaFX application.
-     */
     @Override
     public void start(Stage stage) {
-        primaryStage = stage; // Store reference to primary stage
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/landing_page.fxml"));
-            Parent root = loader.load();
-
-            LandingPageView landingPageView = loader.getController();
-            if (landingPageView == null) {
-                System.err.println("[ERROR] LandingPageView is NULL after FXML load!");
-            } else {
-                new LandingPageController(landingPageView);
-            }
-
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.centerOnScreen();
-            stage.setResizable(false);
-
-            // Set the close request handler
-            stage.setOnCloseRequest(event -> {
-                System.out.println("[INFO] Close request received. Terminating the application...");
-                terminateApplication();
-            });
-
-            stage.show();
-
-            System.out.println("[Client] WELCOME TO LENDIFY");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("[ERROR] Could not load landing_page.fxml");
-        }
+        Platform.setImplicitExit(false); // Keep the JavaFX thread alive
+        primaryStage = stage;
+        showIPInputView();
     }
 
     /**
@@ -123,7 +86,7 @@ public class ClientMain extends Application {
                             Thread.sleep(5000); // Check every 5 seconds
 
                             // Attempt to reconnect to the server
-                            Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+                            Registry registry = LocateRegistry.getRegistry(serverIP, PORT);
                             authService = (Authentication) registry.lookup("authentication");
                             studentProcessors = (StudentProcessors) registry.lookup("student_processors");
                             adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
@@ -152,101 +115,177 @@ public class ClientMain extends Application {
      * Terminates the application gracefully.
      */
     private void terminateApplication() {
-        // Terminate all background threads (if any)
-        terminateBackgroundThreads();
+        System.out.println("[INFO] Terminating application...");
+        Platform.exit(); // Shut down JavaFX
+        System.exit(0); // Ensure JVM exits
+    }
 
-        // Exit the JavaFX application
-        Platform.exit();
 
-        // Ensure the JVM exits
-        System.exit(0);
+    private void showIPInputView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/set_ip_window.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller
+            SetIPView controller = loader.getController();
+            controller.setConnectHandler(this::handleIPInput); // Pass the IP to handleIPInput
+
+            // Create a new stage for the IP input view
+            Stage ipInputStage = new Stage();
+            ipInputStage.setTitle("Specify Server");
+            ipInputStage.setScene(new Scene(root));
+            ipInputStage.setResizable(false);
+            ipInputStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
+
+            // Show the IP input view and wait for user input
+            ipInputStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("[ERROR] Could not load SetIPView.fxml");
+        }
     }
 
     /**
-     * Terminates all background threads and unexports RMI objects.
+     * Handles the IP input from the user and attempts to connect to the server.
+     *
+     * @param ip The server IP address entered by the user.
      */
-    private void terminateBackgroundThreads() {
-        System.out.println("[INFO] Terminating background threads...");
+    public void handleIPInput(String ip) {
+        if (ip == null || ip.trim().isEmpty()) {
+            System.out.println("[Client] No IP address provided. Exiting...");
+            Platform.exit();
+            return;
+        }
 
-        // Terminate RMI threads (if applicable)
+        serverIP = ip.trim();
+        System.out.println("[Client] Connecting to RMI server at " + serverIP + " on port " + PORT);
+
+        // Attempt to connect to the server in a background thread
+        new Thread(() -> {
+            connectToRMIServer(this); // Pass the current instance
+        }).start();
+    }
+
+    /**
+     * Loads the main landing page after a successful connection.
+     */
+    private void loadLandingPage() {
+
+        if (Platform.isFxApplicationThread()) {
+            // If already on the JavaFX Application Thread, load the landing page directly
+            loadLandingPageUI();
+        } else {
+            Platform.runLater(() -> {
+                loadLandingPageUI();
+            });
+        }
+    }
+
+    private void loadLandingPageUI() {
         try {
-            if (authService != null) {
-                java.rmi.server.UnicastRemoteObject.unexportObject(authService, true);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/landing_page.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller
+            LandingPageView landingPageView = loader.getController();
+            if (landingPageView == null) {
+                System.err.println("[ERROR] LandingPageView is NULL after FXML load!");
+            } else {
+                System.out.println("[DEBUG] LandingPageView controller loaded successfully."); // Debug log
+                new LandingPageController(landingPageView);
             }
-            if (studentProcessors != null) {
-                java.rmi.server.UnicastRemoteObject.unexportObject(studentProcessors, true);
-            }
-            if (adminProcessors != null) {
-                java.rmi.server.UnicastRemoteObject.unexportObject(adminProcessors, true);
-            }
-            System.out.println("[INFO] RMI objects unexported.");
+
+            // Set the scene
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            primaryStage.centerOnScreen();
+            primaryStage.setResizable(false);
+
+            primaryStage.setOnCloseRequest(event -> {
+                System.out.println("[INFO] Close request received. Terminating the application...");
+                terminateApplication();
+            });
+            // Show the landing page
+            primaryStage.show();
+
+            System.out.println("[Client] WELCOME TO LENDIFY");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("[ERROR] Could not load landing_page.fxml: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to unexport RMI objects: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("[ERROR] Unexpected error in loadLandingPageUI(): " + e.getMessage());
         }
     }
 
     /**
      * Connects to the RMI server and retries if the server is down.
      */
-    private static void connectToRMIServer() {
+    private static void connectToRMIServer(ClientMain clientMain) {
         final int MAX_RETRIES = 5; // Maximum number of retries
         final int RETRY_DELAY = 5000; // Delay between retries in milliseconds
 
-        // Run the retry logic on a background thread
-        new Thread(() -> {
-            int retryCount = 0;
+        int retryCount = 0;
 
-            while (retryCount < MAX_RETRIES) {
-                try {
-                    Registry registry = LocateRegistry.getRegistry(SERVER_IP, PORT);
+        while (retryCount < MAX_RETRIES) {
+            try {
+                System.out.println("[DEBUG] Attempting to connect to server at " + serverIP + ":" + PORT);
 
-                    authService = (Authentication) registry.lookup("authentication");
-                    studentProcessors = (StudentProcessors) registry.lookup("student_processors");
-                    adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
+                Registry registry = LocateRegistry.getRegistry(serverIP, PORT);
 
-                    authService.logClientConnection(InetAddress.getLocalHost().getHostAddress());
+                System.out.println("[DEBUG] Registry located. Looking up services...");
 
-                    System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
+                authService = (Authentication) registry.lookup("authentication");
+                studentProcessors = (StudentProcessors) registry.lookup("student_processors");
+                adminProcessors = (AdminProcessors) registry.lookup("admin_processors");
 
-                    // Close the popup window on successful reconnection
-                    closePopupWindow();
+                System.out.println("[DEBUG] Services successfully looked up.");
 
-                    // Start the heartbeat mechanism
-                    startHeartbeat();
+                authService.logClientConnection(InetAddress.getLocalHost().getHostAddress());
 
-                    return; // Exit the loop on successful connection
-                } catch (Exception e) {
-                    retryCount++;
-                    System.err.println("[ERROR] " + e.getMessage());
+                System.out.println("[Client] Connected to Authentication, Student, and Admin Processors.");
 
-                    // Show the error window on the JavaFX Application Thread
-                    int finalRetryCount = retryCount;
+                // Close the popup window on successful reconnection
+                closePopupWindow();
+
+                // Start the heartbeat mechanism
+                startHeartbeat();
+
+                // Call the method to load the landing page
+                clientMain.loadLandingPage();
+
+                return; // Exit the loop on successful connection
+            } catch (Exception e) {
+                retryCount++;
+                System.err.println("[ERROR] " + e.getMessage());
+
+                // Show the error window on the JavaFX Application Thread
+                int finalRetryCount = retryCount;
+                Platform.runLater(() -> {
+                    showServerErrorWindow("Server unreachable. Retry attempt " + finalRetryCount + "/" + MAX_RETRIES, finalRetryCount < MAX_RETRIES);
+                });
+
+                if (retryCount >= MAX_RETRIES) {
+                    // Show the final error message and exit the application
                     Platform.runLater(() -> {
-                        showServerErrorWindow("Server unreachable. Retry attempt " + finalRetryCount + "/" + MAX_RETRIES, finalRetryCount < MAX_RETRIES);
+                        showServerErrorWindow("Failed to connect to the server after " + MAX_RETRIES + " attempts. Exiting...", false);
+                        Platform.exit(); // Exit the application
                     });
+                    return;
+                }
 
-                    if (retryCount >= MAX_RETRIES) {
-                        // Show the final error message and exit the application
-                        Platform.runLater(() -> {
-                            showServerErrorWindow("Failed to connect to the server after " + MAX_RETRIES + " attempts. Exiting...", false);
-                            Platform.exit(); // Exit the application
-                        });
-                        return;
+                // Wait for user input before retrying
+                try {
+                    synchronized (ClientMain.class) {
+                        ClientMain.class.wait(); // Pause the thread until notified
                     }
-
-                    // Wait for user input before retrying
-                    try {
-                        synchronized (ClientMain.class) {
-                            ClientMain.class.wait(); // Pause the thread until notified
-                        }
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                        System.err.println("[ERROR] Retry thread interrupted.");
-                        return;
-                    }
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("[ERROR] Retry thread interrupted.");
+                    return;
                 }
             }
-        }).start(); // Start the background thread
+        }
     }
 
 
@@ -343,17 +382,6 @@ public class ClientMain extends Application {
         });
     }
 
-    /**
-     * Pauses execution for a given time.
-     * @param millis Duration in milliseconds.
-     */
-    private static void sleep(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 
     /**
      * Returns the authentication service instance.
@@ -382,13 +410,12 @@ public class ClientMain extends Application {
         return adminProcessors;
     }
 
-
     /**
      * Returns the server IP address.
      *
      * @return The server IP address.
      */
     public static String getServerIP() {
-        return SERVER_IP;
+        return serverIP;
     }
 }

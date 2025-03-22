@@ -10,9 +10,12 @@ module Lendify {
     exports client.utility;
     exports shared;
     exports shared.interfaces;
-
-    // Export the shared.callback package to java.rmi
+    exports client.landingpage;
+    exports client.student.view;
     exports shared.callback to java.rmi;
+    exports client.landingpage.pickserver to javafx.fxml;
+    exports shared.interfaces.admin;
+    exports shared.interfaces.student;
 
     opens shared to com.google.gson;
     opens client.landingpage to javafx.fxml;
@@ -23,6 +26,5 @@ module Lendify {
     opens client.admin.controller to javafx.fxml;
     opens client.student.view to javafx.fxml;
     opens client.student.controller to javafx.fxml;
-    exports shared.interfaces.admin;
-    exports shared.interfaces.student;
+    opens client.landingpage.pickserver to javafx.fxml;
 }

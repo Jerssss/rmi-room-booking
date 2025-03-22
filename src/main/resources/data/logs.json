@@ -105,6 +105,27 @@
         "Action": "Login",
         "Date": "2025-03-22",
         "Time": "18:09:42"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Student",
+        "Action": "Login",
+        "Date": "2025-03-23",
+        "Time": "03:29:38"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Student",
+        "Action": "Login",
+        "Date": "2025-03-23",
+        "Time": "03:33:12"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-23",
+        "Time": "03:33:16"
       }
     ]
   }
