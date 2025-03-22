@@ -7,10 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -20,7 +17,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import shared.Terminal;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -35,17 +31,11 @@ public class AddNewTerminalView implements Initializable {
     @FXML private TableColumn<Terminal, String> endTimeColumn;
     @FXML private TableColumn<Terminal, String> statusColumn;
     @FXML private TableColumn<Terminal, String> reservationDateColumn;
-
     @FXML private TableView<Terminal> addTerminalTableView;
-
-    @FXML
-    private TextField searchTerminalTextField;
-    @FXML
-    private Button searchButton;
-    @FXML
-    private Button redirectAddTerminalWindowButton;
-    @FXML
-    private Button refreshButton;  // Added refresh button reference
+    @FXML private TextField searchTerminalTextField;
+    @FXML private Button searchButton;
+    @FXML private Button redirectAddTerminalWindowButton;
+    @FXML private Button refreshButton;  // Refresh button
 
     private final ObservableList<Terminal> allTerminals = FXCollections.observableArrayList();
     private AddNewTerminalController controller;
@@ -56,9 +46,7 @@ public class AddNewTerminalView implements Initializable {
         initializeTableColumns();
         controller = new AddNewTerminalController(this, new AddNewTerminalModel());
         controller.loadTerminals();  // Fetch & update table on startup
-
         initializeSearchListener();
-
         // Refresh table when refresh button is clicked
         refreshButton.setOnAction(event -> controller.loadTerminals());
         redirectAddTerminalWindowButton.setOnAction(event -> openAddTerminalWindow());
@@ -84,23 +72,19 @@ public class AddNewTerminalView implements Initializable {
         System.out.println("[CLIENT] Controller has been set in AddNewTerminalView.");
     }
 
-    /** Updates Table */
+    /** Updates Table with new terminal data */
     public void updateTable(List<Terminal> terminals) {
         System.out.println("=====================================================");
         if (terminals == null || terminals.isEmpty()) {
             System.err.println("[ERROR] No terminals found. updateTable() was called with an empty list.");
             return;
         }
-
-        // Print how many terminals we received
         System.out.println("[CLIENT] Received " + terminals.size() + " terminals in updateTable().");
-
         allTerminals.setAll(terminals);
         addTerminalTableView.setItems(allTerminals);
-
-        // Print after updating
         System.out.println("[CLIENT] allTerminals now contains " + allTerminals.size() + " items.");
     }
+
     /** Activates Real-Time Search Listener */
     public void initializeSearchListener() {
         searchTerminalTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -108,27 +92,15 @@ public class AddNewTerminalView implements Initializable {
         });
     }
 
-    /** Automatically Searches Terminals Based on Input */
-    private void handleSearch() {
-        String query = searchTerminalTextField.getText().trim().toLowerCase();
-        searchTerminals(query);
-    }
-
     /** Searches terminals without modifying the full list. */
     public void searchTerminals(String query) {
-
-        // Prevent searching if allTerminals is empty
         if (allTerminals.isEmpty()) {
             return;
         }
-
-        // If query is empty, show all terminals again
         if (query == null || query.isEmpty()) {
             addTerminalTableView.setItems(allTerminals);
             return;
         }
-
-        // Filter terminals based on query
         List<Terminal> filteredList = allTerminals.stream()
                 .filter(terminal -> terminal.getTerminalID().toLowerCase().contains(query) ||
                         terminal.getRoom().toLowerCase().contains(query) ||
@@ -138,7 +110,6 @@ public class AddNewTerminalView implements Initializable {
                         terminal.getStartTime().toLowerCase().contains(query) ||
                         terminal.getEndTime().toLowerCase().contains(query))
                 .collect(Collectors.toList());
-
         addTerminalTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
@@ -147,6 +118,7 @@ public class AddNewTerminalView implements Initializable {
         windowView.showWindow();
     }
 
+    // Button animation methods
 
     public void searchButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
