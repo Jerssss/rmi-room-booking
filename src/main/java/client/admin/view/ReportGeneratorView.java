@@ -14,10 +14,15 @@ import shared.Log;
 import shared.Reservation;
 import client.admin.controller.ReportGeneratorController;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ReportGeneratorView implements Initializable {
 
@@ -28,10 +33,7 @@ public class ReportGeneratorView implements Initializable {
     public TextField searchReportTextField;
 
     @FXML
-    public Button searchButton;
-
-    @FXML
-    public Button refreshButton;
+    public Button exportButton;
 
     @FXML
     public TabPane reportsTabPane;
@@ -87,7 +89,8 @@ public class ReportGeneratorView implements Initializable {
         initializeLogTableColumns();
         initializeReservationTableColumns();
         initializeSearchListener();
-        initializeController(); // Added to instantiate the controller.
+        initializeController();
+        exportButton.setOnAction(this::handleExportButtonAction);
     }
 
     /** Initializes Log TableView columns */
@@ -181,14 +184,110 @@ public class ReportGeneratorView implements Initializable {
         System.out.println("[DEBUG] Reservation table updated with " + reservations.size() + " entries.");
     }
 
-    /** Sets the action for the refresh button */
-    public void setRefreshButtonAction(EventHandler<ActionEvent> event) {
-        refreshButton.setOnAction(event);
+    @FXML
+    public void handleExportButtonAction(ActionEvent event) {
+        Tab selectedTab = reportsTabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab == logReportTab) {
+            exportLogsToCSV();
+        } else if (selectedTab == reservationReportTab) {
+            exportReservationsToCSV();
+        } else {
+            showAlert("No data to export from the selected tab.");
+        }
+    }
+
+    private void exportLogsToCSV() {
+        ObservableList<Log> logs = logReportTableView.getItems();
+        if (logs.isEmpty()) {
+            showAlert("No logs to export.");
+            return;
+        }
+        String csvContent = generateLogsCSV(logs);
+        String fileName = "logs_" + System.currentTimeMillis() + ".csv";
+        saveCSVToFile(csvContent, fileName);
+    }
+
+    private void exportReservationsToCSV() {
+        ObservableList<Reservation> reservations = reservationReportTableView.getItems();
+        if (reservations.isEmpty()) {
+            showAlert("No reservations to export.");
+            return;
+        }
+        String csvContent = generateReservationsCSV(reservations);
+        String fileName = "reservations_" + System.currentTimeMillis() + ".csv";
+        saveCSVToFile(csvContent, fileName);
+    }
+
+    private String generateLogsCSV(ObservableList<Log> logs) {
+        StringBuilder csv = new StringBuilder();
+        // Add export timestamp
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        csv.append("Exported on: ").append(timestamp).append("\n\n");
+
+        csv.append("User ID,User Type,Actions,Date,Time\n");
+        for (Log log : logs) {
+            String line = String.format("%s,%s,%s,%s,%s\n",
+                    log.getUserID().toString(),
+                    log.getUserType(),
+                    log.getAction(),
+                    log.getDate(),
+                    log.getTime());
+            csv.append(line);
+        }
+        return csv.toString();
+    }
+
+    private String generateReservationsCSV(ObservableList<Reservation> reservations) {
+        StringBuilder csv = new StringBuilder();
+        // Add export timestamp
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        csv.append("Exported on: ").append(timestamp).append("\n\n");
+
+        csv.append("Reservation ID,Terminal ID,Room Number,Reservation Status,Terminal Status\n");
+        for (Reservation res : reservations) {
+            String line = String.format("%s,%s,%s,%s,%s\n",
+                    res.getReservationID(),
+                    res.getTerminalID(),
+                    res.getRoomID(),
+                    res.getStatus(),
+                    res.getStatus());
+            csv.append(line);
+        }
+        return csv.toString();
+    }
+
+    private void saveCSVToFile(String csvContent, String fileName) {
+        String directoryPath = "src/main/resources/reports";
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            boolean dirsCreated = directory.mkdirs();
+            if (!dirsCreated) {
+                showAlert("Failed to create directory: " + directoryPath);
+                return;
+            }
+        }
+
+        File file = new File(directory, fileName);
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(csvContent);
+            showAlert("Exported successfully to: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            showAlert("Error exporting CSV: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Export Status");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     /** Handles the refresh button's hover exit animation */
-    public void refreshButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
+    public void exportButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), exportButton);
         st.setToX(1.0);
         st.setToY(1.0);
         st.setCycleCount(1);
@@ -197,8 +296,8 @@ public class ReportGeneratorView implements Initializable {
     }
 
     /** Handles the refresh button's hover animation */
-    public void refreshButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
+    public void exportButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), exportButton);
         st.setToX(0.9);
         st.setToY(0.9);
         st.setCycleCount(1);

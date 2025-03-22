@@ -51,9 +51,10 @@ public class ReservationApprovalController {
         loadReservations();
 
         // Set button actions
-        this.view.setActionRefreshButton(event -> loadReservations());
         this.view.setActionSaveChangesButton(event -> saveChanges());
-        this.view.setActionSearchButton(event -> searchReservations(view.getSearchStudResTextField().getText()));
+        this.view.getSearchStudResTextField().textProperty().addListener(
+                (observable, oldValue, newValue) -> searchReservations(newValue)
+        );
     }
 
     /** Loads reservation data and updates the view */
