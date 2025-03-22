@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="centerPane" prefHeight="573.0" prefWidth="805.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="client.admin.view.ReservationApprovalView">
+<VBox fx:id="centerPane" prefHeight="573.0" prefWidth="805.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.admin.view.ReservationApprovalView">
 
    <children>
       <!-- Header Section -->
@@ -40,28 +39,15 @@
                         <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="243.0">
                            <children>
                               <TextField fx:id="searchStudResTextField" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
-                              <Button fx:id="searchButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#searchButtonHovered" onMouseExited="#searchButtonExited" prefHeight="26.0" prefWidth="69.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Search" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
                            </children>
                         </StackPane>
                      </children>
                   </HBox>
 
                   <!-- Refresh Section -->
-                  <HBox alignment="CENTER" prefHeight="74.0" prefWidth="175.0" spacing="10.0">
+                  <HBox alignment="CENTER" prefHeight="74.0" prefWidth="77.0" spacing="10.0">
                      <children>
-                        <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="61.0">
-                           <children>
-                              <Button fx:id="refreshButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#refreshButtonHovered" onMouseExited="#refreshButtonExited" prefHeight="26.0" prefWidth="85.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Refresh" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </StackPane>
+                        <StackPane alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="24.0" />
                      </children>
                   </HBox>
                </children>

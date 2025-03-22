@@ -1,0 +1,25 @@
+Exported on: 2025-03-23 04:28:35
+
+User ID,User Type,Actions,Date,Time
+2250001.0,Admin,Login,2025-02-17,21:45:57
+2250002.0,Admin,Login,2025-02-17,22:03:32
+2250003.0,Admin,Login,2025-02-17,22:04:47
+2240000.0,Student,Login,2025-02-18,18:08:59
+2240001.0,Student,Login,2025-02-18,18:10:32
+Admin Test,Admin,Logout,2025-03-06,21:10:23
+Admin Test,Admin,Logout,2025-03-22,11:18:27
+Admin Test,Admin,Logout,2025-03-22,14:23:02
+Admin Test,Admin,Logout,2025-03-22,14:26:28
+Test Student,Student,Logout,2025-03-22,14:46:22
+Admin Test,Admin,Logout,2025-03-22,14:47:33
+1,Admin,Login,2025-03-22,15:24:35
+Admin Test,Admin,Logout,2025-03-22,15:24:55
+1,Admin,Login,2025-03-22,15:28:31
+1,Admin,Login,2025-03-22,18:09:42
+1,Student,Login,2025-03-23,03:29:38
+1,Student,Login,2025-03-23,03:33:12
+Test Student,Student,Logout,2025-03-23,03:33:16
+1,Admin,Login,2025-03-23,04:12:22
+1,Admin,Login,2025-03-23,04:15:22
+1,Admin,Login,2025-03-23,04:26:44
+1,Admin,Login,2025-03-23,04:28:31

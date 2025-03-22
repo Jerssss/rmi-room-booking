@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 public class ReservationApprovalView implements Initializable {
 
     @FXML
-    private Button searchButton, refreshButton, saveChangesButton;
+    private Button saveChangesButton;
     @FXML
     private TextField searchStudResTextField;
     @FXML
@@ -89,14 +89,6 @@ public class ReservationApprovalView implements Initializable {
         return approveResTableView;
     }
 
-    public void setActionSearchButton(EventHandler<ActionEvent> event) {
-        searchButton.setOnAction(event);
-    }
-
-    public void setActionRefreshButton(EventHandler<ActionEvent> event) {
-        refreshButton.setOnAction(event);
-    }
-
     public void setActionSaveChangesButton(EventHandler<ActionEvent> event) {
         saveChangesButton.setOnAction(event);
     }
@@ -141,23 +133,4 @@ public class ReservationApprovalView implements Initializable {
         animateButton(saveChangesButton, 0.9);
     }
 
-    @FXML
-    private void searchButtonExited() {
-        animateButton(searchButton, 1.0);
-    }
-
-    @FXML
-    private void searchButtonHovered() {
-        animateButton(searchButton, 0.9);
-    }
-
-    @FXML
-    private void refreshButtonExited() {
-        animateButton(refreshButton, 1.0);
-    }
-
-    @FXML
-    private void refreshButtonHovered() {
-        animateButton(refreshButton, 0.9);
-    }
 }

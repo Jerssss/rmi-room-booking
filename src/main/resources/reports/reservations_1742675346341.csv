@@ -1,0 +1,14 @@
+Exported on: 2025-03-23 04:29:06
+
+Reservation ID,Terminal ID,Room Number,Reservation Status,Terminal Status
+1,2,D531,Pending,Pending
+2,1,D524,Approved,Approved
+3,70,D524,Approved,Approved
+4,10,D524,Pending,Pending
+5,PC0,D426,Rejected,Rejected
+6,PC2,D524,Pending,Pending
+7,PC21,D524,Approved,Approved
+8,PC22,D524,Pending,Pending
+9,PC23,D526,Pending,Pending
+10,PC23,D526,Pending,Pending
+11,PC23,D526,Pending,Pending
