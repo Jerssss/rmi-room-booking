@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -181,7 +182,7 @@ public class AdminMainMenuController {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
 
         String date = LocalDate.now().toString();
-        String time = LocalTime.now().toString();
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         logs.add(new Log(userID, userType, "Logout", date, time));
 

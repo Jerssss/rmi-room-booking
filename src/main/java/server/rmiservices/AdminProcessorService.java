@@ -5,10 +5,13 @@ import shared.Reservation;
 import shared.Terminal;
 import shared.callback.Broadcast;
 import shared.interfaces.admin.AdminProcessors;
+import shared.interfaces.student.StudentProcessors;
 import util.JSONUtility;
 
 import java.io.File;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +36,10 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     @Override
     public List<Log> getAllLogs() throws RemoteException {
         try {
-            System.out.println("[AdminProcessorService] Fetching terminal data...");
+            System.out.println("[AdminProcessorService] Fetching logs...");
             return JSONUtility.loadLogs(LOGS_FILE);
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to fetch terminals: " + e.getMessage());
+            System.err.println("[ERROR] Failed to fetch logs: " + e.getMessage());
             return null;
         }
     }
@@ -46,22 +49,17 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         try {
             System.out.println("[AdminProcessorService] Fetching student reservations from: " + RESERVATIONS_FILE.getAbsolutePath());
 
-            // Check if file exists
             if (!RESERVATIONS_FILE.exists()) {
                 System.err.println("[ERROR] JSON file does not exist: " + RESERVATIONS_FILE.getAbsolutePath());
                 return new ArrayList<>();
             }
 
-            // Load reservations from JSON
             List<Reservation> reservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             if (reservations == null || reservations.isEmpty()) {
                 System.out.println("[AdminProcessorService] No reservations found in JSON.");
             } else {
                 System.out.println("[AdminProcessorService] Loaded " + reservations.size() + " reservations.");
-                for (Reservation res : reservations) {
-                    System.out.println("[AdminProcessorService] " + res);
-                }
             }
 
             return reservations;
@@ -83,19 +81,17 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     }
 
     @Override
-    public boolean updateReservations(List<Reservation> updatedReservations) throws RemoteException {
+    public void updateReservations(List<Reservation> updatedReservations) throws RemoteException {
         try {
             System.out.println("[AdminProcessorService] Updating reservations...");
 
-            // Load existing reservations
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             if (allReservations == null) {
                 System.err.println("[ERROR] Failed to load existing reservations.");
-                return false;
+                return;
             }
 
-            // Update the reservations
             for (Reservation updatedReservation : updatedReservations) {
                 boolean found = false;
                 for (int i = 0; i < allReservations.size(); i++) {
@@ -111,17 +107,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 }
             }
 
-            // Save the updated reservations to the JSON file
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
             System.out.println("[AdminProcessorService] Reservations saved successfully.");
 
-            // Notify all registered callbacks about the update
             notifyReservationUpdate(allReservations);
-
-            return true;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to update reservations: " + e.getMessage());
-            return false;
         }
     }
 
@@ -140,6 +131,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+
     @Override
     public boolean modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
         try {
@@ -150,34 +142,40 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 existingTerminals = new ArrayList<>();
             }
 
-            // Updating terminal status
             for (int i = 0; i < existingTerminals.size(); i++) {
                 Terminal existing = existingTerminals.get(i);
                 boolean found = false;
 
                 for (Terminal updated : updatedTerminals) {
-                    if (existingTerminals.get(i).getTerminalID().equals(updated.getTerminalID())) {
-                        existingTerminals.set(i, updated); // Update existing terminal
+                    if (existing.getTerminalID().equals(updated.getTerminalID())) {
+                        existingTerminals.set(i, updated);
                         System.out.println("[AdminProcessorService] Updated terminal: " + updated.getTerminalID());
                         found = true;
                         break;
                     }
                 }
 
-                // Remove terminal if it's not found in updatedTerminals
                 if (!found) {
                     System.err.println("[AdminProcessorService] Removing terminal: " + existing.getTerminalID());
                     existingTerminals.remove(i);
-                    i--; // Adjust index after removal to avoid skipping elements
+                    i--;
                 }
             }
-
 
             JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
             System.out.println("[AdminProcessorService] Terminals updated successfully.");
 
-            // Notify all registered callbacks about the update
             notifyTerminalUpdate(existingTerminals);
+
+            // *** Notify Student Clients ***
+            try {
+                Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
+                StudentProcessors studentProc = (StudentProcessors) registry.lookup("student_processors");
+                studentProc.updateTerminals(existingTerminals);
+                System.out.println("[AdminProcessorService] Pushed terminal update to student clients.");
+            } catch (Exception e) {
+                System.err.println("[AdminProcessorService] Failed to push terminal update to student clients: " + e.getMessage());
+            }
 
             return true;
         } catch (Exception e) {
@@ -202,8 +200,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     /**
      * Notifies all registered callbacks about a reservation update.
-     *
-     * @param reservations The updated list of reservations.
      */
     private void notifyReservationUpdate(List<Reservation> reservations) {
         for (Broadcast callback : callbacks) {
@@ -211,7 +207,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 callback.updateReservationApproval(reservations);
             } catch (RemoteException e) {
                 System.err.println("[SERVER] Failed to notify client: " + e.getMessage());
-                // Remove the callback if the client is no longer reachable
                 callbacks.remove(callback);
             }
         }
@@ -219,8 +214,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     /**
      * Notifies all registered callbacks about a terminal update.
-     *
-     * @param terminals The updated list of terminals.
      */
     private void notifyTerminalUpdate(List<Terminal> terminals) {
         for (Broadcast callback : callbacks) {
@@ -228,7 +221,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 callback.updateTerminal(terminals);
             } catch (RemoteException e) {
                 System.err.println("[SERVER] Failed to notify client: " + e.getMessage());
-                // Remove the callback if the client is no longer reachable
                 callbacks.remove(callback);
             }
         }

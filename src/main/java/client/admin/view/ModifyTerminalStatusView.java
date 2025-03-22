@@ -1,7 +1,6 @@
 package client.admin.view;
 
 import client.admin.controller.ModifyTerminalStatusController;
-import client.admin.model.ModifyTerminalStatusModel;
 import javafx.animation.ScaleTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -10,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Background;
@@ -41,6 +41,7 @@ public class ModifyTerminalStatusView {
     @FXML public TableColumn<Terminal, String> endTimeColumn;
     @FXML private TableColumn<Terminal, String> terminalStatusColumn;
     @FXML private TableColumn<Terminal, String> editColumn;
+
     private Stage confirmationStage;
     @FXML private Label roomNoLabel;
     @FXML private Label terminalNoLabel;
@@ -48,6 +49,7 @@ public class ModifyTerminalStatusView {
     @FXML private Label terminalStatusLabel;
     @FXML private Button confirmButton;
     @FXML private Button cancelButton;
+
     private ModifyTerminalStatusController controller;
     private ObservableList<Terminal> terminalData = FXCollections.observableArrayList();
 
@@ -94,13 +96,18 @@ public class ModifyTerminalStatusView {
         saveChangesButton.setOnAction(event);
     }
 
-    //Refreshed the table
+    // Refresh the table with new data
     public void updateTable(List<Terminal> data) {
         terminalData.setAll(data); // Update dataset
         modTerTableView.setItems(null); // Force reset
         modTerTableView.setItems(terminalData); // Reload table data
         modTerTableView.refresh(); // Force UI refresh
         System.out.println("[DEBUG] Terminal data updated. New table size: " + terminalData.size());
+    }
+
+    // Allow controller to access the current terminal data
+    public ObservableList<Terminal> getCurrentTerminalData() {
+        return terminalData;
     }
 
     private Callback<TableColumn<Terminal, String>, TableCell<Terminal, String>> createStyledStatusCellFactory() {
@@ -223,7 +230,6 @@ public class ModifyTerminalStatusView {
         confirmationStage.showAndWait();
     }
 
-
     public void saveChangesButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
         st.setToX(1.0);
@@ -257,7 +263,6 @@ public class ModifyTerminalStatusView {
         st.setAutoReverse(false);
         st.play();
     }
-
     public void refreshButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(1.0);

@@ -1,19 +1,19 @@
 package client.utility;
 
-import client.admin.controller.ReservationApprovalController;
 import shared.Log;
 import shared.Reservation;
 import shared.Terminal;
 import shared.callback.Broadcast;
+import shared.callback.UpdateTable;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 public class ClientCallBack extends UnicastRemoteObject implements Broadcast {
-    private final ReservationApprovalController controller;
+    private final UpdateTable controller;
 
-    public ClientCallBack(ReservationApprovalController controller) throws RemoteException {
+    public ClientCallBack(UpdateTable controller) throws RemoteException {
         super();
         this.controller = controller;
     }
@@ -21,7 +21,7 @@ public class ClientCallBack extends UnicastRemoteObject implements Broadcast {
     @Override
     public void updateTerminal(List<Terminal> terminals) throws RemoteException {
         System.out.println("[UPDATE] Terminal list updated from server.");
-        // Handle terminal updates if needed
+        controller.updateTerminals(terminals);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ClientCallBack extends UnicastRemoteObject implements Broadcast {
     @Override
     public void updateLogs(List<Log> logs) throws RemoteException {
         System.out.println("[UPDATE] Logs updated from server.");
-        // Handle log updates if needed
+        controller.updateLogs(logs);
     }
 
     @Override

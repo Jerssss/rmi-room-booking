@@ -11,7 +11,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import shared.Log;
+import shared.Reservation;
 import shared.Terminal;
+import shared.callback.UpdateTable;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -27,13 +30,35 @@ public class ModifyTerminalStatusController {
         this.view = view;
         this.model = new ModifyTerminalStatusModel();
 
-        // Load reservations when the page opens
+        // Register the callback for terminal updates
+        model.initCallback(new UpdateTable() {
+            @Override
+            public void updateTerminals(List<Terminal> terminals) {
+                Platform.runLater(() -> {
+                    terminalData.setAll(terminals);
+                    view.updateTable(terminals);
+                    System.out.println("[CLIENT] Terminal update received via callback in ModifyTerminalStatusController.");
+                });
+            }
+
+            @Override
+            public void updateReservations(List<Reservation> reservations) {
+
+            }
+
+            @Override
+            public void updateLogs(List<Log> logs) {
+
+            }
+        });
+
+        // Initial load of terminal data
         loadTerminals();
     }
 
-    /** Loads reservation data and updates the view */
+    /** Loads terminal data and updates the view */
     public void loadTerminals() {
-        System.out.println("[CLIENT] loadTerminals() method called."); // Add this
+        System.out.println("[CLIENT] loadTerminals() method called.");
 
         List<Terminal> terminals = model.fetchTerminals();
 
@@ -41,10 +66,10 @@ public class ModifyTerminalStatusController {
             Platform.runLater(() -> {
                 terminalData.setAll(terminals); // Update observable list
                 view.updateTable(terminals);
-                System.out.println("[CLIENT] Table updated with " + terminals.size() + " reservations.");
+                System.out.println("[CLIENT] Table updated with " + terminals.size() + " terminals.");
             });
         } else {
-            System.err.println("[ERROR] Failed to load reservations.");
+            System.err.println("[ERROR] Failed to load terminals.");
         }
     }
 
@@ -53,7 +78,6 @@ public class ModifyTerminalStatusController {
         view.updateTable(FXCollections.observableArrayList(terminalData));
         System.out.println("[DEBUG] Terminal removed: " + terminal.getTerminalID());
     }
-
 
     public void saveChanges() {
         try {
@@ -118,10 +142,7 @@ public class ModifyTerminalStatusController {
         }
     }
 
-
-
     public void searchTerminals(ObservableList<Terminal> terminalData, String searchText) {
-
         if (searchText == null || searchText.trim().isEmpty()) {
             System.out.println("[DEBUG] Search text is empty. Resetting to full terminal list.");
         }

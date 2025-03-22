@@ -1,8 +1,11 @@
 package client.admin.model;
 
 import client.ClientMain;
+import client.utility.ClientCallBack;
 import shared.Terminal;
+import shared.callback.UpdateTable;
 import shared.interfaces.admin.AdminProcessors;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class ModifyTerminalStatusModel {
@@ -29,6 +32,21 @@ public class ModifyTerminalStatusModel {
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to modify terminal via RMI: " + e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Registers the client callback so that the server can push terminal updates.
+     *
+     * @param updateTable The callback implementation that handles terminal updates.
+     */
+    public void initCallback(UpdateTable updateTable) {
+        try {
+            ClientCallBack clientCallBack = new ClientCallBack(updateTable);
+            adminService.registerCallback(clientCallBack);
+            System.out.println("[CLIENT] Callback registered for terminal status updates.");
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }

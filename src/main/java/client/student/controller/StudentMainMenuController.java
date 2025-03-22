@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import shared.Log;
 import util.JSONUtility;
+import java.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,7 +141,7 @@ public class StudentMainMenuController {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
 
         String date = LocalDate.now().toString();
-        String time = LocalTime.now().toString();
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         logs.add(new Log(userID, userType, "Logout", date, time));
 
