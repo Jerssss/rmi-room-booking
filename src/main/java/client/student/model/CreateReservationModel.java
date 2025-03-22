@@ -4,6 +4,7 @@ import client.ClientMain;
 import shared.Reservation;
 import shared.Terminal;
 import shared.interfaces.student.StudentProcessors;
+import util.exception.ReservationException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -47,12 +48,15 @@ public class CreateReservationModel {
     /**
      * Adds a new reservation by calling the RMI service.
      */
-    public boolean addReservation(Reservation reservation) {
+    public void addReservation(Reservation reservation) {
         try {
-            return studentProcessors.setReservations(reservation);
+            studentProcessors.setReservations(reservation);
         } catch (RemoteException e) {
             System.err.println("[ERROR] Remote exception while adding reservation: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Remote exception while adding reservation", e);
+        } catch (ReservationException e) {
+            System.err.println("[ERROR] Reservation exception: " + e.getMessage());
+            throw new RuntimeException("Reservation exception while adding reservation", e);
         }
     }
 

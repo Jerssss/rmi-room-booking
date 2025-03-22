@@ -3,6 +3,8 @@ package client.student.model;
 import client.ClientMain;
 import shared.Reservation;
 import shared.interfaces.student.StudentProcessors;
+import util.exception.ModifyReservationException;
+import util.exception.ReservationException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -46,14 +48,17 @@ public class ModifyReservationModel {
      * @param reservation the reservation to be updated
      * @return true if the update was successful, false otherwise
      */
-    public boolean updateReservation(Reservation reservation) {
+    public void updateReservation(Reservation reservation) {
         try {
-            return studentProcessors.updateReservation(reservation);
+            studentProcessors.updateReservation(reservation);
         } catch (RemoteException e) {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Remote exception during update", e);
+        } catch ( ModifyReservationException e) {
+            throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Cancels a reservation identified by its ID.
@@ -61,12 +66,16 @@ public class ModifyReservationModel {
      * @param reservationID the ID of the reservation to be cancelled
      * @return true if the cancellation was successful, false otherwise
      */
-    public boolean cancelReservation(String reservationID) {
+    public void cancelReservation(String reservationID) {
         try {
-            return studentProcessors.cancelReservation(reservationID);
+            studentProcessors.cancelReservation(reservationID);
         } catch (RemoteException e) {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Remote exception during cancellation", e);
+        } catch (ReservationException e) {
+            System.err.println("[ERROR] Reservation cancellation failed: " + e.getMessage());
+            throw new RuntimeException("Reservation cancellation exception", e);
         }
     }
+
 }

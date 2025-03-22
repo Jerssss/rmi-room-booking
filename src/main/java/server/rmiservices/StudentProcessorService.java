@@ -4,6 +4,8 @@ import shared.Reservation;
 import shared.Terminal;
 import shared.interfaces.student.StudentProcessors;
 import util.JSONUtility;
+import util.exception.ModifyReservationException;
+import util.exception.ReservationException;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -44,7 +46,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return userReservations;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
-            return null;
+            throw new RemoteException("Error fetching reservations", e);
         }
     }
 
@@ -64,12 +66,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return allReservations;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
-            return null;
+            throw new RemoteException("Error fetching all reservations", e);
         }
     }
 
     @Override
-    public boolean setReservations(Reservation newReservation) throws RemoteException {
+    public void setReservations(Reservation newReservation) throws RemoteException, ReservationException {
         try {
             System.out.println("[StudentProcessorService] Attempting to add reservation for user: " + newReservation.getUserID());
 
@@ -80,35 +82,39 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
 
             System.out.println("[StudentProcessorService] Reservation successfully added.");
-            return true;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to add reservation: " + e.getMessage());
-            return false;
+            throw new ReservationException("Failed to add reservation", e);
         }
     }
 
     @Override
-    public boolean updateReservation(Reservation updatedReservation) throws RemoteException {
+    public void updateReservation(Reservation updatedReservation) throws RemoteException, ModifyReservationException {
         try {
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             // Find and replace the reservation
+            boolean updated = false;
             for (int i = 0; i < allReservations.size(); i++) {
                 if (allReservations.get(i).getReservationID().equals(updatedReservation.getReservationID())) {
                     allReservations.set(i, updatedReservation);
-                    JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
-                    return true;
+                    updated = true;
+                    break;
                 }
             }
-            return false;
+            if (!updated) {
+                throw new ReservationException("Reservation with ID " + updatedReservation.getReservationID() + " not found.");
+            }
+            JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+            System.out.println("[StudentProcessorService] Reservation successfully updated.");
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to update reservation: " + e.getMessage());
-            return false;
+            throw new ModifyReservationException("Failed to update reservation", e);
         }
     }
 
     @Override
-    public boolean cancelReservation(String reservationID) throws RemoteException {
+    public void cancelReservation(String reservationID) throws RemoteException, ReservationException {
         try {
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
@@ -117,16 +123,21 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
                     res.getReservationID().equals(reservationID)
             );
 
-            if (removed) {
-                JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+            if (!removed) {
+                throw new ReservationException("Reservation with ID " + reservationID + " not found.");
             }
-            return removed;
+
+            JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
+            System.out.println("[StudentProcessorService] Reservation successfully canceled.");
+        } catch (ReservationException re) {
+            throw re;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to cancel reservation: " + e.getMessage());
-            return false;
+            throw new ReservationException("Failed to cancel reservation", e);
         }
     }
 
+    @Override
     public List<Terminal> getActiveTerminals() throws RemoteException {
         try {
             System.out.println("[StudentProcessorService] Fetching Terminals...");
@@ -149,7 +160,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             return activeTerminals;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to fetch terminals: " + e.getMessage());
-            return null;
+            throw new RemoteException("Error fetching active terminals", e);
         }
     }
 }

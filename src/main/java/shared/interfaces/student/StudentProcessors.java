@@ -2,6 +2,8 @@ package shared.interfaces.student;
 
 import shared.Reservation;
 import shared.Terminal;
+import util.exception.ModifyReservationException;
+import util.exception.ReservationException;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -29,10 +31,10 @@ public interface StudentProcessors extends Remote {
     /**
      * Adds a new reservation for a student.
      * @param newReservation The reservation details.
-     * @return True if the reservation was successfully added, false otherwise.
      * @throws RemoteException If an RMI communication error occurs.
+     * @throws ReservationException If the reservation could not be added.
      */
-    boolean setReservations(Reservation newReservation) throws RemoteException;
+    void setReservations(Reservation newReservation) throws RemoteException, ReservationException;
 
     /**
      * Retrieves all active terminals.
@@ -44,16 +46,15 @@ public interface StudentProcessors extends Remote {
     /**
      * Updates an existing reservation.
      * @param reservation The updated reservation details.
-     * @return True if the reservation was successfully updated, false otherwise.
      * @throws RemoteException If an RMI communication error occurs.
      */
-    boolean updateReservation(Reservation reservation) throws RemoteException;
+    void updateReservation(Reservation reservation) throws RemoteException, ModifyReservationException;
 
     /**
      * Cancels a reservation based on its ID.
      * @param reservationID The ID of the reservation to cancel.
-     * @return True if the reservation was successfully canceled, false otherwise.
      * @throws RemoteException If an RMI communication error occurs.
+     * @throws ReservationException If the reservation could not be canceled.
      */
-    boolean cancelReservation(String reservationID) throws RemoteException;
+    void cancelReservation(String reservationID) throws RemoteException, ReservationException;
 }

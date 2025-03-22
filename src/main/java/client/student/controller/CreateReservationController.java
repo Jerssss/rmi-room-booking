@@ -72,8 +72,8 @@ public class CreateReservationController {
             // After the dialog is closed, retrieve the created reservation
             Reservation newRes = dialogController.getNewReservation();
             if (newRes != null) {
-                boolean success = model.addReservation(newRes);
-                if (success) {
+                try {
+                    model.addReservation(newRes);
                     System.out.println("[DEBUG] Reservation added successfully.");
                     // Show success popup
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -82,8 +82,14 @@ public class CreateReservationController {
                     alert.setContentText("Reservation created successfully!");
                     alert.showAndWait();
                     // Optionally refresh the table view here if needed.
-                } else {
-                    System.err.println("[ERROR] Failed to add the reservation.");
+                } catch (RuntimeException ex) {
+                    System.err.println("[ERROR] Failed to add the reservation: " + ex.getMessage());
+                    // Show error popup
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Reservation Failed");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to create reservation: " + ex.getMessage());
+                    alert.showAndWait();
                 }
             }
         } catch (IOException e) {
@@ -91,4 +97,5 @@ public class CreateReservationController {
             e.printStackTrace();
         }
     }
+
 }
