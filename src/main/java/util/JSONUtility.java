@@ -151,7 +151,6 @@ public class JSONUtility {
             // Save in expected JSON structure
             defaultGson.toJson(nestedData, writer);
 
-            System.out.println("[DEBUG] Students successfully saved to: " + filePath.getAbsolutePath());
         } catch (IOException ex) {
             throw new RuntimeException("Error saving student data: " + ex.getMessage(), ex);
         }
@@ -172,18 +171,32 @@ public class JSONUtility {
         try (FileReader reader = new FileReader(filePath)) {
             JsonElement jsonElement = JsonParser.parseReader(reader);
 
-            if (jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("Logs")) {
-                JsonObject root = jsonElement.getAsJsonObject();
-                JsonArray logsArray = root.getAsJsonObject("Logs").getAsJsonArray("Log");
-                Type listType = new TypeToken<List<Log>>() {}.getType();
-                return defaultGson.fromJson(logsArray, listType);
-            } else {
-                throw new JsonSyntaxException("Invalid JSON structure in logs.json");
+            if (jsonElement == null || !jsonElement.isJsonObject()) {
+                System.err.println("[ERROR] Invalid JSON format in logs.json. Resetting file.");
+                return new ArrayList<>();
             }
+
+            JsonObject root = jsonElement.getAsJsonObject();
+            if (!root.has("Logs") || !root.getAsJsonObject("Logs").has("Log")) {
+                System.err.println("[ERROR] Missing 'Logs' structure in logs.json. Resetting file.");
+                return new ArrayList<>();
+            }
+
+            JsonArray logsArray = root.getAsJsonObject("Logs").getAsJsonArray("Log");
+            Type listType = new TypeToken<List<Log>>() {}.getType();
+            List<Log> logs = defaultGson.fromJson(logsArray, listType);
+
+            if (logs == null) {
+                System.err.println("[ERROR] Failed to parse logs.json. Returning empty log list.");
+                return new ArrayList<>();
+            }
+
+            return logs;
         } catch (IOException ex) {
             throw new RuntimeException("Error loading log data: " + ex.getMessage(), ex);
         }
     }
+
 
     /**
      * Saves Logs to a JSON file (logs.json).
@@ -191,17 +204,27 @@ public class JSONUtility {
      * @param filePath the JSON file path
      */
     public static void saveLogs(List<Log> logList, File filePath) {
-        Map<String, Map<String, List<Log>>> nestedStructure = new LinkedHashMap<>();
-        Map<String, List<Log>> logMap = new LinkedHashMap<>();
-        logMap.put("Log", logList);
-        nestedStructure.put("Logs", logMap);
+        try {
+            try (FileWriter writer = new FileWriter(filePath, false)) { // Overwrite mode
+                Map<String, List<Log>> logMap = new LinkedHashMap<>();
+                logMap.put("Log", logList);
 
-        try (FileWriter writer = new FileWriter(filePath)) {
-            defaultGson.toJson(nestedStructure, writer);
+                Map<String, Map<String, List<Log>>> nestedStructure = new LinkedHashMap<>();
+                nestedStructure.put("Logs", logMap);
+
+                defaultGson.toJson(nestedStructure, writer);
+                writer.flush(); // Ensure data is written immediately
+            }
+
         } catch (IOException ex) {
+            System.err.println("[ERROR] Failed to save logs to file: " + ex.getMessage());
             throw new RuntimeException("Error saving log data: " + ex.getMessage(), ex);
         }
     }
+
+
+
+
 
     /**
      * Loads Terminals from a JSON file (terminal.json).

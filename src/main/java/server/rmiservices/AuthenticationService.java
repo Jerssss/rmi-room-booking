@@ -13,6 +13,9 @@ import util.exception.InvalidCredentialsException;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -251,8 +254,8 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
     private void logAction(String userID, String userType, String action) {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
 
-        String date = java.time.LocalDate.now().toString();
-        String time = java.time.LocalTime.now().toString();
+        String date = LocalDate.now().toString();
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         logs.add(new Log(userID, userType, action, date, time));
 
