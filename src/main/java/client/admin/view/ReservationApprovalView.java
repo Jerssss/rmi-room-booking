@@ -1,7 +1,6 @@
 package client.admin.view;
 
 import client.admin.controller.ReservationApprovalController;
-import client.admin.model.ReservationApprovalModel;
 import javafx.animation.ScaleTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -27,35 +26,23 @@ import java.util.ResourceBundle;
 public class ReservationApprovalView implements Initializable {
 
     @FXML
-    private Button searchButton, refreshButton;
-    @FXML
-    private Button saveChangesButton;
+    private Button searchButton, refreshButton, saveChangesButton;
     @FXML
     private TextField searchStudResTextField;
     @FXML
     private TableView<Reservation> approveResTableView;
     @FXML
     private TableColumn<Reservation, String> reservationIdColumn, userIdColumn, terminalNumberColumn,
-            roomNumberColumn, dateColumn, startTimeColumn, endTimeColumn;
-    @FXML
-    private TableColumn<Reservation, String> statusColumn;
+            roomNumberColumn, dateColumn, startTimeColumn, endTimeColumn, statusColumn;
+
     private ReservationApprovalController controller;
     private final ObservableList<Reservation> allReservations = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
-        System.out.println("[CLIENT] Table columns initialized successfully.");
-
-        // Manually initialize the controller
-        initializeController();
-    }
-
-    public void initializeController() {
-        System.out.println("[CLIENT] Initializing ReservationApprovalController...");
-        ReservationApprovalModel model = new ReservationApprovalModel();
-        this.controller = new ReservationApprovalController(this, model);
-        System.out.println("[CLIENT] ReservationApprovalController successfully created.");
+        controller = new ReservationApprovalController(this);  // Controller is initialized here
+        System.out.println("[CLIENT] ReservationApprovalView initialized successfully.");
     }
 
     private void initializeTableColumns() {
@@ -74,15 +61,12 @@ public class ReservationApprovalView implements Initializable {
             private final ComboBox<String> statusComboBox = new ComboBox<>(
                     FXCollections.observableArrayList("Pending", "Approved", "Rejected")
             );
+
             {
-                statusComboBox.setStyle("-fx-border-color: transparent; " +
-                        "-fx-padding: 5px; " +
-                        "-fx-font-size: 13px; " +
-                        "-fx-font-family: 'System';");
+                statusComboBox.setStyle("-fx-border-color: transparent; -fx-padding: 5px; -fx-font-size: 13px;");
                 statusComboBox.setOnAction(e -> {
                     Reservation reservation = getTableRow().getItem();
                     if (reservation != null) {
-                        // Update the status directly using the setter method
                         reservation.setStatus(statusComboBox.getValue());
                     }
                 });
@@ -92,36 +76,15 @@ public class ReservationApprovalView implements Initializable {
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                    setText(null);
                     setGraphic(null);
                 } else {
-                    Reservation reservation = getTableRow().getItem();
-                    statusComboBox.setValue(reservation.getStatus());
-
-                    int rowIndex = getIndex();
-                    Color rowColor = (rowIndex % 2 == 1) ? Color.web("#f8f8f8") : Color.WHITE;
-                    setBackground(new Background(new BackgroundFill(rowColor, new CornerRadii(5), null)));
-
-                    statusComboBox.setStyle("-fx-background-color: " +
-                            toRGBCode(rowColor) + "; " +
-                            "-fx-border-color: transparent; " +
-                            "-fx-padding: 5px; " +
-                            "-fx-font-size: 13px; " +
-                            "-fx-font-family: 'System';");
-
-                    statusComboBox.setMaxWidth(Double.MAX_VALUE);
+                    statusComboBox.setValue(getTableRow().getItem().getStatus());
                     setGraphic(statusComboBox);
                 }
             }
-
-            private String toRGBCode(Color color) {
-                return String.format("#%02X%02X%02X",
-                        (int) (color.getRed() * 255),
-                        (int) (color.getGreen() * 255),
-                        (int) (color.getBlue() * 255));
-            }
         };
     }
+
     public TableView<Reservation> getApproveResTableView() {
         return approveResTableView;
     }
@@ -143,73 +106,58 @@ public class ReservationApprovalView implements Initializable {
     }
 
     public void setReservationData(ObservableList<Reservation> data) {
-        allReservations.setAll(data); // Update dataset
-        approveResTableView.setItems(null); // Force reset
-        approveResTableView.setItems(allReservations); // Reload table data
-        approveResTableView.refresh(); // Force UI refresh
-        System.out.println("[DEBUG] Reservation data updated. New table size: " + allReservations.size());
+        allReservations.setAll(data);
+        approveResTableView.setItems(allReservations);
+        approveResTableView.refresh();
+        System.out.println("[DEBUG] Table updated with " + allReservations.size() + " reservations.");
     }
 
     public void updateTable(List<Reservation> reservations) {
-        if (reservations == null || reservations.isEmpty()) {
-            System.out.println("[CLIENT] No data to display in TableView.");
-            return;
+        if (reservations != null && !reservations.isEmpty()) {
+            approveResTableView.getItems().setAll(reservations);
+            System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
+        } else {
+            System.out.println("[CLIENT] No data available for update.");
         }
-        allReservations.setAll(reservations);
-        approveResTableView.setItems(allReservations);
-        System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
     }
 
-    public void saveChangesButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
+    /** Button Animations */
+    private void animateButton(Button button, double scale) {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), button);
+        st.setToX(scale);
+        st.setToY(scale);
         st.setCycleCount(1);
         st.setAutoReverse(false);
         st.play();
     }
 
-    public void saveChangesButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
+    @FXML
+    private void saveChangesButtonExited() {
+        animateButton(saveChangesButton, 1.0);
     }
 
-    public void searchButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void searchButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
+    @FXML
+    private void saveChangesButtonHovered() {
+        animateButton(saveChangesButton, 0.9);
     }
 
-    public void refreshButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void refreshButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
+    @FXML
+    private void searchButtonExited() {
+        animateButton(searchButton, 1.0);
     }
 
+    @FXML
+    private void searchButtonHovered() {
+        animateButton(searchButton, 0.9);
+    }
+
+    @FXML
+    private void refreshButtonExited() {
+        animateButton(refreshButton, 1.0);
+    }
+
+    @FXML
+    private void refreshButtonHovered() {
+        animateButton(refreshButton, 0.9);
+    }
 }

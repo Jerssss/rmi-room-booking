@@ -6,32 +6,57 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import shared.Reservation;
+import shared.Log;
+import shared.Terminal;
 import shared.callback.UpdateTable;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReservationApprovalController implements UpdateTable {
+public class ReservationApprovalController {
 
-    private final ReservationApprovalView view;
     private final ReservationApprovalModel model;
-    private ObservableList<Reservation> reservationData = FXCollections.observableArrayList();
+    private final ReservationApprovalView view;
+    private final ObservableList<Reservation> reservationData = FXCollections.observableArrayList();
 
-    public ReservationApprovalController(ReservationApprovalView view, ReservationApprovalModel model) {
+    public ReservationApprovalController(ReservationApprovalView view) {
         this.view = view;
-        this.model = model;
+        this.model = new ReservationApprovalModel();
 
-        // Let the model initialize and register the callback with this controller as the UpdateTable listener.
-        model.initCallback(this);
+        // Register callback to receive reservation updates
+        model.initCallback(new UpdateTable() {
+            @Override
+            public void updateTerminals(List<Terminal> terminals) {
+                System.out.println("[CLIENT] Terminal update received (not used in this view).");
+            }
 
+            @Override
+            public void updateReservations(List<Reservation> reservations) {
+                Platform.runLater(() -> {
+                    reservationData.setAll(reservations);
+                    view.updateTable(reservations);
+                    System.out.println("[CLIENT] Reservation update received via callback. Table updated with "
+                            + reservations.size() + " entries.");
+                });
+            }
+
+            @Override
+            public void updateLogs(List<Log> logs) {
+                System.out.println("[CLIENT] Log update received (not used in this view).");
+            }
+        });
+
+        // Initial load of data
         loadReservations();
+
+        // Set button actions
         this.view.setActionRefreshButton(event -> loadReservations());
         this.view.setActionSaveChangesButton(event -> saveChanges());
-        this.view.setActionSearchButton(event -> searchTerminals(view.getSearchStudResTextField().getText()));
+        this.view.setActionSearchButton(event -> searchReservations(view.getSearchStudResTextField().getText()));
     }
 
+    /** Loads reservation data and updates the view */
     public void loadReservations() {
         System.out.println("[CLIENT] loadReservations() method called.");
 
@@ -48,23 +73,24 @@ public class ReservationApprovalController implements UpdateTable {
         }
     }
 
+    /** Saves reservation changes to the model */
     public void saveChanges() {
-        List<Reservation> reservationsToSave = new ArrayList<>(view.getApproveResTableView().getItems());
-        System.out.println("[CLIENT] Reservations to save:");
-        for (Reservation reservation : reservationsToSave) {
-            System.out.println(reservation);
-        }
+        List<Reservation> reservationsToSave = List.copyOf(view.getApproveResTableView().getItems());
+
+        System.out.println("[CLIENT] Saving " + reservationsToSave.size() + " reservations.");
         model.saveReservationData(reservationsToSave);
+
         JOptionPane.showMessageDialog(null, "Changes have been successfully saved!",
                 "Save Successful", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void searchTerminals(String searchText) {
-        System.out.println("[DEBUG] Searching for terminals with keyword: " + searchText);
+    /** Filters reservations based on search text */
+    public void searchReservations(String searchText) {
+        System.out.println("[DEBUG] Searching reservations with keyword: " + searchText);
 
         if (searchText == null || searchText.trim().isEmpty()) {
             view.setReservationData(reservationData);
-            System.out.println("[DEBUG] Search text is empty. Resetting to full terminal list.");
+            System.out.println("[DEBUG] Search text is empty. Resetting to full reservation list.");
             return;
         }
 
@@ -82,25 +108,5 @@ public class ReservationApprovalController implements UpdateTable {
 
         view.setReservationData(filteredList);
         System.out.println("[DEBUG] Search completed. Matching results: " + filteredList.size());
-    }
-
-    // This method is defined by the UpdateTable interface.
-    @Override
-    public void updateReservations(List<Reservation> reservations) {
-        Platform.runLater(() -> {
-            reservationData.setAll(reservations);
-            view.updateTable(reservations);
-            System.out.println("[CLIENT] Reservations updated via callback.");
-        });
-    }
-
-    @Override
-    public void updateTerminals(List<shared.Terminal> terminals) {
-        System.out.println("[CLIENT] Terminal update received (not used in this view).");
-    }
-
-    @Override
-    public void updateLogs(List<shared.Log> logs) {
-        System.out.println("[CLIENT] Log update received (not used in this view).");
     }
 }
