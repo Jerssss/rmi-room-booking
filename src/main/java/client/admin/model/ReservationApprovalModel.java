@@ -1,10 +1,12 @@
 package client.admin.model;
 
 import client.ClientMain;
+import client.utility.ClientCallBack;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import shared.Reservation;
 import shared.callback.Broadcast;
+import shared.callback.UpdateTable;
 import shared.interfaces.admin.AdminProcessors;
 
 import java.rmi.RemoteException;
@@ -16,6 +18,19 @@ public class ReservationApprovalModel {
 
     public ReservationApprovalModel() {
         this.adminProcessors = ClientMain.getAdminProcessors();
+    }
+
+    /**
+     * Initializes and registers the callback with the RMI service.
+     * The model creates the callback using the provided UpdateTable listener.
+     */
+    public void initCallback(UpdateTable updateTable) {
+        try {
+            ClientCallBack clientCallBack = new ClientCallBack(updateTable);
+            registerCallback(clientCallBack);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public ObservableList<Reservation> loadReservationData() {
@@ -88,6 +103,9 @@ public class ReservationApprovalModel {
         }
     }
 
+    /**
+     * Registers the provided callback with the AdminProcessors RMI service.
+     */
     public void registerCallback(Broadcast callback) throws RemoteException {
         if (adminProcessors == null) {
             System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
