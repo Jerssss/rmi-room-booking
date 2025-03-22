@@ -65,16 +65,13 @@ public class ReservationApprovalModel {
         }
 
         try {
-            boolean success = adminProcessors.updateReservations(reservations);
-            if (success) {
-                System.out.println("[CLIENT] All reservations updated successfully.");
-            } else {
-                System.err.println("[ERROR] Failed to update reservations.");
-            }
+            adminProcessors.updateReservations(reservations);
+            System.out.println("[CLIENT] All reservations updated successfully.");
         } catch (RemoteException e) {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
         }
     }
+
 
     public List<Reservation> fetchReservations() {
         System.out.println("[CLIENT] fetchReservations() method called.");

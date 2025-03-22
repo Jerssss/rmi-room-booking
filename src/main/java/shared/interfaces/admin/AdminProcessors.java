@@ -40,10 +40,9 @@ public interface AdminProcessors extends Remote {
      * Updates the reservations in the system.
      *
      * @param reservations A list of reservations to be updated.
-     * @return {@code true} if the update was successful, {@code false} otherwise.
      * @throws RemoteException If an RMI communication error occurs.
      */
-    boolean updateReservations(List<Reservation> reservations) throws RemoteException;
+    void updateReservations(List<Reservation> reservations) throws RemoteException;
 
     /**
      * Adds a new terminal to the system.
