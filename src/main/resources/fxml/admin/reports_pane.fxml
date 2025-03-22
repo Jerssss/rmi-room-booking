@@ -75,7 +75,7 @@
                            <children>
                               <TableView fx:id="logReportTableView" prefHeight="482.0" prefWidth="805.0">
                                  <columns>
-                                    <TableColumn fx:id="userIDColumn" prefWidth="150.0" text="User ID" />
+                                    <TableColumn fx:id="userIDColumn" prefWidth="150.0" text="User Name" />
                                     <TableColumn fx:id="userTypeColumn" prefWidth="150.0" text="User Type" />
                                     <TableColumn fx:id="actionsColumn" prefWidth="150.0" text="Actions" />
                                     <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
