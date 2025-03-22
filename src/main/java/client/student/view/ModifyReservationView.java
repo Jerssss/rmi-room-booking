@@ -28,6 +28,11 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+/**
+ * The ModifyReservationView class is responsible for displaying and managing the user interface
+ * for modifying reservations. It allows users to search, edit, and cancel their reservations.
+ * This class implements the Initializable interface to perform initialization tasks.
+ */
 public class ModifyReservationView implements Initializable {
     @FXML private TextField searchStudResTextField;
     @FXML private Button searchButton;
@@ -46,6 +51,12 @@ public class ModifyReservationView implements Initializable {
     private final ObservableList<Reservation> allReservations = FXCollections.observableArrayList();
     private ModifyReservationController controller;
 
+    /**
+     * Initializes the view by setting up the table columns, row factory, controller, and search listener.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
@@ -55,6 +66,9 @@ public class ModifyReservationView implements Initializable {
         initializeSearchListener();
     }
 
+    /**
+     * Initializes the row factory for the reservation table to apply custom styles based on reservation status.
+     */
     private void initializeRowFactory() {
         modResTableView.setRowFactory(tv -> new TableRow<Reservation>() {
             @Override
@@ -69,6 +83,10 @@ public class ModifyReservationView implements Initializable {
         });
     }
 
+    /**
+     * Handles the action of saving changes made to reservations. It removes cancelled reservations
+     * from the list and commits the changes to the server.
+     */
     @FXML
     private void handleSaveChanges() {
         if (controller != null) {
@@ -86,6 +104,9 @@ public class ModifyReservationView implements Initializable {
         }
     }
 
+    /**
+     * Initializes the ModifyReservationController with the current student's ID.
+     */
     private void initializeController() {
         System.out.println("[DEBUG] Initializing ModifyReservationController...");
         String studentID = SessionManager.getStudentID();
@@ -98,6 +119,9 @@ public class ModifyReservationView implements Initializable {
         System.out.println("[DEBUG] ModifyReservationController successfully created with student ID: " + studentID);
     }
 
+    /**
+     * Initializes the table columns with the appropriate cell value factories.
+     */
     private void initializeTableColumns() {
         roomNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoomID()));
         terminalIDColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
@@ -111,6 +135,11 @@ public class ModifyReservationView implements Initializable {
         cancelColumn.setCellFactory(createCancelButtonCellFactory());
     }
 
+    /**
+     * Updates the reservation table with a new list of reservations.
+     *
+     * @param reservations The list of reservations to display in the table.
+     */
     public void updateTable(List<Reservation> reservations) {
         if (reservations == null || reservations.isEmpty()) {
             System.out.println("[DEBUG] No data to display in TableView.");
@@ -123,12 +152,20 @@ public class ModifyReservationView implements Initializable {
         modResTableView.requestLayout();
     }
 
+    /**
+     * Initializes a listener for the search text field to filter reservations based on user input.
+     */
     public void initializeSearchListener() {
         searchStudResTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             searchReservations(newValue.toLowerCase().trim());
         });
     }
 
+    /**
+     * Searches for reservations based on the provided query and updates the table view accordingly.
+     *
+     * @param query The search query to filter reservations.
+     */
     public void searchReservations(String query) {
         String searchText = searchStudResTextField.getText().trim().toLowerCase();
         if (allReservations.isEmpty()) {
@@ -152,6 +189,11 @@ public class ModifyReservationView implements Initializable {
         modResTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
+    /**
+     * Creates a cell factory for the edit button in the reservation table.
+     *
+     * @return A Callback that creates TableCell instances with edit buttons.
+     */
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createEditButtonCellFactory() {
         return column -> new TableCell<>() {
             private final Button editButton = new Button("Edit");
@@ -202,6 +244,11 @@ public class ModifyReservationView implements Initializable {
         };
     }
 
+    /**
+     * Creates a cell factory for the cancel button in the reservation table.
+     *
+     * @return A Callback that creates TableCell instances with cancel buttons.
+     */
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createCancelButtonCellFactory() {
         return column -> new TableCell<>() {
             private final Button cancelButton = new Button("Cancel");
@@ -270,14 +317,27 @@ public class ModifyReservationView implements Initializable {
         };
     }
 
+    /**
+     * Sets the action for the search button.
+     *
+     * @param event The event handler to be set for the search button.
+     */
     public void setSearchButtonAction(EventHandler<ActionEvent> event) {
         searchButton.setOnAction(event);
     }
 
+    /**
+     * Sets the action for the refresh button.
+     *
+     * @param event The event handler to be set for the refresh button.
+     */
     public void setRefreshButtonAction(EventHandler<javafx.event.ActionEvent> event) {
         refreshButton.setOnAction(event);
     }
 
+    /**
+     * Animates the save changes button when the mouse exits.
+     */
     public void saveChangesButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
         st.setToX(1.0);
@@ -287,6 +347,9 @@ public class ModifyReservationView implements Initializable {
         st.play();
     }
 
+    /**
+     * Animates the save changes button when the mouse hovers over it.
+     */
     public void saveChangesButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
         st.setToX(0.9);
@@ -296,6 +359,9 @@ public class ModifyReservationView implements Initializable {
         st.play();
     }
 
+    /**
+     * Animates the search button when the mouse exits.
+     */
     public void searchButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
         st.setToX(1.0);
@@ -305,6 +371,9 @@ public class ModifyReservationView implements Initializable {
         st.play();
     }
 
+    /**
+     * Animates the search button when the mouse hovers over it.
+     */
     public void searchButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
         st.setToX(0.9);
@@ -314,6 +383,9 @@ public class ModifyReservationView implements Initializable {
         st.play();
     }
 
+    /**
+     * Animates the refresh button when the mouse exits.
+     */
     public void refreshButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(1.0);
@@ -323,6 +395,9 @@ public class ModifyReservationView implements Initializable {
         st.play();
     }
 
+    /**
+     * Animates the refresh button when the mouse hovers over it.
+     */
     public void refreshButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(0.9);

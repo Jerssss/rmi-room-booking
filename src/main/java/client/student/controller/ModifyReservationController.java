@@ -15,6 +15,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller class for managing the modification of reservations.
+ * This class handles the interaction between the view and the model,
+ * allowing users to modify existing reservations and manage changes.
+ */
 public class ModifyReservationController {
     private final ModifyReservationView view;
     private final ModifyReservationModel model;
@@ -23,6 +28,12 @@ public class ModifyReservationController {
     private String query;
     private List<String> cancelledReservationIDs = new ArrayList<>();
 
+    /**
+     * Constructs a ModifyReservationController with the specified view and model.
+     *
+     * @param view  the view associated with this controller
+     * @param model the model associated with this controller
+     */
     public ModifyReservationController(ModifyReservationView view, ModifyReservationModel model) {
         this.view = view;
         this.model = model;
@@ -31,6 +42,10 @@ public class ModifyReservationController {
         view.setRefreshButtonAction(event -> loadReservations());
     }
 
+    /**
+     * Loads the reservations from the model and updates the view.
+     * Resets the pending reservation and changes made status.
+     */
     public void loadReservations() {
         List<Reservation> reservations = model.fetchReservations();
         if (reservations != null) {
@@ -40,6 +55,11 @@ public class ModifyReservationController {
         }
     }
 
+    /**
+     * Displays a dialog for editing a specific reservation.
+     *
+     * @param reservation the reservation to be edited
+     */
     public void showEditDialog(Reservation reservation) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/modify_reservation_window.fxml"));
@@ -64,6 +84,11 @@ public class ModifyReservationController {
         }
     }
 
+    /**
+     * Commits the changes made to the reservations.
+     * This includes processing cancellations and updating the pending reservation.
+     * Displays an alert indicating whether the changes were saved successfully.
+     */
     public void commitChanges() {
         if (cancelledReservationIDs.isEmpty() && !changesMade) {
             showNoChangesAlert();
@@ -93,6 +118,9 @@ public class ModifyReservationController {
         alert.showAndWait();
     }
 
+    /**
+     * Displays an alert indicating that no changes were detected.
+     */
     private void showNoChangesAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("No Changes");
@@ -101,11 +129,20 @@ public class ModifyReservationController {
         alert.showAndWait();
     }
 
-
+    /**
+     * Sets the changesMade status.
+     *
+     * @param changesMade the new status of changesMade
+     */
     public void setChangesMade(boolean changesMade) {
         this.changesMade = changesMade;
     }
 
+    /**
+     * Updates the table with the pending reservation.
+     *
+     * @param reservation the updated reservation to be reflected in the table
+     */
     public void updateTableWithPendingReservation(Reservation reservation) {
         this.pendingReservation = reservation;
         List<Reservation> reservations = model.fetchReservations();
@@ -117,10 +154,14 @@ public class ModifyReservationController {
         }
     }
 
+    /**
+     * Cancels a reservation by adding its ID to the list of cancelled reservations.
+     *
+     * @param reservationID the ID of the reservation to be cancelled
+     */
     public void cancelReservation(String reservationID) {
         // Add the ID to the list of cancellations
         cancelledReservationIDs.add(reservationID);
         changesMade = true;
-
     }
 }

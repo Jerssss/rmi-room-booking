@@ -15,6 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller for the Modify Reservation dialog.
+ * This class handles the user interface for modifying an existing reservation,
+ * including input validation and interaction with the main controller.
+ */
 public class ModifyReservationDialogController {
     @FXML private DatePicker datePicker;
     @FXML private TextField startTimeTextField;
@@ -32,6 +37,10 @@ public class ModifyReservationDialogController {
     private ModifyReservationController mainController;
     private boolean changesMade = false;
 
+    /**
+     * Initializes the dialog by setting up the room number combo box
+     * and configuring the date picker to restrict date selection.
+     */
     @FXML
     public void initialize() {
         roomNumberComboBox.getItems().addAll("D524", "D526", "D426");
@@ -51,10 +60,21 @@ public class ModifyReservationDialogController {
         });
     }
 
+    /**
+     * Sets the dialog stage for this controller.
+     *
+     * @param dialogStage the stage to be set
+     */
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
 
+    /**
+     * Sets the reservation to be modified and updates the input fields
+     * with the reservation's current data.
+     *
+     * @param reservation the reservation to be modified
+     */
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
         // Update input fields
@@ -75,6 +95,12 @@ public class ModifyReservationDialogController {
         checkEditPermission(reservation);
     }
 
+    /**
+     * Checks if the user has permission to edit the reservation based on its status
+     * and the time remaining before the reservation starts.
+     *
+     * @param reservation the reservation to check
+     */
     private void checkEditPermission(Reservation reservation) {
         LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
         LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
@@ -104,10 +130,19 @@ public class ModifyReservationDialogController {
         }
     }
 
+    /**
+     * Sets the main controller for this dialog.
+     *
+     * @param mainController the main controller to be set
+     */
     public void setMainController(ModifyReservationController mainController) {
         this.mainController = mainController;
     }
 
+    /**
+     * Handles the action of sending the modification request.
+     * Validates input, updates the reservation, and notifies the main controller.
+     */
     @FXML
     private void handleSendRequest() {
         // Check if any changes were made
@@ -143,11 +178,18 @@ public class ModifyReservationDialogController {
         dialogStage.close(); // Close dialog without saving to database
     }
 
+    /**
+     * Handles the action of canceling the modification and closing the dialog.
+     */
     @FXML
     private void handleCancel() {
         dialogStage.close();
     }
 
+    /**
+     * Handles the action of deleting the reservation.
+     * Prompts the user for confirmation before proceeding with the cancellation.
+     */
     @FXML
     private void handleDelete() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -162,6 +204,11 @@ public class ModifyReservationDialogController {
         }
     }
 
+    /**
+     * Validates the input fields for the reservation modification.
+     *
+     * @return a list of error messages if validation fails, otherwise an empty list
+     */
     private List<String> validateInput() {
         List<String> errors = new ArrayList<>();
         LocalDate date = datePicker.getValue();
@@ -176,6 +223,14 @@ public class ModifyReservationDialogController {
         return errors;
     }
 
+    /**
+     * Parses a time string into a LocalTime object.
+     *
+     * @param time the time string to parse
+     * @param errors a list to collect error messages
+     * @param fieldName the name of the field being validated
+     * @return the parsed LocalTime, or null if parsing fails
+     */
     private LocalTime parseTime(String time, List<String> errors, String fieldName) {
         try {
             return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
@@ -185,6 +240,9 @@ public class ModifyReservationDialogController {
         }
     }
 
+    /**
+     * Updates the reservation object with the current input field values.
+     */
     private void updateReservation() {
         if (!isReservationModified()) {
             changesMade = false;
@@ -199,6 +257,11 @@ public class ModifyReservationDialogController {
         changesMade = true; // Notify the main controller that changes were made
     }
 
+    /**
+     * Displays an error dialog with the provided validation error messages.
+     *
+     * @param errors the list of error messages to display
+     */
     private void showErrorDialog(List<String> errors) {
         StringBuilder message = new StringBuilder("Validation errors:\n");
         for (String error : errors) {
@@ -207,6 +270,12 @@ public class ModifyReservationDialogController {
         new Alert(Alert.AlertType.ERROR, message.toString()).showAndWait();
     }
 
+    /**
+     * Checks if the current reservation input fields have been modified
+     * compared to the original reservation data.
+     *
+     * @return true if the reservation has been modified, false otherwise
+     */
     private boolean isReservationModified() {
         // Compare the current input fields with the original reservation data
         return !datePicker.getValue().toString().equals(reservation.getReservationDate()) ||
@@ -216,6 +285,11 @@ public class ModifyReservationDialogController {
                 !terminalNumberTextField.getText().equals(reservation.getTerminalID());
     }
 
+    /**
+     * Checks if any changes have been made to the reservation.
+     *
+     * @return true if changes were made, false otherwise
+     */
     public boolean isChangesMade() {
         return changesMade;
     }

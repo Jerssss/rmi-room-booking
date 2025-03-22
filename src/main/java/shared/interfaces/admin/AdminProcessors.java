@@ -1,7 +1,9 @@
 package shared.interfaces.admin;
 
+import shared.Log;
 import shared.Reservation;
 import shared.Terminal;
+import shared.callback.Broadcast;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -11,7 +13,13 @@ import java.util.List;
  * Remote interface for admin-related processes.
  */
 public interface AdminProcessors extends Remote {
-
+    /**
+     * Retrieves all logs.
+     *
+     * @return A list of all logs.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    List<Log> getAllLogs() throws RemoteException;
     /**
      * Retrieves all student reservations.
      *
@@ -47,9 +55,26 @@ public interface AdminProcessors extends Remote {
 
     /**
      * Modifies the status of existing terminals in the system.
+     *
      * @param terminal A list of terminals with updated status information.
+     * @return {@code true} if the modification was successful, {@code false} otherwise.
      * @throws RemoteException If an RMI communication error occurs.
      */
     boolean modifyTerminalStatus(List<Terminal> terminal) throws RemoteException;
 
+    /**
+     * Registers a client callback to receive updates from the server.
+     *
+     * @param callback The client's callback instance to register.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    void registerCallback(Broadcast callback) throws RemoteException;
+
+    /**
+     * Unregisters a client callback to stop receiving updates from the server.
+     *
+     * @param callback The client's callback instance to unregister.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    void unregisterCallback(Broadcast callback) throws RemoteException;
 }

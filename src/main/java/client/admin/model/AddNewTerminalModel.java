@@ -13,19 +13,9 @@ public class AddNewTerminalModel {
     private AdminProcessors adminService;
 
     public AddNewTerminalModel() {
-        connectToServer();
+        this.adminService = ClientMain.getAdminProcessors(); // Get RMI instance
     }
 
-    private void connectToServer() {
-        try {
-            String serverIP = ClientMain.getServerIP();
-            Registry registry = LocateRegistry.getRegistry(serverIP, 1099);
-            adminService = (AdminProcessors) registry.lookup("admin_processors");
-            System.out.println("[RMI] Connected to admin_processors service.");
-        } catch (Exception e) {
-            System.err.println("[ERROR] Could not connect to admin_processors: " + e.getMessage());
-        }
-    }
 
     public List<Terminal> fetchTerminals() {
         try {

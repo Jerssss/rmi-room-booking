@@ -9,7 +9,7 @@
         "reservation_date": "2025-02-02",
         "start_time": "09:40",
         "end_time": "10:00",
-        "status": "Approved"
+        "status": "Pending"
       },
       {
         "reservation_id": "2",
@@ -19,7 +19,7 @@
         "reservation_date": "2025-02-20",
         "start_time": "10:00",
         "end_time": "12:00",
-        "status": "Rejected"
+        "status": "Approved"
       },
       {
         "reservation_id": "3",
@@ -29,7 +29,7 @@
         "reservation_date": "2025-02-18",
         "start_time": "12:10",
         "end_time": "12:30",
-        "status": "Pending"
+        "status": "Approved"
       },
       {
         "reservation_id": "4",
@@ -49,7 +49,7 @@
         "reservation_date": "2025-03-27",
         "start_time": "07:30",
         "end_time": "09:30",
-        "status": "Pending"
+        "status": "Rejected"
       },
       {
         "reservation_id": "6",
@@ -79,16 +79,6 @@
         "reservation_date": "2025-03-17",
         "start_time": "09:30",
         "end_time": "11:30",
-        "status": "Pending"
-      },
-      {
-        "reservation_id": "8",
-        "user_id": "2240005",
-        "terminal_id": "PC22",
-        "room_id": "D524",
-        "reservation_date": "2025-03-17",
-        "start_time": "09:30",
-        "end_time": "10:30",
         "status": "Pending"
       },
       {

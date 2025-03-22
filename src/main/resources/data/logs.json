@@ -1078,6 +1078,34 @@
         "Action": "Login",
         "Date": "2025-03-15",
         "Time": "10:10:17.587228300"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-20",
+        "Time": "17:11:07.288786400"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-20",
+        "Time": "17:11:17.482725200"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Admin",
+        "Action": "Logout",
+        "Date": "2025-03-20",
+        "Time": "17:53:27.010682100"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-20",
+        "Time": "17:53:49.730820100"
       }
     ]
   }
