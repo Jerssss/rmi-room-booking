@@ -59,7 +59,10 @@ public class ModifyTerminalStatusView {
         initializeController();
 
         // Attach the buttons functionality
-        setActionSearchButton(actionEvent -> controller.searchTerminals(terminalData, modTerTextField.getText()));
+        modTerTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            controller.searchTerminals(newValue);
+        });
+
         setActionRefreshButton(event -> controller.loadTerminals());
         setActionSaveChangesButton(event -> controller.saveChanges());
     }
@@ -80,11 +83,6 @@ public class ModifyTerminalStatusView {
         System.out.println("[CLIENT] Initializing ModifyTerminalStatusController...");
         this.controller = new ModifyTerminalStatusController(this);
         System.out.println("[CLIENT] ModifyTerminalStatusController successfully created.");
-    }
-
-    public void setActionSearchButton(EventHandler<ActionEvent> event) {
-        searchButton.setOnAction(event);
-        System.out.println("[DEBUG] Search triggered. Query: " + modTerTextField.getText());
     }
 
     public void setActionRefreshButton(EventHandler<ActionEvent> event) {
@@ -247,22 +245,7 @@ public class ModifyTerminalStatusView {
         st.setAutoReverse(false);
         st.play();
     }
-    public void searchButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void searchButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
+
     public void refreshButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(1.0);
@@ -271,6 +254,7 @@ public class ModifyTerminalStatusView {
         st.setAutoReverse(false);
         st.play();
     }
+
     public void refreshButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(0.9);
