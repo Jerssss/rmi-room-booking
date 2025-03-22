@@ -1,13 +1,11 @@
 package client.admin.model;
 
 import client.ClientMain;
-import shared.Admin;
+import client.utility.ClientCallBack;
 import shared.Log;
 import shared.Reservation;
+import shared.callback.UpdateTable;
 import shared.interfaces.admin.AdminProcessors;
-import shared.interfaces.student.StudentProcessors;
-import util.JSONUtility;
-import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -17,7 +15,6 @@ public class ReportGeneratorModel {
     public ReportGeneratorModel() {
         this.adminProcessors = ClientMain.getAdminProcessors(); // Get RMI instance
     }
-
 
     public List<Log> fetchLogs() {
         System.out.println("[DEBUG] fetchLogs() method called.");
@@ -34,8 +31,8 @@ public class ReportGeneratorModel {
                 System.out.println("[DEBUG] No logs found via RMI.");
             } else {
                 System.out.println("[DEBUG] Loaded " + logs.size() + " logs via RMI.");
-                for (Log Logs : logs) {
-                    System.out.println("[DEBUG] " + Logs);
+                for (Log log : logs) {
+                    System.out.println("[DEBUG] " + log);
                 }
             }
 
@@ -45,7 +42,6 @@ public class ReportGeneratorModel {
             return null;
         }
     }
-
 
     public List<Reservation> fetchReservations() {
         System.out.println("[DEBUG] fetchReservations() method called.");
@@ -71,6 +67,21 @@ public class ReportGeneratorModel {
         } catch (RemoteException e) {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Registers the client callback so that the server can push log and reservation updates.
+     *
+     * @param updateTable The callback implementation handling log and reservation updates.
+     */
+    public void initCallback(UpdateTable updateTable) {
+        try {
+            ClientCallBack clientCallBack = new ClientCallBack(updateTable);
+            adminProcessors.registerCallback(clientCallBack);
+            System.out.println("[CLIENT] Callback registered for report updates.");
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }
