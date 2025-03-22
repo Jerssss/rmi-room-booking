@@ -142,24 +142,30 @@ public class ModifyTerminalStatusController {
         }
     }
 
-    public void searchTerminals(ObservableList<Terminal> terminalData, String searchText) {
-        if (searchText == null || searchText.trim().isEmpty()) {
-            System.out.println("[DEBUG] Search text is empty. Resetting to full terminal list.");
+    public void searchTerminals(String query) {
+        if (terminalData.isEmpty()) {
+            return;
         }
 
-        String lowerCaseSearchText = searchText.toLowerCase();
-        ObservableList<Terminal> filteredList = terminalData.stream()
+        if (query == null || query.trim().isEmpty()) {
+            System.out.println("[DEBUG] Search text is empty. Resetting to full terminal list.");
+            view.updateTable(terminalData); // Reset table to original data
+            return;
+        }
+
+        String lowerCaseQuery = query.toLowerCase();
+        List<Terminal> filteredList = terminalData.stream()
                 .filter(terminal ->
-                        terminal.getRoom().toLowerCase().contains(lowerCaseSearchText) ||
-                                terminal.getTerminalID().toLowerCase().contains(lowerCaseSearchText) ||
-                                terminal.getOs().toLowerCase().contains(lowerCaseSearchText) ||
-                                terminal.getStartTime().toLowerCase().contains(lowerCaseSearchText) ||
-                                terminal.getEndTime().toLowerCase().contains(lowerCaseSearchText) ||
-                                terminal.getReservationDate().toLowerCase().contains(lowerCaseSearchText) ||
-                                terminal.getStatus().toLowerCase().contains(lowerCaseSearchText))
-                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+                        terminal.getTerminalID().toLowerCase().contains(lowerCaseQuery) ||
+                                terminal.getRoom().toLowerCase().contains(lowerCaseQuery) ||
+                                terminal.getOs().toLowerCase().contains(lowerCaseQuery) ||
+                                terminal.getStatus().toLowerCase().contains(lowerCaseQuery) ||
+                                terminal.getReservationDate().toLowerCase().contains(lowerCaseQuery) ||
+                                terminal.getStartTime().toLowerCase().contains(lowerCaseQuery) ||
+                                terminal.getEndTime().toLowerCase().contains(lowerCaseQuery))
+                .collect(Collectors.toList());
 
         System.out.println("[DEBUG] Search completed. Matching results: " + filteredList.size());
-        view.updateTable(filteredList);
+        view.updateTable(FXCollections.observableArrayList(filteredList));
     }
 }

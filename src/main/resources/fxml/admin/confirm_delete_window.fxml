@@ -132,8 +132,8 @@
     <bottom>
         <HBox alignment="CENTER" prefHeight="56.0" prefWidth="366.0" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
-                <Button fx:id="confirmButton" mnemonicParsing="false" text="Confirm" />
+                <Button fx:id="cancelButton" mnemonicParsing="false" prefHeight="21.0" prefWidth="125.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px; -fx-font-family: 'System'; -fx-font-size: 14px; -fx-font-weight: bold;"  text="Cancel" textFill="WHITE" />
+                <Button fx:id="confirmButton" mnemonicParsing="false" prefHeight="21.0" prefWidth="125.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px; -fx-font-family: 'System'; -fx-font-size: 14px; -fx-font-weight: bold;" text="Confirm" textFill="WHITE" />
             </children>
         </HBox>
     </bottom>
