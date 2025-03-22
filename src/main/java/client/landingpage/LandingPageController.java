@@ -51,7 +51,6 @@ public class LandingPageController {
         }
     }
 
-
     private void handleSignUp(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/sign_up_page.fxml"));
