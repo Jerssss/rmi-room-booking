@@ -30,7 +30,7 @@ public class ModifyTerminalStatusView {
 
     @FXML private Button searchButton;
     @FXML private Button saveChangesButton;
-    @FXML private Button refreshButton;
+    @FXML private Button resetButton;
     @FXML private TextField modTerTextField;
     @FXML private TableView<Terminal> modTerTableView;
     @FXML private TableColumn<Terminal, String> roomNumberColumn;
@@ -63,7 +63,7 @@ public class ModifyTerminalStatusView {
             controller.searchTerminals(newValue);
         });
 
-        setActionRefreshButton(event -> controller.loadTerminals());
+        setActionResetButton(event -> controller.loadTerminals());
         setActionSaveChangesButton(event -> controller.saveChanges());
     }
 
@@ -85,8 +85,8 @@ public class ModifyTerminalStatusView {
         System.out.println("[CLIENT] ModifyTerminalStatusController successfully created.");
     }
 
-    public void setActionRefreshButton(EventHandler<ActionEvent> event) {
-        refreshButton.setOnAction(event);
+    public void setActionResetButton(EventHandler<ActionEvent> event) {
+        resetButton.setOnAction(event);
         System.out.println("[DEBUG] Refresh triggered");
     }
 
@@ -201,9 +201,14 @@ public class ModifyTerminalStatusView {
                 confirmButton = (Button) confirmationPane.lookup("#confirmButton");
                 cancelButton = (Button) confirmationPane.lookup("#cancelButton");
 
+                // Add hover effects
+                applyHoverEffect(confirmButton);
+                applyHoverEffect(cancelButton);
+
                 confirmationStage = new Stage();
                 confirmationStage.initModality(Modality.APPLICATION_MODAL);
                 confirmationStage.setScene(new Scene(confirmationPane));
+                confirmationStage.setResizable(false); // Disables the maximize button
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -228,6 +233,27 @@ public class ModifyTerminalStatusView {
         confirmationStage.showAndWait();
     }
 
+    // Apply uniform hover effect
+    private void applyHoverEffect(Button button) {
+        button.setOnMouseEntered(event -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), button);
+            st.setToX(0.9);
+            st.setToY(0.9);
+            st.setCycleCount(1);
+            st.setAutoReverse(false);
+            st.play();
+        });
+
+        button.setOnMouseExited(event -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), button);
+            st.setToX(1.0);
+            st.setToY(1.0);
+            st.setCycleCount(1);
+            st.setAutoReverse(false);
+            st.play();
+        });
+    }
+
     public void saveChangesButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
         st.setToX(1.0);
@@ -246,8 +272,8 @@ public class ModifyTerminalStatusView {
         st.play();
     }
 
-    public void refreshButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
+    public void resetButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), resetButton);
         st.setToX(1.0);
         st.setToY(1.0);
         st.setCycleCount(1);
@@ -255,8 +281,8 @@ public class ModifyTerminalStatusView {
         st.play();
     }
 
-    public void refreshButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
+    public void resetButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), resetButton);
         st.setToX(0.9);
         st.setToY(0.9);
         st.setCycleCount(1);
