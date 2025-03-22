@@ -1,8 +1,6 @@
 package client.login;
 
 import shared.interfaces.Authentication;
-import shared.callback.ClientCallbackInterface;
-import client.utility.ClientCallbackImpl;
 import util.exception.AccountAlreadyLoggedIn;
 import util.exception.InvalidCredentialsException;
 import java.io.IOException;
