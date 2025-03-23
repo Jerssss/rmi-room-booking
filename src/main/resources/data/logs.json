@@ -175,8 +175,6 @@
         "Action": "Logout",
         "Date": "2025-03-23",
         "Time": "12:10:02"
-<<<<<<< HEAD
-=======
       },
       {
         "UserID": "1",
@@ -233,7 +231,13 @@
         "Action": "Login",
         "Date": "2025-03-23",
         "Time": "15:39:05"
->>>>>>> ccccd44ab91524c8c543e68dfaeb2e263adab5de
+      },
+      {
+        "UserID": "1",
+        "UserType": "Student",
+        "Action": "Login",
+        "Date": "2025-03-23",
+        "Time": "16:14:04"
       }
     ]
   }
