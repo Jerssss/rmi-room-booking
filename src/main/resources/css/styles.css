@@ -71,3 +71,13 @@
     -fx-opacity: 0.5;
     -fx-disable: true;
 }
+
+.deleted-row {
+    -fx-background-color: #d3d3d3;
+    -fx-opacity: 0.7;
+}
+
+.deleted-row .button {
+    -fx-opacity: 0.5;
+    -fx-disable: true;
+}

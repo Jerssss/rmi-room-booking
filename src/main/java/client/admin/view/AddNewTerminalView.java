@@ -33,9 +33,7 @@ public class AddNewTerminalView implements Initializable {
     @FXML private TableColumn<Terminal, String> reservationDateColumn;
     @FXML private TableView<Terminal> addTerminalTableView;
     @FXML private TextField searchTerminalTextField;
-    @FXML private Button searchButton;
     @FXML private Button redirectAddTerminalWindowButton;
-    @FXML private Button refreshButton;  // Refresh button
 
     private final ObservableList<Terminal> allTerminals = FXCollections.observableArrayList();
     private AddNewTerminalController controller;
@@ -47,8 +45,6 @@ public class AddNewTerminalView implements Initializable {
         controller = new AddNewTerminalController(this, new AddNewTerminalModel());
         controller.loadTerminals();  // Fetch & update table on startup
         initializeSearchListener();
-        // Refresh table when refresh button is clicked
-        refreshButton.setOnAction(event -> controller.loadTerminals());
         redirectAddTerminalWindowButton.setOnAction(event -> openAddTerminalWindow());
     }
 
@@ -119,39 +115,6 @@ public class AddNewTerminalView implements Initializable {
     }
 
     // Button animation methods
-
-    public void searchButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void searchButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void refreshButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-    public void refreshButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
     public void addTerminalButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectAddTerminalWindowButton);
         st.setToX(1.0);

@@ -119,7 +119,17 @@
         "reservation_date": "2025-03-20",
         "start_time": "09:30",
         "end_time": "11:30",
-        "status": "Accepted"
+        "status": "Approved"
+      },
+      {
+        "reservation_id": "26",
+        "user_id": "1",
+        "terminal_id": "PC0",
+        "room_id": "D426",
+        "reservation_date": "2025-03-24",
+        "start_time": "08:30",
+        "end_time": "09:30",
+        "status": "Pending"
       }
     ]
   }
