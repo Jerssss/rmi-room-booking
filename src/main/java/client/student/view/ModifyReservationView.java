@@ -76,10 +76,13 @@ public class ModifyReservationView implements Initializable {
                 super.updateItem(reservation, empty);
                 getStyleClass().remove("cancelled-row");
                 getStyleClass().remove("past-date-row");
+                getStyleClass().remove("deleted-row");
 
                 if (!empty && reservation != null) {
                     if ("Cancelled".equals(reservation.getStatus())) {
                         getStyleClass().add("cancelled-row");
+                    } else if ("Deleted".equals(reservation.getStatus())) {
+                        getStyleClass().add("deleted-row");
                     }
 
                     LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
@@ -206,11 +209,6 @@ public class ModifyReservationView implements Initializable {
         modResTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
-    /**
-     * Creates a cell factory for the edit button in the reservation table.
-     *
-     * @return A Callback that creates TableCell instances with edit buttons.
-     */
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createEditButtonCellFactory() {
         return column -> new TableCell<>() {
             private final Button editButton = new Button("Edit");
@@ -263,17 +261,12 @@ public class ModifyReservationView implements Initializable {
                             editButton.setDisable(false); // Enable the edit button for active reservations
                         }
                     }
-                    setGraphic(editButton );
+                    setGraphic(editButton);
                 }
             }
         };
     }
 
-    /**
-     * Creates a cell factory for the cancel button in the reservation table.
-     *
-     * @return A Callback that creates TableCell instances with cancel buttons.
-     */
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createCancelButtonCellFactory() {
         return column -> new TableCell<>() {
             private final Button cancelButton = new Button("Cancel");
@@ -283,48 +276,49 @@ public class ModifyReservationView implements Initializable {
                 cancelButton.setOnAction(event -> {
                     Reservation reservation = getTableRow().getItem();
                     if (reservation != null) {
-                        LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
-                        LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
-                        LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
-                        LocalDateTime now = LocalDateTime.now();
+                        // Determine the action based on the reservation status
+                        boolean isDeleteMode = "Cancelled".equals(reservation.getStatus()) || "Rejected".equals(reservation.getStatus()) || LocalDate.parse(reservation.getReservationDate()).isBefore(LocalDate.now());
+                        String action = isDeleteMode ? "Delete" : "Cancel";
+                        String confirmationMessage = isDeleteMode ?
+                                "Are you sure you want to delete this reservation?" :
+                                "Are you sure you want to cancel this reservation?";
 
-                        // Check if the reservation is within 24 hours or has been rejected
-                        if (reservationDateTime.isBefore(now.plusHours(24)) || "Rejected".equals(reservation.getStatus())) {
-                            Alert alert = new Alert(Alert.AlertType.WARNING);
-                            alert.setTitle("Cancellation Not Allowed");
-                            alert.setHeaderText(null);
-                            alert.setContentText("You cannot cancel a reservation that has been rejected or less than 24 hours before the start time.");
-                            alert.showAndWait();
-                            return; // Exit the method if cancellation is not allowed
+                        // Only enforce the 24-hour rule for "Cancel" mode
+                        if (!isDeleteMode) {
+                            LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
+                            LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
+                            LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
+                            LocalDateTime now = LocalDateTime.now();
+                            LocalDateTime twentyFourHoursFromNow = now.plusHours(24);
+                            if (reservationDateTime.isBefore(twentyFourHoursFromNow)) {
+                                Alert alert = new Alert(Alert.AlertType.WARNING);
+                                alert.setTitle("Cancellation Not Allowed");
+                                alert.setHeaderText(null);
+                                alert.setContentText("You cannot cancel a reservation that is within 24 hours of its start time.");
+                                alert.showAndWait();
+                                return;
+                            }
                         }
 
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Confirm Cancellation");
-                        alert.setHeaderText("Cancel Reservation");
-                        alert.setContentText("Are you sure you want to cancel this reservation?");
+                        alert.setTitle("Confirm " + action);
+                        alert.setHeaderText(null);
+                        alert.setContentText(confirmationMessage);
 
                         Optional<ButtonType> result = alert.showAndWait();
                         if (result.isPresent() && result.get() == ButtonType.OK) {
-                            // Mark the reservation as cancelled
-                            reservation.setStatus("Cancelled");
-                            controller.cancelReservation(reservation.getReservationID());
-
-                            // Refresh the table to apply CSS changes
-                            modResTableView.refresh(); // This will now reflect the local change
-
-                            // Disable buttons
-                            cancelButton.setDisable(true);
-                            TableRow<Reservation> row = getTableRow();
-                            if (row != null) {
-                                for (Node node : row.getChildrenUnmodifiable()) {
-                                    if (node instanceof TableCell) {
-                                        TableCell<?, ?> cell = (TableCell<?, ?>) node;
-                                        if (cell.getGraphic() instanceof Button && "Edit".equals(((Button) cell.getGraphic()).getText())) {
-                                            cell.getGraphic().setDisable(true);
-                                        }
-                                    }
-                                }
+                            if (isDeleteMode) {
+                                // Mark the reservation as deleted
+                                reservation.setStatus("Deleted");
+                                controller.cancelReservation(reservation.getReservationID());
+                            } else {
+                                // Mark the reservation as cancelled
+                                reservation.setStatus("Cancelled");
+                                controller.cancelReservation(reservation.getReservationID());
                             }
+
+                            // Refresh the table to apply CSS changes and disable buttons
+                            modResTableView.refresh();
                         }
                     }
                 });
@@ -338,8 +332,21 @@ public class ModifyReservationView implements Initializable {
                 } else {
                     Reservation reservation = getTableRow().getItem();
                     if (reservation != null) {
-                        // Disable the cancel button for rejected reservations
-                        cancelButton.setDisable("Rejected".equals(reservation.getStatus()));
+                        // Change the button label to "Delete" for cancelled, rejected, or past reservations
+                        if ("Cancelled".equals(reservation.getStatus()) || "Rejected".equals(reservation.getStatus()) || LocalDate.parse(reservation.getReservationDate()).isBefore(LocalDate.now())) {
+                            cancelButton.setText("Delete");
+                            cancelButton.setStyle("-fx-background-color: #ab1313; -fx-text-fill: white; -fx-opacity: 1.0;");
+                            // Disable the button for deleted reservations
+                            if ("Deleted".equals(reservation.getStatus())) {
+                                cancelButton.setDisable(true); // Disable the button for deleted reservations
+                            } else {
+                                cancelButton.setDisable(false); // Enable the button for rejected or past reservations
+                            }
+                        } else {
+                            cancelButton.setText("Cancel");
+                            cancelButton.setStyle("-fx-background-color: #ab1313; -fx-text-fill: white; -fx-opacity: 1.0;");
+                            cancelButton.setDisable(false); // Enable the button for active reservations
+                        }
                     }
                     setGraphic(cancelButton);
                 }
