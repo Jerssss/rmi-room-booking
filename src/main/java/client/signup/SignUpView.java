@@ -25,7 +25,7 @@ public class SignUpView {
     @FXML
     private TextField courseYearField;
     @FXML
-    private TextField nameField; // Added Name Field
+    private TextField nameField;
     @FXML
     private PasswordField signUpUserPass;
     @FXML
@@ -34,9 +34,6 @@ public class SignUpView {
     private StackPane facultyTypeStackPane;
     @FXML
     private StackPane courseYearStackPane;
-
-    private Parent root;
-    private FXMLLoader fxmlLoader;
 
     @FXML
     public void initialize() {

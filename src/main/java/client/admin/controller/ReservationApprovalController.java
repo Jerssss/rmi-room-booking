@@ -14,12 +14,24 @@ import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The `ReservationApprovalController` class is responsible for managing the logic
+ * and interactions for approving reservations. It handles loading reservation data,
+ * updating the view, saving changes, and searching for reservations.
+ */
 public class ReservationApprovalController {
 
     private final ReservationApprovalModel model;
     private final ReservationApprovalView view;
     private final ObservableList<Reservation> reservationData = FXCollections.observableArrayList();
 
+    /**
+     * Constructs a `ReservationApprovalController` with the specified view.
+     * Initializes the model, sets up callbacks for reservation updates,
+     * and loads the initial reservation data.
+     *
+     * @param view The `ReservationApprovalView` instance associated with this controller.
+     */
     public ReservationApprovalController(ReservationApprovalView view) {
         this.view = view;
         this.model = new ReservationApprovalModel();
@@ -57,7 +69,9 @@ public class ReservationApprovalController {
         );
     }
 
-    /** Loads reservation data and updates the view */
+    /**
+     * Loads reservation data from the model and updates the view.
+     */
     public void loadReservations() {
         System.out.println("[CLIENT] loadReservations() method called.");
 
@@ -74,7 +88,9 @@ public class ReservationApprovalController {
         }
     }
 
-    /** Saves reservation changes to the model */
+    /**
+     * Saves the modified reservation data to the model.
+     */
     public void saveChanges() {
         List<Reservation> reservationsToSave = List.copyOf(view.getApproveResTableView().getItems());
 
@@ -85,13 +101,14 @@ public class ReservationApprovalController {
                 "Save Successful", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /** Filters reservations based on search text */
+    /**
+     * Filters reservations based on the provided search text and updates the view.
+     *
+     * @param searchText The text to filter reservations by.
+     */
     public void searchReservations(String searchText) {
-        System.out.println("[DEBUG] Searching reservations with keyword: " + searchText);
-
         if (searchText == null || searchText.trim().isEmpty()) {
             view.setReservationData(reservationData);
-            System.out.println("[DEBUG] Search text is empty. Resetting to full reservation list.");
             return;
         }
 
@@ -108,6 +125,5 @@ public class ReservationApprovalController {
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         view.setReservationData(filteredList);
-        System.out.println("[DEBUG] Search completed. Matching results: " + filteredList.size());
     }
 }

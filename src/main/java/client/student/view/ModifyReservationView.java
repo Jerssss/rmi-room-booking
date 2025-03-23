@@ -61,7 +61,7 @@ public class ModifyReservationView implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
         initializeRowFactory();
-        System.out.println("[DEBUG] Table columns initialized successfully.");
+        System.out.println("[CLIENT] Table columns initialized successfully.");
         initializeController();
         initializeSearchListener();
     }
@@ -108,15 +108,12 @@ public class ModifyReservationView implements Initializable {
      * Initializes the ModifyReservationController with the current student's ID.
      */
     private void initializeController() {
-        System.out.println("[DEBUG] Initializing ModifyReservationController...");
         String studentID = SessionManager.getStudentID();
         if (studentID == null || studentID.isEmpty()) {
-            System.err.println("[ERROR] Student ID is missing from the session.");
             return;
         }
         ModifyReservationModel model = new ModifyReservationModel(studentID);
         this.controller = new ModifyReservationController(this, model);
-        System.out.println("[DEBUG] ModifyReservationController successfully created with student ID: " + studentID);
     }
 
     /**
@@ -142,13 +139,13 @@ public class ModifyReservationView implements Initializable {
      */
     public void updateTable(List<Reservation> reservations) {
         if (reservations == null || reservations.isEmpty()) {
-            System.out.println("[DEBUG] No data to display in TableView.");
+            System.out.println("[CLIENT] No data to display in TableView.");
             return;
         }
         allReservations.setAll(reservations);
         modResTableView.setItems(allReservations);
         modResTableView.refresh();
-        System.out.println("[DEBUG] Table updated with " + reservations.size() + " reservations.");
+        System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
         modResTableView.requestLayout();
     }
 

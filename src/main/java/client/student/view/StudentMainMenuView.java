@@ -20,11 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-
-
-
-
 public class StudentMainMenuView {
 
     @FXML
@@ -45,10 +40,6 @@ public class StudentMainMenuView {
     private Label headerTimeLabel;
     @FXML
     private BorderPane rootPane;
-
-    // 🟡 Add this (fixing the error)
-    @FXML
-    private ToggleButton serverToggleButton;
 
     private Button currentlyHighlightedButton;
 
@@ -149,15 +140,6 @@ public class StudentMainMenuView {
     public void setActionLogoutButton(EventHandler<ActionEvent> event) {
         logOutButton.setOnAction(event);
     }
-
-
-
-
-
-
-
-
-
 
     private void highlightButton(Button button) {
         //remove the highlight from the previously highlighted button

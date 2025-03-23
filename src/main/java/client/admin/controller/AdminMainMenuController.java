@@ -30,9 +30,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-
 /**
- * Controls the Admin Main Menu actions.
+ * The `AdminMainMenuController` class is responsible for handling the actions and logic
+ * of the Admin Main Menu. It manages navigation to different admin functionalities,
+ * such as adding terminals, viewing student reservations, and handling logout.
  */
 public class AdminMainMenuController {
     private final AdminMainMenuView view;
@@ -42,6 +43,15 @@ public class AdminMainMenuController {
 
     private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
 
+    /**
+     * Constructs an `AdminMainMenuController` with the specified view, model, and logged-in username.
+     * Initializes the view with the logged-in user's name, sets up date and time display,
+     * and configures button actions.
+     *
+     * @param view             The `AdminMainMenuView` instance associated with this controller.
+     * @param model            The `AdminMainMenuModel` instance associated with this controller.
+     * @param loggedInUserName The username of the currently logged-in admin.
+     */
     public AdminMainMenuController(AdminMainMenuView view, AdminMainMenuModel model, String loggedInUserName) {
         this.view = view;
         this.model = model;
@@ -59,7 +69,12 @@ public class AdminMainMenuController {
 
     }
 
-
+    /**
+     * Handles the action for adding a new terminal. Loads the Add New Terminal view
+     * and sets up the corresponding controller.
+     *
+     * @param event The event triggered by clicking the "Add New Terminal" button.
+     */
     private void handleAddNewTerminal(ActionEvent event) {
         System.out.println("=====================================================");
 
@@ -78,17 +93,19 @@ public class AdminMainMenuController {
 
             // Set new view in the center pane
             view.getRootPane().setCenter(addTerminalView);
-            System.out.println("[DEBUG] Successfully loaded Add New Terminal view.");
-
         } catch (IOException e) {
             System.err.println("[ERROR] Failed to load Add New Terminal: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-
+    /**
+     * Handles the action for viewing student reservations. Loads the Student Reservations view
+     * and sets up the corresponding controller.
+     *
+     * @param event The event triggered by clicking the "View Student Reservations" button.
+     */
     private void handleViewStudentReservation(ActionEvent event) {
-        System.out.println("[DEBUG] Navigating to View Student Reservations...");
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/student_reservations_pane.fxml"));
@@ -100,8 +117,6 @@ public class AdminMainMenuController {
                 System.err.println("[ERROR] ViewStudentReservationsView is NULL after FXML load!");
                 return;
             }
-            System.out.println("[DEBUG] ViewStudentReservationsView successfully loaded.");
-
             // Create MVC Components
             ViewStudentReservationsModel reservationsModel = new ViewStudentReservationsModel();
             ViewStudentReservationsController reservationsController = new ViewStudentReservationsController(reservationsView, reservationsModel);
@@ -122,27 +137,38 @@ public class AdminMainMenuController {
         }
     }
 
+    /**
+     * Handles the action for modifying terminal status. Currently prints a placeholder message.
+     */
     private void handleModifyTerminal() {
         System.out.println("Navigating to Modify Terminal Status...");
     }
 
+    /**
+     * Handles the action for generating reports. Currently prints a placeholder message.
+     */
     private void handleReports() {
         System.out.println("Navigating to Reports...");
     }
 
+    /**
+     * Handles the action for reservation approval. Currently prints a placeholder message.
+     */
     private void handleReservationApproval() {
         System.out.println("Navigating to Reservation Approval");
     }
 
-    /** Handles Logout and logs the action. */
+    /**
+     * Handles the logout action. Logs the logout event and navigates back to the login page.
+     *
+     * @param event The event triggered by clicking the "Logout" button.
+     */
     private void handleLogout(ActionEvent event) {
         if (loggedInUserName != null) {
             logLogoutToJson(loggedInUserName, "Admin");
         }
 
         try {
-            System.out.println("[DEBUG] Logging out and loading Login Page...");
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
             Parent root = loader.load();
 
@@ -176,7 +202,10 @@ public class AdminMainMenuController {
     }
 
     /**
-     * Logs a logout action into logs.json.
+     * Logs a logout action into the logs.json file.
+     *
+     * @param userID   The ID of the user logging out.
+     * @param userType The type of the user (e.g., "Admin").
      */
     private void logLogoutToJson(String userID, String userType) {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
@@ -191,41 +220,5 @@ public class AdminMainMenuController {
         System.out.println("[LOGOUT] Successfully logged out: " + userID);
         System.out.println("=====================================================");
     }
-
-
-    private void switchScene(ActionEvent event, String fxmlPath, String title) {
-        try {
-            System.out.println("[DEBUG] Loading Scene: " + fxmlPath);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            if (loader.getLocation() == null) {
-                System.err.println("[ERROR] FXML file path is incorrect: " + fxmlPath);
-                return;
-            }
-
-            Parent root = loader.load();
-            System.out.println("[DEBUG] Successfully loaded FXML: " + fxmlPath);
-
-            Platform.runLater(() -> {
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                if (stage == null) {
-                    System.err.println("[ERROR] Stage is NULL! Cannot change scene.");
-                    return;
-                }
-
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setTitle(title);
-                stage.centerOnScreen();
-                stage.show();
-                System.out.println("[DEBUG] Scene changed successfully to " + title);
-            });
-
-        } catch (IOException e) {
-            System.err.println("[ERROR] Failed to load " + fxmlPath);
-            e.printStackTrace();
-        }
-    }
-
 
 }
