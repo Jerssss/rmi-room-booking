@@ -57,12 +57,11 @@ public class ReservationApprovalView implements Initializable {
     }
 
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createStyledStatusCellFactory() {
-        return column -> new TableCell<>() {
-            private final ComboBox<String> statusComboBox = new ComboBox<>(
-                    FXCollections.observableArrayList("Pending", "Approved", "Rejected")
-            );
+        return column -> new TableCell<Reservation, String>() {
+            private final ComboBox<String> statusComboBox = new ComboBox<>();
 
             {
+                statusComboBox.getItems().addAll("Pending", "Approved", "Rejected");
                 statusComboBox.setStyle("-fx-border-color: transparent; -fx-padding: 5px; -fx-font-size: 13px;");
                 statusComboBox.setOnAction(e -> {
                     Reservation reservation = getTableRow().getItem();
@@ -78,9 +77,31 @@ public class ReservationApprovalView implements Initializable {
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setGraphic(null);
                 } else {
+                    Reservation reservation = getTableRow().getItem();
                     statusComboBox.setValue(getTableRow().getItem().getStatus());
+
+                    int rowIndex = getIndex();
+                    Color rowColor = (rowIndex % 2 == 1) ? Color.web("#f8f8f8") : Color.WHITE;
+                    setBackground(new Background(new BackgroundFill(rowColor, new CornerRadii(5), null)));
+
+                    statusComboBox.setStyle("-fx-background-color: " +
+                            toRGBCode(rowColor) + "; " +
+                            "-fx-border-color: transparent; " +
+                            "-fx-padding: 5px; " +
+                            "-fx-font-size: 13px; " +
+                            "-fx-font-family: 'System';");
+
+                    statusComboBox.setMaxWidth(Double.MAX_VALUE);
+
                     setGraphic(statusComboBox);
                 }
+            }
+
+            private String toRGBCode(Color color) {
+                return String.format("#%02X%02X%02X",
+                        (int) (color.getRed() * 255),
+                        (int) (color.getGreen() * 255),
+                        (int) (color.getBlue() * 255));
             }
         };
     }
