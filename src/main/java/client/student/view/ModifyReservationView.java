@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -209,6 +208,11 @@ public class ModifyReservationView implements Initializable {
         modResTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
+    /**
+     * Creates a cell factory for the edit button in the reservation table.
+     *
+     * @return A Callback that creates TableCell instances with edit buttons.
+     */
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createEditButtonCellFactory() {
         return column -> new TableCell<>() {
             private final Button editButton = new Button("Edit");
@@ -266,6 +270,12 @@ public class ModifyReservationView implements Initializable {
             }
         };
     }
+
+    /**
+     * Creates a cell factory for the cancel button in the reservation table.
+     *
+     * @return A Callback that creates TableCell instances with cancel buttons.
+     */
 
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createCancelButtonCellFactory() {
         return column -> new TableCell<>() {
