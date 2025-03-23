@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ModifyReservationController {
     private final ModifyReservationView view;
-    private final ModifyReservationModel model;
+    private ModifyReservationModel model;
     private Reservation pendingReservation;
     private boolean changesMade = false;
     private String query;
@@ -68,6 +68,7 @@ public class ModifyReservationController {
             ModifyReservationDialogController dialogController = loader.getController();
             dialogController.setReservation(reservation);
             dialogController.setMainController(this);
+            dialogController.setModel(model); // Pass the model to the dialog
 
             Stage dialogStage = new Stage();
             dialogController.setDialogStage(dialogStage);

@@ -1,6 +1,7 @@
 package client.student.view;
 
 import client.student.controller.ModifyReservationController;
+import client.student.model.ModifyReservationModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -35,6 +36,7 @@ public class ModifyReservationDialogController {
     private Stage dialogStage;
     private Reservation reservation;
     private ModifyReservationController mainController;
+    private ModifyReservationModel model;
     private boolean changesMade = false;
 
     /**
@@ -58,6 +60,10 @@ public class ModifyReservationDialogController {
                 }
             }
         });
+
+        // Listeners for real-time overlap validation
+        startTimeTextField.textProperty().addListener((obs, oldVal, newVal) -> validateTimeOverlap());
+        endTimeTextField.textProperty().addListener((obs, oldVal, newVal) -> validateTimeOverlap());
     }
 
     /**
@@ -161,6 +167,29 @@ public class ModifyReservationDialogController {
             return;
         }
 
+        String startTime = startTimeTextField.getText();
+        String endTime = endTimeTextField.getText();
+        String terminalID = terminalNumberTextField.getText();
+        String reservationDate = datePicker.getValue().toString();
+
+        // Validate maximum reservation duration (2 hours)
+        int startMinutes = convertTimeToMinutes(startTime);
+        int endMinutes = convertTimeToMinutes(endTime);
+        int duration = endMinutes - startMinutes;
+        if (duration > 120) {
+            showErrorDialog(List.of("Reservations cannot exceed 2 hours."));
+            return;
+        }
+
+        // Validate time overlap
+        List<Reservation> existingReservations = model.fetchReservationsForTerminal(terminalID, reservationDate);
+        if (existingReservations != null && hasOverlap(existingReservations, startTime, endTime)) {
+            startTimeTextField.setStyle("-fx-text-fill: red;");
+            endTimeTextField.setStyle("-fx-text-fill: red;");
+            showErrorDialog(List.of("Time slot overlaps with an existing reservation!"));
+            return;
+        }
+
         updateReservation();
 
         // Update the table
@@ -220,6 +249,17 @@ public class ModifyReservationDialogController {
         if (startTime != null && endTime != null && !endTime.isAfter(startTime)) {
             errors.add("End time must be after start time.");
         }
+
+        // Validate maximum reservation duration (2 hours)
+        if (startTime != null && endTime != null) {
+            int startMinutes = convertTimeToMinutes(startTimeTextField.getText());
+            int endMinutes = convertTimeToMinutes(endTimeTextField.getText());
+            int duration = endMinutes - startMinutes;
+            if (duration > 120) {
+                errors.add("Reservations cannot exceed 2 hours.");
+            }
+        }
+
         return errors;
     }
 
@@ -292,5 +332,96 @@ public class ModifyReservationDialogController {
      */
     public boolean isChangesMade() {
         return changesMade;
+    }
+
+    /**
+     * Sets the model for this dialog.
+     *
+     * @param model the model to be set
+     */
+    public void setModel(ModifyReservationModel model) {
+        this.model = model;
+    }
+
+    /**
+     * Validates if the provided time string is in the correct format (HH:mm).
+     *
+     * @param time the time string to validate
+     * @return true if the time format is valid, false otherwise
+     */
+    private boolean isValidTimeFormat(String time) {
+        return time.matches("^(?:[01]\\d|2[0-3]):[0-5]\\d$");
+    }
+
+    /**
+     * Converts a time string in the format HH:mm to the total number of minutes since midnight.
+     *
+     * @param time the time string to convert
+     * @return the total number of minutes since midnight
+     */
+    private int convertTimeToMinutes(String time) {
+        String[] parts = time.split(":");
+        return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
+    }
+
+    /**
+     * Checks if a new time slot overlaps with any existing reservations.
+     *
+     * @param existingReservations the list of existing reservations
+     * @param newStart the start time of the new reservation in HH:mm format
+     * @param newEnd the end time of the new reservation in HH:mm format
+     * @return true if there is an overlap, false otherwise
+     */
+    private boolean hasOverlap(List<Reservation> existingReservations, String newStart, String newEnd) {
+        int newStartTime = convertTimeToMinutes(newStart);
+        int newEndTime = convertTimeToMinutes(newEnd);
+        for (Reservation res : existingReservations) {
+            // Skip the current reservation being edited
+            if (res.getReservationID().equals(reservation.getReservationID())) {
+                continue;
+            }
+            int existingStart = convertTimeToMinutes(res.getStartTime());
+            int existingEnd = convertTimeToMinutes(res.getEndTime());
+            if ((newStartTime >= existingStart && newStartTime < existingEnd) ||
+                    (newEndTime > existingStart && newEndTime <= existingEnd) ||
+                    (newStartTime <= existingStart && newEndTime >= existingEnd)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Validates if the new time slot overlaps with any existing reservations.
+     * If an overlap is detected, the start and end time text fields are highlighted in red.
+     */
+    private void validateTimeOverlap() {
+        startTimeTextField.setStyle("");
+        endTimeTextField.setStyle("");
+
+        String startTime = startTimeTextField.getText();
+        String endTime = endTimeTextField.getText();
+        if (startTime.isEmpty() || endTime.isEmpty()) {
+            return;
+        }
+        if (!isValidTimeFormat(startTime) || !isValidTimeFormat(endTime)) {
+            return;
+        }
+        int startMinutes = convertTimeToMinutes(startTime);
+        int endMinutes = convertTimeToMinutes(endTime);
+        if (startMinutes >= endMinutes) {
+            return;
+        }
+
+        String terminalID = terminalNumberTextField.getText();
+        if (terminalID == null || terminalID.isEmpty() || datePicker.getValue() == null) {
+            return;
+        }
+        String reservationDate = datePicker.getValue().toString();
+        List<Reservation> existingReservations = model.fetchReservationsForTerminal(terminalID, reservationDate);
+        if (existingReservations != null && hasOverlap(existingReservations, startTime, endTime)) {
+            startTimeTextField.setStyle("-fx-text-fill: red;");
+            endTimeTextField.setStyle("-fx-text-fill: red;");
+        }
     }
 }

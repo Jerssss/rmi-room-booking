@@ -62,6 +62,16 @@
         "status": "Pending"
       },
       {
+        "reservation_id": "25",
+        "user_id": "1",
+        "terminal_id": "PC2",
+        "room_id": "D524",
+        "reservation_date": "2025-03-26",
+        "start_time": "10:30",
+        "end_time": "11:00",
+        "status": "Pending"
+      },
+      {
         "reservation_id": "7",
         "user_id": "1",
         "terminal_id": "PC21",
@@ -99,7 +109,7 @@
         "reservation_date": "2025-03-19",
         "start_time": "09:30",
         "end_time": "11:30",
-        "status": "Pending"
+        "status": "Rejected"
       },
       {
         "reservation_id": "11",
@@ -109,7 +119,7 @@
         "reservation_date": "2025-03-20",
         "start_time": "09:30",
         "end_time": "11:30",
-        "status": "Pending"
+        "status": "Accepted"
       }
     ]
   }
