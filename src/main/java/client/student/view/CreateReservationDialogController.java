@@ -31,11 +31,10 @@ public class CreateReservationDialogController {
 
     private Stage dialogStage;
     private Reservation newReservation;
-    private CreateReservationModel model;  // For fetching reservations and student ID
+    private CreateReservationModel model;
 
     @FXML
     public void initialize() {
-        // Disable dates before tomorrow in the DatePicker
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
@@ -48,7 +47,6 @@ public class CreateReservationDialogController {
         });
         datePicker.setValue(LocalDate.now().plusDays(1));
 
-        // Listeners for real-time overlap validation
         startTimeTextField.textProperty().addListener((obs, oldVal, newVal) -> validateTimeOverlap());
         endTimeTextField.textProperty().addListener((obs, oldVal, newVal) -> validateTimeOverlap());
 
@@ -72,6 +70,7 @@ public class CreateReservationDialogController {
 
     @FXML
     private void handleSaveReservation() {
+        // Reset any previous error styling
         startTimeTextField.setStyle("");
         endTimeTextField.setStyle("");
 
@@ -122,15 +121,20 @@ public class CreateReservationDialogController {
             return;
         }
 
-        // Get the student ID from the model
         String userID = model.getStudentID();
-        // Generate the next reservation ID instead of using a random generator
         String reservationID = model.getNextReservationId();
         newReservation = new Reservation(reservationID, userID, terminalID, roomID,
                 reservationDate, startTime, endTime, "Pending");
 
-        System.out.println("[CLIENT] Created reservation: " + newReservation);
-        dialogStage.close();
+        try {
+            // Call the model's addReservation (void) method.
+            model.addReservation(newReservation);
+            // Show confirmation popup
+            showConfirmationPopup("Reservation successfully added!");
+            dialogStage.close();
+        } catch (RuntimeException ex) {
+            showErrorAlert("Failed to add reservation. Please try again.");
+        }
     }
 
     private void validateTimeOverlap() {
@@ -166,6 +170,14 @@ public class CreateReservationDialogController {
     private void showErrorAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Invalid Input");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showConfirmationPopup(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
