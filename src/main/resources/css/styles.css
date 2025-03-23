@@ -53,3 +53,12 @@
 .button:disabled {
     -fx-opacity: 0.5;
 }
+
+.past-date-row {
+    -fx-background-color: #cccccc;
+}
+
+.past-date-row .button {
+    -fx-opacity: 0.5;
+    -fx-disable: true;
+}

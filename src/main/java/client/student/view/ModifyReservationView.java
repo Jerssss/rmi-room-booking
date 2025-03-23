@@ -75,9 +75,17 @@ public class ModifyReservationView implements Initializable {
             protected void updateItem(Reservation reservation, boolean empty) {
                 super.updateItem(reservation, empty);
                 getStyleClass().remove("cancelled-row");
+                getStyleClass().remove("past-date-row");
 
-                if (!empty && reservation != null && "Cancelled".equals(reservation.getStatus())) {
-                    getStyleClass().add("cancelled-row");
+                if (!empty && reservation != null) {
+                    if ("Cancelled".equals(reservation.getStatus())) {
+                        getStyleClass().add("cancelled-row");
+                    }
+
+                    LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
+                    if (reservationDate.isBefore(LocalDate.now())) {
+                        getStyleClass().add("past-date-row");
+                    }
                 }
             }
         });
@@ -214,12 +222,16 @@ public class ModifyReservationView implements Initializable {
                     if (reservation != null) {
                         // Check if the reservation can be edited
                         LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
-                        LocalTime startTime = LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
-                        LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
+                        LocalDateTime startDateTime = LocalDateTime.of(reservationDate, LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm")));
                         LocalDateTime now = LocalDateTime.now();
-                        LocalDateTime twentyFourHoursFromNow = now.plusHours(24);
 
-                        boolean canEdit = "Pending".equals(reservation.getStatus()) && reservationDateTime.isAfter(twentyFourHoursFromNow);
+                        // Check if the reservation is in the past
+                        if (reservationDate.isBefore(LocalDate.now())) {
+                            return; // Do not allow editing for past dates
+                        }
+
+                        // Check if the reservation can be edited based on status and time
+                        boolean canEdit = "Pending".equals(reservation.getStatus()) && startDateTime.isAfter(now.plusHours(24));
 
                         if (canEdit) {
                             controller.showEditDialog(reservation);
@@ -242,10 +254,14 @@ public class ModifyReservationView implements Initializable {
                     setGraphic(null);
                 } else {
                     Reservation reservation = getTableRow().getItem();
-                    if (reservation != null && "Cancelled".equals(reservation.getStatus())) {
-                        editButton.setDisable(true); // Disable the edit button for cancelled reservations
-                    } else {
-                        editButton.setDisable(false); // Enable the edit button for active reservations
+                    if (reservation != null) {
+                        LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
+                        // Disable the edit button for cancelled reservations or past dates
+                        if ("Cancelled".equals(reservation.getStatus()) || reservationDate.isBefore(LocalDate.now())) {
+                            editButton.setDisable(true); // Disable the edit button
+                        } else {
+                            editButton.setDisable(false); // Enable the edit button for active reservations
+                        }
                     }
                     setGraphic(editButton);
                 }
