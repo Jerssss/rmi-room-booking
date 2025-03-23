@@ -12,8 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="328.0" styleClass="background-pane" stylesheets="@../../css/styles.css"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.landingpage.pickserver.SetIPView"><center>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="328.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.landingpage.pickserver.SetIPView"><center>
    <VBox maxHeight="-Infinity" prefHeight="122.0" prefWidth="328.0" BorderPane.alignment="CENTER">
       <children>
          <VBox prefHeight="99.0" prefWidth="308.0">
@@ -28,6 +27,7 @@
                                  <Font name="System Bold" size="12.0" />
                               </font>
                            </Label>
+                              <Button fx:id="clearButton" mnemonicParsing="false" styleClass="background-pane" text="X" translateX="274.0" />
                         </children>
                      </StackPane>
                   </children>
