@@ -16,16 +16,6 @@ public class SessionManager {
         return activeSessions.get(sessionToken);
     }
 
-    public static void invalidateSession(String sessionToken) {
-        activeSessions.remove(sessionToken);
-        if (sessionToken.equals(currentSessionToken)) {
-            currentSessionToken = null;
-        }
-    }
-
-    public static boolean isValidSession(String sessionToken) {
-        return activeSessions.containsKey(sessionToken);
-    }
 
     public static String getStudentID() {
         // Return the user ID for the current session token, or null if none exists.
