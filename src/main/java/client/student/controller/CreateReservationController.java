@@ -9,6 +9,7 @@ import shared.Terminal;
 import shared.callback.UpdateTable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreateReservationController {
     private final CreateReservationView view;
@@ -23,6 +24,14 @@ public class CreateReservationController {
             public void updateTerminals(List<Terminal> terminals) {
                 Platform.runLater(() -> view.updateTable(terminals));
                 System.out.println("[CLIENT] Terminal update received via callback.");
+
+                Platform.runLater(() -> {
+                    List<Terminal> activeTerminals = terminals.stream()
+                            .filter(ter -> "Active".equalsIgnoreCase(ter.getStatus()))
+                            .collect(Collectors.toList());
+                    view.updateTable(activeTerminals);
+                    System.out.println("[CLIENT] Terminal update received via callback.");
+                });
             }
 
             @Override
