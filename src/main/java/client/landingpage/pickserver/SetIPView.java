@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
 import javafx.animation.ScaleTransition;
 import javafx.util.Duration;
@@ -23,7 +24,7 @@ public class SetIPView {
     private Button connectButton;
 
     @FXML
-    private Button useSelectedButton;
+    private Button clearButton;
 
     private Consumer<String> connectHandler;
 
@@ -51,6 +52,16 @@ public class SetIPView {
                 serversComboBox.setDisable(false); // Enable ComboBox
             }
         });
+
+        // Add a TextFormatter to restrict input to numbers and periods
+        ipTextField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("[0-9.]*")) {
+                return change; // Allow the change if it matches the pattern
+            } else {
+                return null; // Reject the change if it doesn't match the pattern
+            }
+        }));
     }
 
     @FXML
