@@ -18,7 +18,6 @@ public class CreateReservationController {
         this.view = view;
         this.model = model;
 
-        // Register the callback for real-time updates
         model.initCallback(new UpdateTable() {
             @Override
             public void updateTerminals(List<Terminal> terminals) {
@@ -28,7 +27,7 @@ public class CreateReservationController {
 
             @Override
             public void updateReservations(List<Reservation> reservations) {
-
+                // Not used in this view
             }
 
             @Override
@@ -37,13 +36,9 @@ public class CreateReservationController {
             }
         });
 
-        // Load initial terminal data
         loadTerminals();
     }
 
-    /**
-     * Loads terminal data and updates the TableView.
-     */
     public void loadTerminals() {
         System.out.println("[CLIENT] Fetching terminal data...");
         List<Terminal> terminals = model.fetchTerminals();
@@ -53,5 +48,10 @@ public class CreateReservationController {
             System.out.println("[CLIENT] Loaded " + terminals.size() + " terminals.");
         }
         view.updateTable(terminals);
+    }
+
+    // Added getter to allow access to the model from the view
+    public CreateReservationModel getModel() {
+        return model;
     }
 }

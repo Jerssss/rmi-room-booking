@@ -16,7 +16,7 @@ public class CreateReservationModel {
     private final String studentID;
 
     public CreateReservationModel(String studentID) {
-        this.studentService = ClientMain.getStudentProcessors(); // Get RMI instance
+        this.studentService = ClientMain.getStudentProcessors();
         this.studentID = studentID;
     }
 
@@ -29,22 +29,17 @@ public class CreateReservationModel {
         }
     }
 
-    public boolean addReservation(Reservation reservation) {
+    // Updated to match the interface: returns void.
+    public void addReservation(Reservation reservation) {
         try {
-            // You might choose to use updateReservation() if you are updating an existing reservation,
-            // or a dedicated method like setReservations() if adding a new one.
-            studentService.updateReservation(reservation);
-            return true;
+            studentService.setReservations(reservation);
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to add reservation: " + e.getMessage());
-            return false;
+            // Rethrow as an unchecked exception so that the caller can handle it.
+            throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Returns the next available reservation ID based on the highest numeric ID so far.
-     * If no reservations exist or parsing fails, returns "1".
-     */
     public String getNextReservationId() {
         try {
             List<Reservation> allReservations = studentService.getAllReservations();
@@ -68,9 +63,6 @@ public class CreateReservationModel {
         }
     }
 
-    /**
-     * Registers the client callback so that the server can push reservation updates.
-     */
     public void initCallback(UpdateTable updateTable) {
         try {
             ClientCallBack clientCallBack = new ClientCallBack(updateTable);
@@ -81,7 +73,6 @@ public class CreateReservationModel {
         }
     }
 
-    // Getter for studentID if needed elsewhere
     public String getStudentID() {
         return studentID;
     }

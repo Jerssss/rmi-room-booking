@@ -19,17 +19,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.Duration;
 import shared.Reservation;
 import shared.Terminal;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -45,23 +41,21 @@ public class CreateReservationView implements Initializable {
     @FXML
     private Button refreshButton;
     @FXML
-    private TableView <Terminal> createReservationTableView;
+    private TableView<Terminal> createReservationTableView;
     @FXML
-    private TableColumn <Terminal, String> terminalColumn;
+    private TableColumn<Terminal, String> terminalColumn;
     @FXML
-    private TableColumn <Terminal, String> roomNumberColumn;
+    private TableColumn<Terminal, String> roomNumberColumn;
     @FXML
-    private TableColumn <Terminal, String> terminalOSColumn;
+    private TableColumn<Terminal, String> terminalOSColumn;
     @FXML
-    private TableColumn <Terminal, String> statusColumn;
+    private TableColumn<Terminal, String> statusColumn;
     @FXML
-    private TableColumn <Terminal, String> startTimeColumn;
+    private TableColumn<Terminal, String> startTimeColumn;
     @FXML
-    private TableColumn <Terminal, String> endTimeColumn;
+    private TableColumn<Terminal, String> endTimeColumn;
     @FXML
-    public TableColumn <Terminal, String> reserveColumn;
-
-
+    public TableColumn<Terminal, String> reserveColumn;
 
     public TextField terminalNoTextField;
     public TextField roomNoTextField;
@@ -80,31 +74,27 @@ public class CreateReservationView implements Initializable {
     // Store controller instance
     private CreateReservationController controller;
 
-    /** JavaFX calls this method automatically after loading FXML */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
-        System.out.println("[CLIENT] Table columns initialized successfully.");
+        System.out.println("[DEBUG] Table columns initialized successfully.");
 
-        // Manually initialize the controller
         initializeController();
         initializeSearchListener();
-
     }
 
-    /** Forcefully create and initialize the controller */
     public void initializeController() {
         String studentID = SessionManager.getStudentID();
         if (studentID == null || studentID.isEmpty()) {
             System.err.println("[ERROR] Student ID is missing from the session.");
             return;
         }
+        System.out.println("[DEBUG] Initializing CreateReservationsController...");
         CreateReservationModel model = new CreateReservationModel(studentID);
         this.controller = new CreateReservationController(this, model);
+        System.out.println("[DEBUG] CreateReservationsController successfully created.");
     }
 
-
-    /** Properly initializes TableView columns */
     private void initializeTableColumns() {
         terminalColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
         roomNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoom()));
@@ -136,17 +126,16 @@ public class CreateReservationView implements Initializable {
                 }
             }
         });
-
     }
 
     public void updateTable(List<Terminal> terminals) {
         if (terminals == null || terminals.isEmpty()) {
-            System.out.println("[CLIENT] No data to display in TableView.");
+            System.out.println("[DEBUG] No data to display in TableView.");
             return;
         }
         allTerminals.setAll(terminals);
         createReservationTableView.setItems(allTerminals);
-        System.out.println("[CLIENT] Table updated with " + terminals.size() + " Terminals.");
+        System.out.println("[DEBUG] Table updated with " + terminals.size() + " Terminals.");
     }
 
     public void initializeSearchListener() {
@@ -155,13 +144,11 @@ public class CreateReservationView implements Initializable {
         });
     }
 
-    /** Filter Reservations Based on Search Text */
     private void filterReservations(String searchText) {
         if (searchText.isEmpty()) {
-            createReservationTableView.setItems(allTerminals); // Show all if search is empty
+            createReservationTableView.setItems(allTerminals);
             return;
         }
-
         List<Terminal> filteredList = allTerminals.stream()
                 .filter(ter -> ter.getTerminalID().toLowerCase().contains(searchText) ||
                         ter.getRoom().toLowerCase().contains(searchText) ||
@@ -174,27 +161,50 @@ public class CreateReservationView implements Initializable {
         createReservationTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
-
+    /**
+     * Updated method to open the reservation form and pass terminal details.
+     */
     private void showReservationForm(Terminal terminal) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/add_reservation_window.fxml"));
             BorderPane reservationPane = loader.load();
 
-            CreateReservationDialogController controller = loader.getController();
-
+            CreateReservationDialogController dialogController = loader.getController();
+            // Pass the selected terminal details so that the fields get pre-filled
+            dialogController.setTerminalDetails(terminal);
+            // Pass the model from the controller to the dialog controller
+            dialogController.setModel(controller.getModel());
 
             Stage dialogStage = new Stage();
-            controller.setDialogStage(dialogStage);
+            dialogController.setDialogStage(dialogStage);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setScene(new Scene(reservationPane));
             dialogStage.showAndWait();
-
-        //    if (controller.isReservationCreated()) {
-       //         JOptionPane.showMessageDialog(null, "Reservation successfully created!");
-       //     }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setRefreshButtonAction(EventHandler<ActionEvent> event) {
+        refreshButton.setOnAction(event);
+    }
+
+    public void searchButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+
+    public void searchButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
+        st.setToX(0.9);
+        st.setToY(0.9);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
     }
 
     public void refreshButtonExited() {
@@ -213,5 +223,69 @@ public class CreateReservationView implements Initializable {
         st.setCycleCount(1);
         st.setAutoReverse(false);
         st.play();
+    }
+
+    public void createButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectCreateReservationWindowButton);
+        st.setToX(0.9);
+        st.setToY(0.9);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+
+    public void createButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectCreateReservationWindowButton);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+
+    public void saveChangesButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+
+    public void saveChangesButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
+        st.setToX(0.9);
+        st.setToY(0.9);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
+    }
+
+    public void setAddReservationButtonAction(EventHandler<ActionEvent> event) {
+        reserveColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button addReservationButton = new Button("Add Reservation");
+
+            {
+                addReservationButton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
+                addReservationButton.setOnAction(e -> {
+                    getTableView().getSelectionModel().select(getIndex());
+                    event.handle(e);
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(addReservationButton);
+                }
+            }
+        });
+    }
+
+    public Terminal getSelectedTerminal() {
+        return createReservationTableView.getSelectionModel().getSelectedItem();
     }
 }
