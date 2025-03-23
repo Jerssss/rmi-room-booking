@@ -14,7 +14,7 @@
         "terminal_id": "PC1",
         "terminal_room": "D426",
         "terminal_os": "Windows",
-        "terminal_status": "Under Maintenance",
+        "terminal_status": "Maintenance",
         "reservation_date": "2025-02-17",
         "start_time": "08:00",
         "end_time": "16:00"
@@ -68,7 +68,7 @@
         "terminal_id": "PC7",
         "terminal_room": "D524",
         "terminal_os": "macOS",
-        "terminal_status": "Under Maintenance",
+        "terminal_status": "Maintenance",
         "reservation_date": "2025-02-22",
         "start_time": "08:00",
         "end_time": "16:00"
@@ -86,7 +86,7 @@
         "terminal_id": "PC9",
         "terminal_room": "D426",
         "terminal_os": "Windows",
-        "terminal_status": "Under Maintenance",
+        "terminal_status": "Maintenance",
         "reservation_date": "2025-02-17",
         "start_time": "08:00",
         "end_time": "16:00"
@@ -113,7 +113,7 @@
         "terminal_id": "PC12",
         "terminal_room": "D426",
         "terminal_os": "Windows",
-        "terminal_status": "Under Maintenance",
+        "terminal_status": "Maintenance",
         "reservation_date": "2025-02-20",
         "start_time": "09:00",
         "end_time": "17:00"
@@ -140,7 +140,7 @@
         "terminal_id": "PC15",
         "terminal_room": "D524",
         "terminal_os": "macOS",
-        "terminal_status": "Under Maintenance",
+        "terminal_status": "Maintenance",
         "reservation_date": "2025-02-16",
         "start_time": "07:30",
         "end_time": "15:30"
@@ -185,7 +185,7 @@
         "terminal_id": "PC20",
         "terminal_room": "D524",
         "terminal_os": "macOS",
-        "terminal_status": "Under Maintenance",
+        "terminal_status": "Maintenance",
         "reservation_date": "2025-02-21",
         "start_time": "08:00",
         "end_time": "16:00"

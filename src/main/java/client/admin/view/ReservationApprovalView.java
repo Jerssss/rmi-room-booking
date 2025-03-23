@@ -101,7 +101,7 @@ public class ReservationApprovalView implements Initializable {
         allReservations.setAll(data);
         approveResTableView.setItems(allReservations);
         approveResTableView.refresh();
-        System.out.println("[DEBUG] Table updated with " + allReservations.size() + " reservations.");
+        System.out.println("[CLIENT] Table updated with " + allReservations.size() + " reservations.");
     }
 
     public void updateTable(List<Reservation> reservations) {

@@ -60,6 +60,9 @@ public class ServerErrorWindowView {
             // Close the pop-up window
             Stage stage = (Stage) closeButton.getScene().getWindow();
             stage.close();
+            System.out.println("[CLIENT] Closing the client program...");
+            System.exit(0);
+
         });
 
         // Handle the "Retry" button action

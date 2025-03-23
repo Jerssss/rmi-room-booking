@@ -21,11 +21,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The `ModifyTerminalStatusController` class is responsible for managing the logic
+ * and interactions for modifying terminal statuses. It handles loading terminal data,
+ * updating the view, removing terminals, saving changes, and searching for terminals.
+ */
 public class ModifyTerminalStatusController {
     private final ModifyTerminalStatusView view;
     private final ModifyTerminalStatusModel model;
     private ObservableList<Terminal> terminalData = FXCollections.observableArrayList();
 
+    /**
+     * Constructs a `ModifyTerminalStatusController` with the specified view.
+     * Initializes the model, sets up the callback for terminal updates, and loads
+     * the initial terminal data.
+     *
+     * @param view The `ModifyTerminalStatusView` instance associated with this controller.
+     */
     public ModifyTerminalStatusController(ModifyTerminalStatusView view) {
         this.view = view;
         this.model = new ModifyTerminalStatusModel();
@@ -56,7 +68,9 @@ public class ModifyTerminalStatusController {
         loadTerminals();
     }
 
-    /** Loads terminal data and updates the view */
+    /**
+     * Loads terminal data from the model and updates the view.
+     */
     public void loadTerminals() {
         System.out.println("[CLIENT] loadTerminals() method called.");
 
@@ -73,12 +87,20 @@ public class ModifyTerminalStatusController {
         }
     }
 
+    /**
+     * Removes a terminal from the observable list and updates the view.
+     *
+     * @param terminal The terminal to remove.
+     */
     public void removeTerminal(Terminal terminal) {
         terminalData.remove(terminal);
         view.updateTable(FXCollections.observableArrayList(terminalData));
-        System.out.println("[DEBUG] Terminal removed: " + terminal.getTerminalID());
+        System.out.println("[CLIENT] Terminal removed: " + terminal.getTerminalID());
     }
 
+    /**
+     * Opens a confirmation window to confirm modifications before saving.
+     */
     public void saveChanges() {
         try {
             // Load the modification confirmation FXML
@@ -106,6 +128,10 @@ public class ModifyTerminalStatusController {
         }
     }
 
+    /**
+     * Applies the changes made to the terminal data and saves them to the model.
+     * Displays a success or error message based on the result.
+     */
     public void applyChanges() {
         List<Terminal> modifiedTerminals = terminalData.stream().collect(Collectors.toList());
 
@@ -142,13 +168,17 @@ public class ModifyTerminalStatusController {
         }
     }
 
+    /**
+     * Searches for terminals based on a query and updates the view with the filtered results.
+     *
+     * @param query The search query to filter terminals by.
+     */
     public void searchTerminals(String query) {
         if (terminalData.isEmpty()) {
             return;
         }
 
         if (query == null || query.trim().isEmpty()) {
-            System.out.println("[DEBUG] Search text is empty. Resetting to full terminal list.");
             view.updateTable(terminalData); // Reset table to original data
             return;
         }
@@ -165,7 +195,6 @@ public class ModifyTerminalStatusController {
                                 terminal.getEndTime().toLowerCase().contains(lowerCaseQuery))
                 .collect(Collectors.toList());
 
-        System.out.println("[DEBUG] Search completed. Matching results: " + filteredList.size());
         view.updateTable(FXCollections.observableArrayList(filteredList));
     }
 }

@@ -18,8 +18,6 @@ public class ViewReservationModel {
 
 
     public List<Reservation> fetchReservations() {
-        System.out.println("[DEBUG] fetchReservations() method called.");
-
         try {
             if (studentProcessors == null) {
                 System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
@@ -29,12 +27,9 @@ public class ViewReservationModel {
             List<Reservation> reservations = studentProcessors.getReservations(studentID);
 
             if (reservations == null || reservations.isEmpty()) {
-                System.out.println("[DEBUG] No reservations found via RMI.");
+                System.out.println("[CLIENT] No reservations found via RMI.");
             } else {
-                System.out.println("[DEBUG] Loaded " + reservations.size() + " reservations via RMI.");
-                for (Reservation res : reservations) {
-                    System.out.println("[DEBUG] " + res);
-                }
+                System.out.println("[CLIENT] Loaded " + reservations.size() + " reservations via RMI.");
             }
 
             return reservations;

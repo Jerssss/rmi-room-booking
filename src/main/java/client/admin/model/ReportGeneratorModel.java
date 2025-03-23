@@ -9,16 +9,26 @@ import shared.interfaces.admin.AdminProcessors;
 import java.rmi.RemoteException;
 import java.util.List;
 
+/**
+ * The `ReportGeneratorModel` class is responsible for handling the logic related to
+ * generating reports. It fetches logs and reservations from the server via RMI.
+ */
 public class ReportGeneratorModel {
     private AdminProcessors adminProcessors;
 
+    /**
+     * Constructs a `ReportGeneratorModel` and initializes the RMI service.
+     */
     public ReportGeneratorModel() {
         this.adminProcessors = ClientMain.getAdminProcessors(); // Get RMI instance
     }
 
+    /**
+     * Fetches a list of all logs from the server.
+     *
+     * @return A list of `Log` objects, or `null` if the operation fails.
+     */
     public List<Log> fetchLogs() {
-        System.out.println("[DEBUG] fetchLogs() method called.");
-
         try {
             if (adminProcessors == null) {
                 System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
@@ -28,12 +38,9 @@ public class ReportGeneratorModel {
             List<Log> logs = adminProcessors.getAllLogs();
 
             if (logs == null || logs.isEmpty()) {
-                System.out.println("[DEBUG] No logs found via RMI.");
+                System.out.println("[CLIENT] No logs found via RMI.");
             } else {
-                System.out.println("[DEBUG] Loaded " + logs.size() + " logs via RMI.");
-                for (Log log : logs) {
-                    System.out.println("[DEBUG] " + log);
-                }
+                System.out.println("[CLIENT] Loaded " + logs.size() + " logs via RMI.");
             }
 
             return logs;
@@ -43,9 +50,12 @@ public class ReportGeneratorModel {
         }
     }
 
+    /**
+     * Fetches a list of all reservations from the server.
+     *
+     * @return A list of `Reservation` objects, or `null` if the operation fails.
+     */
     public List<Reservation> fetchReservations() {
-        System.out.println("[DEBUG] fetchReservations() method called.");
-
         try {
             if (adminProcessors == null) {
                 System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
@@ -55,12 +65,10 @@ public class ReportGeneratorModel {
             List<Reservation> reservations = adminProcessors.getAllStudentReservations();
 
             if (reservations == null || reservations.isEmpty()) {
-                System.out.println("[DEBUG] No reservations found via RMI.");
+                System.out.println("[CLIENT] No reservations found via RMI.");
             } else {
-                System.out.println("[DEBUG] Loaded " + reservations.size() + " reservations via RMI.");
-                for (Reservation res : reservations) {
-                    System.out.println("[DEBUG] " + res);
-                }
+                System.out.println("[CLIENT] Loaded " + reservations.size() + " reservations via RMI.");
+
             }
 
             return reservations;
