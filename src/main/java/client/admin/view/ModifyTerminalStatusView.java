@@ -28,7 +28,6 @@ import java.util.List;
 
 public class ModifyTerminalStatusView {
 
-    @FXML private Button searchButton;
     @FXML private Button saveChangesButton;
     @FXML private Button resetButton;
     @FXML private TextField modTerTextField;
@@ -112,7 +111,7 @@ public class ModifyTerminalStatusView {
             private final ComboBox<String> statusComboBox = new ComboBox<>();
 
             {
-                statusComboBox.getItems().addAll("Active", "Down", "Under Maintenance");
+                statusComboBox.getItems().addAll("Active", "Down", "Maintenance");
                 statusComboBox.setStyle("-fx-border-color: transparent; " +
                         "-fx-padding: 5px; " +
                         "-fx-font-size: 13px; " +
