@@ -69,7 +69,7 @@ public class StudentMainMenuController {
 
             // Create MVC Components
             ViewReservationModel reservationModel = new ViewReservationModel(studentID);
-            ViewReservationController reservationController = new ViewReservationController(reservationView, reservationModel);
+            ViewReservationController reservationController = new ViewReservationController(reservationView, reservationModel,studentID);
 
             // Switch Scene
             Platform.runLater(() -> {

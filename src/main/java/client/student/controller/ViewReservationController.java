@@ -9,14 +9,17 @@ import shared.Log;
 import shared.callback.UpdateTable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ViewReservationController {
     private final ViewReservationView view;
     private final ViewReservationModel model;
+    private final String studentID; // Store the student's ID
 
-    public ViewReservationController(ViewReservationView view, ViewReservationModel model) {
+    public ViewReservationController(ViewReservationView view, ViewReservationModel model, String studentID) {
         this.view = view;
         this.model = model;
+        this.studentID = studentID; // Store the logged-in student's ID
 
         // Register the callback for reservation updates
         model.initCallback(new UpdateTable() {
@@ -27,9 +30,15 @@ public class ViewReservationController {
 
             @Override
             public void updateReservations(List<Reservation> reservations) {
+                // Filter reservations only for the logged-in student
+                List<Reservation> studentReservations = reservations.stream()
+                        .filter(reservation -> reservation.getUserID().equals(studentID))
+                        .collect(Collectors.toList());
+
                 Platform.runLater(() -> {
-                    view.updateTable(reservations);
-                    System.out.println("[CLIENT] Reservation update received via callback.");
+                    view.updateTable(studentReservations);
+                    System.out.println("[CLIENT] Callback received. Updating table with "
+                            + studentReservations.size() + " reservations.");
                 });
             }
 

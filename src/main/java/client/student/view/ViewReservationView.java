@@ -72,7 +72,7 @@
                 return;
             }
             ViewReservationModel model = new ViewReservationModel(studentID);
-            this.controller = new ViewReservationController(this, model);
+            this.controller = new ViewReservationController(this, model, studentID);
             initializeSearchListener();
         }
 
