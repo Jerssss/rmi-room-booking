@@ -9,6 +9,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import shared.Log;
 import shared.Reservation;
@@ -18,6 +20,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -257,22 +261,52 @@ public class ReportGeneratorView implements Initializable {
     }
 
     private void saveCSVToFile(String csvContent, String fileName) {
-        String directoryPath = "src/main/resources/reports";
-        File directory = new File(directoryPath);
-        if (!directory.exists()) {
-            boolean dirsCreated = directory.mkdirs();
-            if (!dirsCreated) {
-                showAlert("Failed to create directory: " + directoryPath);
+        // Default directory setup
+        Path defaultPath = Path.of("src/main/resources/reports").toAbsolutePath();
+        File defaultDirectory = defaultPath.toFile();
+
+        // Ensure default directory exists
+        if (!defaultDirectory.exists()) {
+            try {
+                Files.createDirectories(defaultPath);
+            } catch (IOException e) {
+                showAlert("Failed to create default directory: " + defaultPath);
                 return;
             }
         }
 
-        File file = new File(directory, fileName);
-        try (FileWriter writer = new FileWriter(file)) {
+        // Configure directory chooser
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Save Location");
+        directoryChooser.setInitialDirectory(defaultDirectory);
+
+        // Get current window context
+        Window window = exportButton.getScene().getWindow();
+
+        // Show dialog and get selected directory
+        File selectedDirectory = directoryChooser.showDialog(window);
+
+        // Fall back to default if user cancels
+        if (selectedDirectory == null) {
+            selectedDirectory = defaultDirectory;
+        }
+
+        // Create target directory if it doesn't exist
+        if (!selectedDirectory.exists()) {
+            boolean created = selectedDirectory.mkdirs();
+            if (!created) {
+                showAlert("Failed to create directory: " + selectedDirectory.getAbsolutePath());
+                return;
+            }
+        }
+
+        // Create and save file
+        File outputFile = new File(selectedDirectory, fileName);
+        try (FileWriter writer = new FileWriter(outputFile)) {
             writer.write(csvContent);
-            showAlert("Exported successfully to: " + file.getAbsolutePath());
+            showAlert("File saved successfully to:\n" + outputFile.getAbsolutePath());
         } catch (IOException e) {
-            showAlert("Error exporting CSV: " + e.getMessage());
+            showAlert("Error saving file: " + e.getMessage());
             e.printStackTrace();
         }
     }
