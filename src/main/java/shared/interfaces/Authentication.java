@@ -16,11 +16,12 @@ public interface Authentication extends Remote {
      * @param userType    The type of user (e.g., "Admin" or "Student").
      * @param courseYear  The course year of the student (if applicable).
      * @param facultyType The faculty type of the admin (if applicable).
-     * @return True if registration is successful, false otherwise.
-     * @throws RemoteException If a communication-related exception occurs during the remote method call.
+     * @throws RemoteException If a communication-related exception occurs.
+     * @throws IllegalArgumentException If user type is invalid.
+     * @throws RuntimeException If the user already exists.
      */
-    boolean signUp(String userID, String name, String password, String userType, String courseYear, String facultyType) throws RemoteException;
-
+    void signUp(String userID, String name, String password, String userType, String courseYear, String facultyType)
+            throws RemoteException;
     /**
      * Authenticates a user based on credentials.
      *

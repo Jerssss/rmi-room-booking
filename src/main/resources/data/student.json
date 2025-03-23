@@ -54,6 +54,12 @@
         "Name": "ESPERANZATE, ANJELO",
         "Password": "2240002",
         "CourseYear": "BSIT 2"
+      },
+      {
+        "Student_ID": "2240841",
+        "Name": "Kristelle",
+        "Password": "2240841",
+        "CourseYear": "BSIT 2"
       }
     ]
   }

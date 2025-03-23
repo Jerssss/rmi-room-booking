@@ -17,13 +17,15 @@ public class SignUpModel {
 
     /**
      * Registers a new user via the RMI Authentication Service.
-     * @return true if successful, false otherwise.
+     * @throws RemoteException If a communication error occurs.
+     * @throws IllegalArgumentException If input data is invalid.
+     * @throws RuntimeException If the user already exists.
      */
-    public boolean register(String userID, String name, String password, String userType, String courseYear, String facultyType) throws RemoteException {
+    public void register(String userID, String name, String password, String userType, String courseYear, String facultyType)
+            throws RemoteException {
         if (authService == null) {
-            System.err.println("[ERROR] Authentication service is NULL. Server might be down.");
-            return false;
+            throw new RemoteException("[ERROR] Authentication service is NULL. Server might be down.");
         }
-        return authService.signUp(userID, name, password, userType, courseYear, facultyType);
+        authService.signUp(userID, name, password, userType, courseYear, facultyType);
     }
 }
