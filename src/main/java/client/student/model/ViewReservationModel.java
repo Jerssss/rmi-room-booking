@@ -3,6 +3,8 @@ package client.student.model;
 import client.ClientMain;
 import shared.Reservation;
 import shared.interfaces.student.StudentProcessors;
+import shared.callback.UpdateTable;
+import client.utility.ClientCallBack;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -16,11 +18,10 @@ public class ViewReservationModel {
         this.studentID = studentID; // Store the student ID after login
     }
 
-
     public List<Reservation> fetchReservations() {
         try {
             if (studentProcessors == null) {
-                System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
+                System.err.println("[ERROR] StudentProcessors RMI service is NULL!");
                 return null;
             }
 
@@ -36,6 +37,20 @@ public class ViewReservationModel {
         } catch (RemoteException e) {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Registers a callback so that when the server pushes reservation updates,
+     * the callback's updateReservations method is triggered.
+     */
+    public void initReservationCallback(UpdateTable updateTable) {
+        try {
+            ClientCallBack clientCallBack = new ClientCallBack(updateTable);
+            studentProcessors.registerCallback(clientCallBack);
+            System.out.println("[CLIENT] Reservation callback registered.");
+        } catch (RemoteException e) {
+            System.err.println("[ERROR] Failed to register reservation callback: " + e.getMessage());
         }
     }
 }
