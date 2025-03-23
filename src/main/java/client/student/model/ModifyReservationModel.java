@@ -1,7 +1,9 @@
 package client.student.model;
 
 import client.ClientMain;
+import client.utility.ClientCallBack;
 import shared.Reservation;
+import shared.callback.UpdateTable;
 import shared.interfaces.student.StudentProcessors;
 import util.exception.ModifyReservationException;
 import util.exception.ReservationException;
@@ -47,7 +49,7 @@ public class ModifyReservationModel {
      * Fetches all reservations for a specific terminal on a specific date.
      *
      * @param terminalId the ID of the terminal
-     * @param date the date of the reservations
+     * @param date       the date of the reservations
      * @return a list of reservations for the specified terminal and date, or null if the fetch fails
      */
     public List<Reservation> fetchReservationsForTerminal(String terminalId, String date) {
@@ -68,7 +70,6 @@ public class ModifyReservationModel {
      * Updates a specific reservation.
      *
      * @param reservation the reservation to be updated
-     * @return true if the update was successful, false otherwise
      */
     public void updateReservation(Reservation reservation) {
         try {
@@ -76,7 +77,7 @@ public class ModifyReservationModel {
         } catch (RemoteException e) {
             System.err.println("[CLIENT] RMI call failed: " + e.getMessage());
             throw new RuntimeException("Remote exception during update", e);
-        } catch ( ModifyReservationException e) {
+        } catch (ModifyReservationException e) {
             throw new RuntimeException(e);
         }
     }
@@ -85,7 +86,6 @@ public class ModifyReservationModel {
      * Cancels a reservation identified by its ID.
      *
      * @param reservationID the ID of the reservation to be cancelled
-     * @return true if the cancellation was successful, false otherwise
      */
     public void cancelReservation(String reservationID) {
         try {
@@ -96,6 +96,22 @@ public class ModifyReservationModel {
         } catch (ReservationException e) {
             System.err.println("[CLIENT] Reservation cancellation failed: " + e.getMessage());
             throw new RuntimeException("Reservation cancellation exception", e);
+        }
+    }
+
+    /**
+     * Registers the callback for real-time reservation updates.
+     *
+     * @param updateTable the callback implementation
+     */
+    public void initCallback(UpdateTable updateTable) {
+        try {
+            // Assuming ClientCallBack is implemented similar to the one used in ViewReservationModel
+            ClientCallBack clientCallBack = new ClientCallBack(updateTable);
+            studentProcessors.registerCallback(clientCallBack);
+            System.out.println("[CLIENT] Callback registered for reservation updates in ModifyReservationModel.");
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.Reservation;
+import shared.callback.UpdateTable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +38,28 @@ public class ModifyReservationController {
     public ModifyReservationController(ModifyReservationView view, ModifyReservationModel model) {
         this.view = view;
         this.model = model;
+
+        // Register callback for real-time updates
+        model.initCallback(new UpdateTable() {
+            @Override
+            public void updateTerminals(List<shared.Terminal> terminals) {
+                // Not used in this context.
+            }
+
+            @Override
+            public void updateReservations(List<Reservation> reservations) {
+                // When a callback is received, reload reservations to reflect any changes.
+                loadReservations();
+                System.out.println("[CLIENT] Callback received in ModifyReservationController. Table refreshed.");
+            }
+
+            @Override
+            public void updateLogs(List<shared.Log> logs) {
+                // Not used in this context.
+            }
+        });
+
+        // Initial load of reservations
         loadReservations();
         view.setSearchButtonAction(event -> view.searchReservations(query));
         view.setRefreshButtonAction(event -> loadReservations());
