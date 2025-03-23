@@ -129,9 +129,7 @@ public class ReportGeneratorView implements Initializable {
 
     /** Initializes the ReportGeneratorController */
     public void initializeController() {
-        System.out.println("[DEBUG] Initializing ReportGeneratorController...");
         new ReportGeneratorController(this);
-        System.out.println("[DEBUG] ReportGeneratorController successfully created.");
     }
 
     /** Filters logs based on search text */
@@ -169,23 +167,23 @@ public class ReportGeneratorView implements Initializable {
     /** Updates the logs table with new data */
     public void updateLogsTable(List<Log> logs) {
         if (logs == null || logs.isEmpty()) {
-            System.out.println("[DEBUG] No logs to display.");
+            System.out.println("[CLIENT] No logs to display.");
             return;
         }
         allLogs.setAll(logs);
         logReportTableView.setItems(allLogs);
-        System.out.println("[DEBUG] Log table updated with " + logs.size() + " entries.");
+        System.out.println("[CLIENT] Log table updated with " + logs.size() + " entries.");
     }
 
     /** Updates the reservations table with new data */
     public void updateReservationsTable(List<Reservation> reservations) {
         if (reservations == null || reservations.isEmpty()) {
-            System.out.println("[DEBUG] No reservations to display.");
+            System.out.println("[CLIENT] No reservations to display.");
             return;
         }
         allReservations.setAll(reservations);
         reservationReportTableView.setItems(allReservations);
-        System.out.println("[DEBUG] Reservation table updated with " + reservations.size() + " entries.");
+        System.out.println("[CLIENT] Reservation table updated with " + reservations.size() + " entries.");
     }
 
     @FXML

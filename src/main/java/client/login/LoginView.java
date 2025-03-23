@@ -24,9 +24,9 @@ public class LoginView {
     }
 
     @FXML
-    private Button logInPageLogInButton; // Ensure this matches FXML fx:id
+    private Button logInPageLogInButton;
     @FXML
-    private Button logInPageSignUpButton; // Ensure this matches FXML fx:id
+    private Button logInPageSignUpButton;
     @FXML
     private TextField idField;
     @FXML

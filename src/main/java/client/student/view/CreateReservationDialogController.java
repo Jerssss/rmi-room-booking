@@ -129,7 +129,7 @@ public class CreateReservationDialogController {
         newReservation = new Reservation(reservationID, userID, terminalID, roomID,
                 reservationDate, startTime, endTime, "Pending");
 
-        System.out.println("[DEBUG] Created reservation: " + newReservation);
+        System.out.println("[CLIENT] Created reservation: " + newReservation);
         dialogStage.close();
     }
 

@@ -10,10 +10,22 @@ import shared.callback.UpdateTable;
 
 import java.util.List;
 
+/**
+ * The `ViewStudentReservationsController` class is responsible for managing the logic
+ * and interactions for viewing student reservations. It handles loading reservation data,
+ * updating the view, and responding to updates via callbacks.
+ */
 public class ViewStudentReservationsController {
     private final ViewStudentReservationsView view;
     private final ViewStudentReservationsModel model;
 
+    /**
+     * Constructs a `ViewStudentReservationsController` with the specified view and model.
+     * Initializes the callback for reservation updates and loads the initial reservation data.
+     *
+     * @param view  The `ViewStudentReservationsView` instance associated with this controller.
+     * @param model The `ViewStudentReservationsModel` instance associated with this controller.
+     */
     public ViewStudentReservationsController(ViewStudentReservationsView view, ViewStudentReservationsModel model) {
         this.view = view;
         this.model = model;
@@ -22,7 +34,6 @@ public class ViewStudentReservationsController {
         model.initCallback(new UpdateTable() {
             @Override
             public void updateTerminals(List<Terminal> terminals) {
-
             }
 
             @Override
@@ -35,7 +46,6 @@ public class ViewStudentReservationsController {
 
             @Override
             public void updateLogs(List<Log> logs) {
-
             }
 
         });
@@ -47,7 +57,9 @@ public class ViewStudentReservationsController {
         this.view.setRefreshButtonAction(event -> loadReservations());
     }
 
-    /** Loads reservation data and updates the view */
+    /**
+     * Loads reservation data from the model and updates the view.
+     */
     public void loadReservations() {
         System.out.println("[CLIENT] loadReservations() method called.");
 

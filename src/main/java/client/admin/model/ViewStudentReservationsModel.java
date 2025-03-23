@@ -9,14 +9,25 @@ import client.utility.ClientCallBack;
 import java.rmi.RemoteException;
 import java.util.List;
 
+/**
+ * The `ViewStudentReservationsModel` class is responsible for handling the logic related to
+ * viewing student reservations. It fetches reservation data from the server via RMI.
+ */
 public class ViewStudentReservationsModel {
 
     private AdminProcessors adminProcessors;
-
+     /**
+     * Constructs a `ViewStudentReservationsModel` and initializes the RMI service.
+     */
     public ViewStudentReservationsModel() {
         this.adminProcessors = ClientMain.getAdminProcessors(); // Get RMI instance
     }
 
+    /**
+     * Fetches a list of all reservations from the server.
+     *
+     * @return A list of `Reservation` objects, or `null` if the operation fails.
+     */
     public List<Reservation> fetchReservations() {
         System.out.println("[CLIENT] fetchReservations() method called.");
 

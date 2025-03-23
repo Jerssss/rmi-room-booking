@@ -1,24 +1,18 @@
 package client.admin.model;
 
-import shared.interfaces.RMIServer;
 import client.ClientMain;
 import shared.interfaces.admin.AdminProcessors;
-import shared.interfaces.student.StudentProcessors;
-
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.Arrays;
 
 /**
- * Model for Admin Main Menu, handling server interactions.
+ * The `AdminMainMenuModel` class is responsible for handling server interactions
+ * for the Admin Main Menu. It initializes the connection to the RMI server.
  */
 public class AdminMainMenuModel {
 
     private AdminProcessors adminProcessors;
 
     /**
-     * Constructor that initializes the connection to the RMI server.
+     * Constructs an `AdminMainMenuModel` and initializes the RMI service.
      */
     public AdminMainMenuModel() {
 
