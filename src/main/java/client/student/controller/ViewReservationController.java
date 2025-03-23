@@ -4,9 +4,9 @@ import client.student.model.ViewReservationModel;
 import client.student.view.ViewReservationView;
 import javafx.application.Platform;
 import shared.Reservation;
+import shared.Terminal;
+import shared.Log;
 import shared.callback.UpdateTable;
-import shared.Log; // Assuming Log is defined in shared, even if not used here
-import shared.Terminal; // For completeness; not used in reservations callback here
 
 import java.util.List;
 
@@ -18,32 +18,31 @@ public class ViewReservationController {
         this.view = view;
         this.model = model;
 
-        // Load reservations when the page opens
-        loadReservations();
+        // Register the callback for reservation updates
+        model.initCallback(new UpdateTable() {
+            @Override
+            public void updateTerminals(List<Terminal> terminals) {
+                // No need to handle terminal updates here
+            }
 
-        // Register the callback to receive reservation updates
-        model.initReservationCallback(new UpdateTable() {
             @Override
             public void updateReservations(List<Reservation> reservations) {
-                // Run on the JavaFX Application Thread
                 Platform.runLater(() -> {
                     view.updateTable(reservations);
-                    System.out.println("[CLIENT] Reservation callback updated table with "
-                            + (reservations != null ? reservations.size() : 0) + " reservations.");
+                    System.out.println("[CLIENT] Reservation update received via callback.");
                 });
             }
 
             @Override
-            public void updateTerminals(List<Terminal> terminals) {
-                // Not used in this context
-            }
-
-            @Override
             public void updateLogs(List<Log> logs) {
-                // Not used in this context
+                // No need to handle log updates here
             }
         });
 
+        // Load reservations initially
+        loadReservations();
+
+        // Set refresh button action
         this.view.setRefreshButtonAction(event -> loadReservations());
     }
 

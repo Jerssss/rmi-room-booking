@@ -1,10 +1,10 @@
 package client.student.model;
 
 import client.ClientMain;
-import shared.Reservation;
-import shared.interfaces.student.StudentProcessors;
-import shared.callback.UpdateTable;
 import client.utility.ClientCallBack;
+import shared.Reservation;
+import shared.callback.UpdateTable;
+import shared.interfaces.student.StudentProcessors;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -18,6 +18,7 @@ public class ViewReservationModel {
         this.studentID = studentID; // Store the student ID after login
     }
 
+    /** Fetch reservations for the logged-in student */
     public List<Reservation> fetchReservations() {
         try {
             if (studentProcessors == null) {
@@ -40,17 +41,14 @@ public class ViewReservationModel {
         }
     }
 
-    /**
-     * Registers a callback so that when the server pushes reservation updates,
-     * the callback's updateReservations method is triggered.
-     */
-    public void initReservationCallback(UpdateTable updateTable) {
+    /** Registers the callback for real-time reservation updates */
+    public void initCallback(UpdateTable updateTable) {
         try {
             ClientCallBack clientCallBack = new ClientCallBack(updateTable);
             studentProcessors.registerCallback(clientCallBack);
-            System.out.println("[CLIENT] Reservation callback registered.");
+            System.out.println("[CLIENT] Callback registered for reservation updates.");
         } catch (RemoteException e) {
-            System.err.println("[ERROR] Failed to register reservation callback: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
