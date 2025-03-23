@@ -52,9 +52,6 @@ public class ViewStudentReservationsController {
 
         // Load reservations when the page opens
         loadReservations();
-
-        // Set button actions
-        this.view.setRefreshButtonAction(event -> loadReservations());
     }
 
     /**
