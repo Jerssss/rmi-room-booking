@@ -8,6 +8,7 @@ import util.exception.ReservationException;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Model class for managing reservation modifications.
@@ -43,6 +44,27 @@ public class ModifyReservationModel {
     }
 
     /**
+     * Fetches all reservations for a specific terminal on a specific date.
+     *
+     * @param terminalId the ID of the terminal
+     * @param date the date of the reservations
+     * @return a list of reservations for the specified terminal and date, or null if the fetch fails
+     */
+    public List<Reservation> fetchReservationsForTerminal(String terminalId, String date) {
+        try {
+            List<Reservation> allReservations = studentProcessors.getAllReservations();
+            if (allReservations == null) return null;
+            return allReservations.stream()
+                    .filter(res -> res.getTerminalID().equals(terminalId)
+                            && res.getReservationDate().equals(date))
+                    .collect(Collectors.toList());
+        } catch (RemoteException e) {
+            System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Updates a specific reservation.
      *
      * @param reservation the reservation to be updated
@@ -58,7 +80,6 @@ public class ModifyReservationModel {
             throw new RuntimeException(e);
         }
     }
-
 
     /**
      * Cancels a reservation identified by its ID.
@@ -77,5 +98,4 @@ public class ModifyReservationModel {
             throw new RuntimeException("Reservation cancellation exception", e);
         }
     }
-
 }

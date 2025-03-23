@@ -30,7 +30,7 @@ public class SetIPView {
     @FXML
     public void initialize() {
         // Initialize the ComboBox with predefined IPs if any
-        serversComboBox.getItems().addAll("192.168.100.13", "192.168.1.2", "192.168.1.3", null);
+        serversComboBox.getItems().addAll("192.168.100.13", "192.168.1.2", "192.168.1.3", "192.168.1.100", null);
 
         // Disable TextField when ComboBox is used
         serversComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
