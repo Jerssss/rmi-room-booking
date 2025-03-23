@@ -38,8 +38,6 @@ public class SignUpController {
                 handleSignUp(event);
             } catch (ParserConfigurationException e) {
                 throw new RuntimeException(e);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
             }
         });
     }
@@ -66,7 +64,7 @@ public class SignUpController {
         }
     }
 
-    private void handleSignUp(ActionEvent event) throws ParserConfigurationException, RemoteException {
+    private void handleSignUp(ActionEvent event) throws ParserConfigurationException {
 
         // Store field and dropdown contents
         String userID = signUpView.getIDField().getText();
@@ -80,23 +78,33 @@ public class SignUpController {
         if (userID.isEmpty() || name.isEmpty() || pass.isEmpty() || userType == null) {
             signUpView.getPromptLabel().setText("Please accomplish all fields.");
             signUpView.getPromptLabel().setVisible(true);
-        } else if (!userID.matches("\\d{1,7}")) { // Validate ID is up to 7 digits
+            return;
+        }
+
+        if (!userID.matches("\\d{1,7}")) { // Validate ID is up to 7 digits
             signUpView.getPromptLabel().setText("ID must be a numeric value with up to 7 digits.");
             signUpView.getPromptLabel().setVisible(true);
-        } else {
-            signUpView.getPromptLabel().setVisible(false); // Hide error prompt if all is good
+            return;
+        }
 
+        signUpView.getPromptLabel().setVisible(false); // Hide error prompt if all is good
+
+        try {
             // Call the register method in SignUpModel
-            boolean isRegistered = signUpModel.register(userID, name, pass, userType, courseYear, facultyType);
+            signUpModel.register(userID, name, pass, userType, courseYear, facultyType);
 
-            if (isRegistered) {
-                signUpView.getPromptLabel().setText("Registration successful!");
-                signUpView.getPromptLabel().setVisible(true);
-                redirectToLogin(event);
-            } else {
-                signUpView.getPromptLabel().setText("Registration failed. Please try again.");
-                signUpView.getPromptLabel().setVisible(true);
-            }
+            // If no exception, registration was successful
+            signUpView.getPromptLabel().setText("Registration successful!");
+            signUpView.getPromptLabel().setVisible(true);
+            redirectToLogin(event);
+        } catch (RemoteException e) {
+            showErrorDialog("Registration failed: Server error. Please try again.");
+        } catch (IllegalArgumentException e) {
+            signUpView.getPromptLabel().setText(e.getMessage());
+            signUpView.getPromptLabel().setVisible(true);
+        } catch (RuntimeException e) {
+            signUpView.getPromptLabel().setText("Registration failed: " + e.getMessage());
+            signUpView.getPromptLabel().setVisible(true);
         }
     }
     private void switchScene(ActionEvent event, Parent root) {

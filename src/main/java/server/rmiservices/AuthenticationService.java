@@ -55,15 +55,16 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
      * @throws RemoteException If a communication-related exception occurs during the remote method call.
      */
     @Override
-    public boolean signUp(String userID, String name, String password, String userType, String courseYear, String facultyType)
+    public void signUp(String userID, String name, String password, String userType, String courseYear, String facultyType)
             throws RemoteException {
 
         if ("Admin".equalsIgnoreCase(userType)) {
-            return registerAdmin(userID, name, password, facultyType);
+            registerAdmin(userID, name, password, facultyType);
         } else if ("Student".equalsIgnoreCase(userType)) {
-            return registerStudent(userID, name, password, courseYear);
+            registerStudent(userID, name, password, courseYear);
+        } else {
+            throw new IllegalArgumentException("Invalid user type: " + userType);
         }
-        return false;
     }
 
     /**
@@ -75,28 +76,16 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
      * @param facultyType The faculty type of the admin.
      * @return True if registration is successful, false otherwise.
      */
-    private boolean registerAdmin(String id, String name, String password, String facultyType) {
-        // Use LinkedHashMap instead of HashMap to maintain order
+    private void registerAdmin(String id, String name, String password, String facultyType) {
         LinkedHashMap<String, Admin> admins = JSONUtility.loadAdmins(ADMIN_JSON_FILE);
 
         if (admins.containsKey(id)) {
-            System.err.println("[SIGNUP] Admin already exists: " + id);
-            return false;
+            throw new RuntimeException("Admin already exists: " + id);
         }
 
-        // Debug: Print the new admin details
-        System.out.println("[DEBUG] Creating new admin: " + id + ", " + name + ", " + password + ", " + facultyType);
-
         Admin newAdmin = new Admin(id, name, "Admin", password, facultyType);
-
-        // Insert the new admin at the end
         admins.put(id, newAdmin);
-
-        // Save back to JSON file
         JSONUtility.saveAdmins(admins, ADMIN_JSON_FILE);
-
-        System.out.println("[SIGNUP] Admin registered: " + id);
-        return true;
     }
 
     /**
@@ -108,25 +97,19 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
      * @param courseYear The course year of the student.
      * @return True if registration is successful, false otherwise.
      */
-    private boolean registerStudent(String id, String name, String password, String courseYear) {
-        // Use LinkedHashMap instead of HashMap to maintain order
+    /**
+     * Registers a new student user.
+     */
+    private void registerStudent(String id, String name, String password, String courseYear) {
         LinkedHashMap<String, Student> students = JSONUtility.loadStudents(STUDENT_JSON_FILE);
 
         if (students.containsKey(id)) {
-            System.err.println("[SIGNUP] Student already exists: " + id);
-            return false;
+            throw new RuntimeException("Student already exists: " + id);
         }
 
         Student newStudent = new Student(id, name, password, courseYear);
-
-        // Insert the new student at the end
         students.put(id, newStudent);
-
-        // Save back to JSON file
         JSONUtility.saveStudents(students, STUDENT_JSON_FILE);
-
-        System.out.println("[SIGNUP] Student registered: " + id);
-        return true;
     }
 
 
