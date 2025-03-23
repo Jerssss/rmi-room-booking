@@ -38,7 +38,7 @@ public class ModifyReservationModel {
         try {
             return studentProcessors.getReservations(studentID);
         } catch (RemoteException e) {
-            System.err.println("[ERROR] RMI call failed: " + e.getMessage());
+            System.err.println("[CLIENT] RMI call failed: " + e.getMessage());
             return null;
         }
     }
@@ -59,7 +59,7 @@ public class ModifyReservationModel {
                             && res.getReservationDate().equals(date))
                     .collect(Collectors.toList());
         } catch (RemoteException e) {
-            System.err.println("[ERROR] Failed to fetch reservations: " + e.getMessage());
+            System.err.println("[CLIENT] Failed to fetch reservations: " + e.getMessage());
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class ModifyReservationModel {
         try {
             studentProcessors.updateReservation(reservation);
         } catch (RemoteException e) {
-            System.err.println("[ERROR] RMI call failed: " + e.getMessage());
+            System.err.println("[CLIENT] RMI call failed: " + e.getMessage());
             throw new RuntimeException("Remote exception during update", e);
         } catch ( ModifyReservationException e) {
             throw new RuntimeException(e);
@@ -91,10 +91,10 @@ public class ModifyReservationModel {
         try {
             studentProcessors.cancelReservation(reservationID);
         } catch (RemoteException e) {
-            System.err.println("[ERROR] RMI call failed: " + e.getMessage());
+            System.err.println("[CLIENT] RMI call failed: " + e.getMessage());
             throw new RuntimeException("Remote exception during cancellation", e);
         } catch (ReservationException e) {
-            System.err.println("[ERROR] Reservation cancellation failed: " + e.getMessage());
+            System.err.println("[CLIENT] Reservation cancellation failed: " + e.getMessage());
             throw new RuntimeException("Reservation cancellation exception", e);
         }
     }
