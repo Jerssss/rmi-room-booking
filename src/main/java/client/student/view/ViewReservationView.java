@@ -87,7 +87,7 @@
         }
 
         /**
-         * Updates TableView with new reservations, prioritizing "Pending" reservations
+         * Updates TableView with new reservations, prioritizing "Approved" reservations
          * and sorting them by the latest reservation date.
          *
          * @param reservations The list of reservations to display in the table.
@@ -98,13 +98,13 @@
                 return;
             }
 
-            // Sort reservations: "Pending" first, then by reservation date (latest first)
+            // Sort reservations: "Approved" first, then by reservation date (latest first)
             reservations = reservations.stream()
                     .sorted((r1, r2) -> {
                         if (r1.getStatus().equals(r2.getStatus())) {
                             return r2.getReservationDate().compareTo(r1.getReservationDate());
                         } else {
-                            return "Pending".equals(r1.getStatus()) ? -1 : 1;
+                            return "Approved".equals(r1.getStatus()) ? -1 : 1;
                         }
                     })
                     .collect(Collectors.toList());
