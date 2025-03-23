@@ -121,7 +121,7 @@ public class ModifyReservationDialogController {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Edit Not Allowed");
             alert.setHeaderText(null);
-            alert.setContentText("You can only edit reservations that are Pending and have at least 24 hours before the start time.");
+            alert.setContentText("You can only edit reservations that have at least 24 hours before the start time.");
 
             // Add an OK button to close the dialog
             alert.getButtonTypes().setAll(ButtonType.OK);

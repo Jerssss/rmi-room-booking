@@ -62,3 +62,12 @@
     -fx-opacity: 0.5;
     -fx-disable: true;
 }
+
+.rejected-row {
+    -fx-background-color: #d3d3d3;
+}
+
+.rejected-row .button {
+    -fx-opacity: 0.5;
+    -fx-disable: true;
+}

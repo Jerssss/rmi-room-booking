@@ -225,9 +225,9 @@ public class ModifyReservationView implements Initializable {
                         LocalDateTime startDateTime = LocalDateTime.of(reservationDate, LocalTime.parse(reservation.getStartTime(), DateTimeFormatter.ofPattern("HH:mm")));
                         LocalDateTime now = LocalDateTime.now();
 
-                        // Check if the reservation is in the past
-                        if (reservationDate.isBefore(LocalDate.now())) {
-                            return; // Do not allow editing for past dates
+                        // Check if the reservation is in the past or has been rejected
+                        if (reservationDate.isBefore(LocalDate.now()) || "Rejected".equals(reservation.getStatus())) {
+                            return; // Do not allow editing for past dates or rejected reservations
                         }
 
                         // Check if the reservation can be edited based on status and time
@@ -256,14 +256,14 @@ public class ModifyReservationView implements Initializable {
                     Reservation reservation = getTableRow().getItem();
                     if (reservation != null) {
                         LocalDate reservationDate = LocalDate.parse(reservation.getReservationDate());
-                        // Disable the edit button for cancelled reservations or past dates
-                        if ("Cancelled".equals(reservation.getStatus()) || reservationDate.isBefore(LocalDate.now())) {
+                        // Disable the edit button for cancelled or rejected reservations or past dates
+                        if ("Cancelled".equals(reservation.getStatus()) || "Rejected".equals(reservation.getStatus()) || reservationDate.isBefore(LocalDate.now())) {
                             editButton.setDisable(true); // Disable the edit button
                         } else {
                             editButton.setDisable(false); // Enable the edit button for active reservations
                         }
                     }
-                    setGraphic(editButton);
+                    setGraphic(editButton );
                 }
             }
         };
@@ -288,12 +288,12 @@ public class ModifyReservationView implements Initializable {
                         LocalDateTime reservationDateTime = LocalDateTime.of(reservationDate, startTime);
                         LocalDateTime now = LocalDateTime.now();
 
-                        // Check if the reservation is within 24 hours
-                        if (reservationDateTime.isBefore(now.plusHours(24))) {
+                        // Check if the reservation is within 24 hours or has been rejected
+                        if (reservationDateTime.isBefore(now.plusHours(24)) || "Rejected".equals(reservation.getStatus())) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Cancellation Not Allowed");
                             alert.setHeaderText(null);
-                            alert.setContentText("You cannot cancel a reservation less than 24 hours before the start time.");
+                            alert.setContentText("You cannot cancel a reservation that has been rejected or less than 24 hours before the start time.");
                             alert.showAndWait();
                             return; // Exit the method if cancellation is not allowed
                         }
@@ -336,6 +336,11 @@ public class ModifyReservationView implements Initializable {
                 if (empty) {
                     setGraphic(null);
                 } else {
+                    Reservation reservation = getTableRow().getItem();
+                    if (reservation != null) {
+                        // Disable the cancel button for rejected reservations
+                        cancelButton.setDisable("Rejected".equals(reservation.getStatus()));
+                    }
                     setGraphic(cancelButton);
                 }
             }
