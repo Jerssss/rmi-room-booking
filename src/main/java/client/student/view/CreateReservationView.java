@@ -84,7 +84,7 @@ public class CreateReservationView implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
-        System.out.println("[DEBUG] Table columns initialized successfully.");
+        System.out.println("[CLIENT] Table columns initialized successfully.");
 
         // Manually initialize the controller
         initializeController();
@@ -99,12 +99,8 @@ public class CreateReservationView implements Initializable {
             System.err.println("[ERROR] Student ID is missing from the session.");
             return;
         }
-        System.out.println("[DEBUG] Initializing CreateReservationsController...");
         CreateReservationModel model = new CreateReservationModel(studentID);
         this.controller = new CreateReservationController(this, model);
-        System.out.println("[DEBUG] CreateReservationsController successfully created.");
-
-
     }
 
 
@@ -145,12 +141,12 @@ public class CreateReservationView implements Initializable {
 
     public void updateTable(List<Terminal> terminals) {
         if (terminals == null || terminals.isEmpty()) {
-            System.out.println("[DEBUG] No data to display in TableView.");
+            System.out.println("[CLIENT] No data to display in TableView.");
             return;
         }
         allTerminals.setAll(terminals);
         createReservationTableView.setItems(allTerminals);
-        System.out.println("[DEBUG] Table updated with " + terminals.size() + " Terminals.");
+        System.out.println("[CLIENT] Table updated with " + terminals.size() + " Terminals.");
     }
 
     public void initializeSearchListener() {
@@ -201,32 +197,6 @@ public class CreateReservationView implements Initializable {
         }
     }
 
-
-
-
-    /** Sets refresh button action */
-    public void setRefreshButtonAction(EventHandler<ActionEvent> event) {
-        refreshButton.setOnAction(event);
-    }
-
-    public void searchButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    public void searchButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
     public void refreshButtonExited() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
         st.setToX(1.0);
@@ -244,76 +214,4 @@ public class CreateReservationView implements Initializable {
         st.setAutoReverse(false);
         st.play();
     }
-
-    public void createButtonHovered() {
-        // Assuming you have a button for create reservations, e.g., createButton
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectCreateReservationWindowButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    public void createButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), redirectCreateReservationWindowButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    public void saveChangesButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    public void saveChangesButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    /** Sets the action for the "Add Reservation" button */
-    public void setAddReservationButtonAction(EventHandler<ActionEvent> event) {
-        reserveColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button addReservationButton = new Button("Add Reservation");
-
-            {
-                addReservationButton.setStyle("-fx-background-color: #0d3073; -fx-text-fill: white;");
-                addReservationButton.setOnAction(e -> {
-                    // Ensure the row is selected so that getSelectedTerminal() works
-                    getTableView().getSelectionModel().select(getIndex());
-                    // Now call the provided event handler
-                    event.handle(e);
-                });
-            }
-
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(addReservationButton);
-                }
-            }
-        });
-    }
-
-
-
-    /** Returns the currently selected terminal in the TableView */
-    public Terminal getSelectedTerminal() {
-        return createReservationTableView.getSelectionModel().getSelectedItem();
-    }
-
 }

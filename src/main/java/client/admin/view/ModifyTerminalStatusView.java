@@ -87,7 +87,6 @@ public class ModifyTerminalStatusView {
 
     public void setActionResetButton(EventHandler<ActionEvent> event) {
         resetButton.setOnAction(event);
-        System.out.println("[DEBUG] Refresh triggered");
     }
 
     public void setActionSaveChangesButton(EventHandler<ActionEvent> event) {
@@ -100,7 +99,7 @@ public class ModifyTerminalStatusView {
         modTerTableView.setItems(null); // Force reset
         modTerTableView.setItems(terminalData); // Reload table data
         modTerTableView.refresh(); // Force UI refresh
-        System.out.println("[DEBUG] Terminal data updated. New table size: " + terminalData.size());
+        System.out.println("[CLIENT] Terminal data updated. New table size: " + terminalData.size());
     }
 
     // Allow controller to access the current terminal data

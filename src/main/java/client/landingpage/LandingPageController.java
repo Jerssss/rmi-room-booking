@@ -62,7 +62,6 @@ public class LandingPageController {
                 return;
             }
 
-            System.out.println("[DEBUG] SignUpView successfully loaded.");
             new SignUpController(signUpView, new SignUpModel());
 
             switchScene(event, root);

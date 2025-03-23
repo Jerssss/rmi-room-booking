@@ -55,7 +55,7 @@
         @Override
         public void initialize(URL location, ResourceBundle resources) {
             initializeTableColumns();
-            System.out.println("[DEBUG] Table columns initialized successfully.");
+            System.out.println("[CLIENT] Table columns initialized successfully.");
             initializeController();
         }
 
@@ -65,7 +65,6 @@
          * so that it can be passed into the model.
          */
         public void initializeController() {
-            System.out.println("[DEBUG] Initializing ViewReservationController...");
             // Retrieve the logged-in student ID (ensure SessionManager has a getter for it)
             String studentID = SessionManager.getStudentID();
             if (studentID == null || studentID.isEmpty()) {
@@ -74,7 +73,6 @@
             }
             ViewReservationModel model = new ViewReservationModel(studentID);
             this.controller = new ViewReservationController(this, model);
-            System.out.println("[DEBUG] ViewReservationController successfully created with student ID: " + studentID);
             initializeSearchListener();
         }
 
@@ -91,12 +89,12 @@
         /** Updates TableView with new reservations */
         public void updateTable(List<Reservation> reservations) {
             if (reservations == null || reservations.isEmpty()) {
-                System.out.println("[DEBUG] No data to display in TableView.");
+                System.out.println("[CLIENT] No data to display in TableView.");
                 return;
             }
             allReservations.setAll(reservations);
             viewResTableView.setItems(allReservations);
-            System.out.println("[DEBUG] Table updated with " + reservations.size() + " reservations.");
+            System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
         }
 
 

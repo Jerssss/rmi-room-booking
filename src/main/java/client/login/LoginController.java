@@ -150,7 +150,6 @@ public class LoginController {
                 System.err.println("[ERROR] StudentMainMenuView is NULL after loading FXML!");
                 return;
             }
-            System.out.println("[DEBUG] StudentMainMenuView successfully loaded.");
             new StudentMainMenuController(studentMainMenuView, new StudentMainMenuModel(), loggedInUserName, userID);
             changeScene(event, root);
         } catch (IOException e) {

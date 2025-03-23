@@ -55,8 +55,6 @@ public class SetIPView {
 
     @FXML
     private void handleConnectButtonAction() {
-        System.out.println("[DEBUG] Connect button clicked."); // Debug log
-
         String serverIP;
 
         // Get the IP from the active field
