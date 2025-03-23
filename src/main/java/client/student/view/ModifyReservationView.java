@@ -142,6 +142,18 @@ public class ModifyReservationView implements Initializable {
             System.out.println("[CLIENT] No data to display in TableView.");
             return;
         }
+
+        // Sort reservations by status and date
+        reservations = reservations.stream()
+                .sorted((r1, r2) -> {
+                    if (r1.getStatus().equals(r2.getStatus())) {
+                        return r2.getReservationDate().compareTo(r1.getReservationDate());
+                    } else {
+                        return "Pending".equals(r1.getStatus()) ? -1 : 1;
+                    }
+                })
+                .collect(Collectors.toList());
+
         allReservations.setAll(reservations);
         modResTableView.setItems(allReservations);
         modResTableView.refresh();

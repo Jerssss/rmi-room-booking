@@ -86,12 +86,29 @@
             statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
         }
 
-        /** Updates TableView with new reservations */
+        /**
+         * Updates TableView with new reservations, prioritizing "Pending" reservations
+         * and sorting them by the latest reservation date.
+         *
+         * @param reservations The list of reservations to display in the table.
+         */
         public void updateTable(List<Reservation> reservations) {
             if (reservations == null || reservations.isEmpty()) {
                 System.out.println("[CLIENT] No data to display in TableView.");
                 return;
             }
+
+            // Sort reservations: "Pending" first, then by reservation date (latest first)
+            reservations = reservations.stream()
+                    .sorted((r1, r2) -> {
+                        if (r1.getStatus().equals(r2.getStatus())) {
+                            return r2.getReservationDate().compareTo(r1.getReservationDate());
+                        } else {
+                            return "Pending".equals(r1.getStatus()) ? -1 : 1;
+                        }
+                    })
+                    .collect(Collectors.toList());
+
             allReservations.setAll(reservations);
             viewResTableView.setItems(allReservations);
             System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
