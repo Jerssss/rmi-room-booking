@@ -46,7 +46,8 @@ public class ModifyTerminalStatusModel {
         try {
             System.out.println("=====================================================");
             System.out.println("[CLIENT] Modified terminal status have been saved");
-            return adminService.modifyTerminalStatus(terminals);
+            adminService.modifyTerminalStatus(terminals);
+            return true;
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to modify terminal via RMI: " + e.getMessage());
             return false;

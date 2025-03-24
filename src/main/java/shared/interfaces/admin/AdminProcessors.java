@@ -59,7 +59,7 @@ public interface AdminProcessors extends Remote {
      * @return {@code true} if the modification was successful, {@code false} otherwise.
      * @throws RemoteException If an RMI communication error occurs.
      */
-    boolean modifyTerminalStatus(List<Terminal> terminal) throws RemoteException;
+    void modifyTerminalStatus(List<Terminal> terminal) throws RemoteException;
 
     /**
      * Registers a client callback to receive updates from the server.

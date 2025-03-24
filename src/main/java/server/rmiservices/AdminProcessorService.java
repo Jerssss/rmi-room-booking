@@ -154,7 +154,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     }
 
     @Override
-    public boolean modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
+    public void modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
         try {
             System.out.println("[DEBUG] AdminProcessorService: Modifying terminal details...");
             List<Terminal> existingTerminals = JSONUtility.loadTerminals(TERMINALS_FILE);
@@ -198,11 +198,8 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             } catch (Exception e) {
                 System.err.println("[ERROR] AdminProcessorService: Failed to push terminal update to student clients: " + e.getMessage());
             }
-
-            return true;
         } catch (Exception e) {
             System.err.println("[ERROR] AdminProcessorService: Failed to update terminals: " + e.getMessage());
-            return false;
         }
     }
 
