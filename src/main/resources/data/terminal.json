@@ -216,6 +216,15 @@
         "reservation_date": "2025-03-18",
         "start_time": "09:30",
         "end_time": "11:30"
+      },
+      {
+        "terminal_id": "PC24",
+        "terminal_room": "D524",
+        "terminal_os": "Windows",
+        "terminal_status": "Active",
+        "reservation_date": "2025-03-26",
+        "start_time": "11:30",
+        "end_time": "16:30"
       }
     ]
   }

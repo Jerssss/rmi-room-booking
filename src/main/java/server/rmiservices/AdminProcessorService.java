@@ -91,6 +91,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 return;
             }
 
+            // Update the reservations based on the provided list
             for (Reservation updatedReservation : updatedReservations) {
                 boolean found = false;
                 for (int i = 0; i < allReservations.size(); i++) {
@@ -116,8 +117,8 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             try {
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 StudentProcessors studentProc = (StudentProcessors) registry.lookup("student_processors");
-                // Uncomment below if your StudentProcessors interface provides a method for reservations update
-                studentProc.updateReservation((Reservation) allReservations);
+                // Use the new batch update method
+                studentProc.updateReservations(allReservations);
                 System.out.println("[DEBUG] AdminProcessorService: Pushed reservation update to student clients.");
             } catch (Exception e) {
                 System.err.println("[ERROR] AdminProcessorService: Failed to push reservation update to student clients: " + e.getMessage());
@@ -197,8 +198,6 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             } catch (Exception e) {
                 System.err.println("[ERROR] AdminProcessorService: Failed to push terminal update to student clients: " + e.getMessage());
             }
-
-            // Optionally, notify student clients about reservation update if applicable
 
             return true;
         } catch (Exception e) {

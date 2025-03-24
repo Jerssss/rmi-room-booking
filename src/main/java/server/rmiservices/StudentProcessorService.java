@@ -79,7 +79,6 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             try {
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 AdminProcessors adminProc = (AdminProcessors) registry.lookup("admin_processors");
-                // Uncomment below if your AdminProcessors interface provides a method for reservation updates
                 adminProc.updateReservations(allReservations);
                 System.out.println("[DEBUG] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
@@ -120,7 +119,6 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             try {
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 AdminProcessors adminProc = (AdminProcessors) registry.lookup("admin_processors");
-                // Uncomment below if your AdminProcessors interface provides a method for reservation updates
                 adminProc.updateReservations(allReservations);
                 System.out.println("[DEBUG] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
@@ -129,6 +127,25 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         } catch (Exception e) {
             System.err.println("[ERROR] StudentProcessorService: updateReservation: " + e.getMessage());
             throw new ModifyReservationException("Failed to update reservation", e);
+        }
+    }
+
+    /**
+     * New method for handling batch reservation updates.
+     */
+    @Override
+    public void updateReservations(List<Reservation> reservations) throws RemoteException {
+        System.out.println("[DEBUG] StudentProcessorService: Received batch reservation update.");
+        try {
+            // Save the whole list to file
+            JSONUtility.saveReservations(reservations, RESERVATIONS_FILE);
+            System.out.println("[DEBUG] StudentProcessorService: Reservations saved successfully via batch update.");
+
+            // Notify local callbacks
+            notifyReservationUpdate(reservations);
+        } catch (Exception e) {
+            System.err.println("[ERROR] StudentProcessorService: updateReservations: " + e.getMessage());
+            throw new RemoteException("Batch update failed", e);
         }
     }
 
@@ -152,7 +169,6 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             try {
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 AdminProcessors adminProc = (AdminProcessors) registry.lookup("admin_processors");
-                // Uncomment below if your AdminProcessors interface provides a method for reservation updates
                 adminProc.updateReservations(allReservations);
                 System.out.println("[DEBUG] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
