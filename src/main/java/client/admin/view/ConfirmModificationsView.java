@@ -1,6 +1,7 @@
 package client.admin.view;
 
 import client.admin.controller.ModifyTerminalStatusController;
+import client.admin.controller.ReservationApprovalController;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,9 +15,14 @@ public class ConfirmModificationsView {
     private Button confirmButton;
 
     private ModifyTerminalStatusController modifyController; // Reference to main controller
+    private ReservationApprovalController reservationController;
 
     public void setModifyTerminalStatusController(ModifyTerminalStatusController controller) {
         this.modifyController = controller;
+    }
+
+    public void setReservationApprovalController(ReservationApprovalController controller) {
+        this.reservationController = controller;
     }
 
     @FXML
@@ -28,10 +34,15 @@ public class ConfirmModificationsView {
     private void confirmChanges() {
         // Close confirmation window
         closeWindow();
-        // Call the save logic in ModifyTerminalStatusController
-        modifyController.applyChanges();
+        // Call the save logic in ModifyTerminalStatusController if it's set
+        if (modifyController != null) {
+            modifyController.applyChanges();
+        }
 
-
+        // Call the approval logic in ReservationApprovalController if it's set
+        if (reservationController != null) {
+            reservationController.applyChanges();
+        }
     }
 
     private void closeWindow() {

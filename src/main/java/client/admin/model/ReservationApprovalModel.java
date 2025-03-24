@@ -47,17 +47,19 @@ public class ReservationApprovalModel {
      *
      * @param reservations A list of `Reservation` objects with updated data.
      */
-    public void saveReservationData(List<Reservation> reservations) {
+    public boolean saveReservationData(List<Reservation> reservations) {
         if (adminProcessors == null) {
             System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
-            return;
+            return false;
         }
 
         try {
             adminProcessors.updateReservations(reservations);
             System.out.println("[CLIENT] All reservations updated successfully.");
+            return true;
         } catch (RemoteException e) {
             System.err.println("[ERROR] RMI call failed: " + e.getMessage());
+            return false;
         }
     }
 

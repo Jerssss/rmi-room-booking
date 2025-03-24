@@ -1,16 +1,23 @@
 package client.admin.controller;
 
 import client.admin.model.ReservationApprovalModel;
+import client.admin.view.ConfirmModificationsView;
 import client.admin.view.ReservationApprovalView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import shared.Reservation;
 import shared.Log;
 import shared.Terminal;
 import shared.callback.UpdateTable;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +70,7 @@ public class ReservationApprovalController {
         loadReservations();
 
         // Set button actions
-        this.view.setActionSaveChangesButton(event -> saveChanges());
+        this.view.setActionSaveChangesButton(event -> handleSaveChanges());
         this.view.getSearchStudResTextField().textProperty().addListener(
                 (observable, oldValue, newValue) -> searchReservations(newValue)
         );
@@ -99,6 +106,69 @@ public class ReservationApprovalController {
 
         JOptionPane.showMessageDialog(null, "Changes have been successfully saved!",
                 "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void handleSaveChanges() {
+        try {
+            // Load the modification confirmation FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/confirm_modifications_window.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and pass reference
+            ConfirmModificationsView confirmController = loader.getController();
+            confirmController.setReservationApprovalController(this); // Pass the controller reference
+
+            // Create a new modal stage for confirmation
+            Stage confirmationStage = new Stage();
+            confirmationStage.setTitle("Confirm Modifications");
+            confirmationStage.setScene(new Scene(root));
+            confirmationStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with the main window
+            confirmationStage.setResizable(false);
+            confirmationStage.showAndWait(); // Wait for user action
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "Error loading the modification confirmation window.",
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void applyChanges() {
+        List<Reservation> reservationsToSave = List.copyOf(view.getApproveResTableView().getItems());
+
+        System.out.println("[CLIENT] Saving " + reservationsToSave.size() + " reservations.");
+        boolean success = model.saveReservationData(reservationsToSave);
+
+        if (!success) {
+            JOptionPane.showMessageDialog(null,
+                    "Failed to modify terminal data.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        } else {
+            try {
+                // Load the "Saved Notifier" FXML
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/saved_notifier_window.fxml"));
+                Parent root = loader.load();
+
+                // Create a new Stage (pop-up window)
+                Stage notifierStage = new Stage();
+                notifierStage.setTitle("Saved Successfully");
+                notifierStage.setScene(new Scene(root));
+                notifierStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with the main window
+                notifierStage.setResizable(false);
+                notifierStage.showAndWait(); // Wait until the user closes it
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Error loading the saved notification window.",
+                        "Load Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**
