@@ -65,18 +65,15 @@ public class SignUpController {
     }
 
     private void handleSignUp(ActionEvent event) throws ParserConfigurationException {
-
-        // Store field and dropdown contents
+        // Existing field collection
         String userID = signUpView.getIDField().getText();
         String name = signUpView.getNameField().getText();
         String pass = signUpView.getPassField().getText();
-        String userType = signUpView.getUserTypeBox().getValue();
         String courseYear = signUpView.getCourseYearField().getText();
-        String facultyType = signUpView.getFacultyTypeField().getText();
 
-        // Validate input fields
-        if (userID.isEmpty() || name.isEmpty() || pass.isEmpty() || userType == null) {
-            signUpView.getPromptLabel().setText("Please accomplish all fields.");
+        // Update validation (remove userType check)
+        if (userID.isEmpty() || name.isEmpty() || pass.isEmpty() || courseYear.isEmpty()) {
+            signUpView.getPromptLabel().setText("Please complete all fields.");
             signUpView.getPromptLabel().setVisible(true);
             return;
         }
@@ -91,7 +88,7 @@ public class SignUpController {
 
         try {
             // Call the register method in SignUpModel
-            signUpModel.register(userID, name, pass, userType, courseYear, facultyType);
+            signUpModel.register(userID, name, pass, courseYear);
 
             // If no exception, registration was successful
             signUpView.getPromptLabel().setText("Registration successful!");
