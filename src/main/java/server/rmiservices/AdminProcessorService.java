@@ -33,16 +33,16 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     public AdminProcessorService() throws RemoteException {
         super();
-        System.out.println("[DEBUG] AdminProcessorService instantiated.");
+        System.out.println("[SERVER] AdminProcessorService instantiated.");
     }
 
     @Override
     public List<Log> getAllLogs() throws RemoteException {
         try {
-            System.out.println("[DEBUG] AdminProcessorService: Fetching logs...");
+            System.out.println("[SERVER] AdminProcessorService: Fetching logs...");
             return JSONUtility.loadLogs(LOGS_FILE);
         } catch (Exception e) {
-            System.err.println("[ERROR] AdminProcessorService: Failed to fetch logs: " + e.getMessage());
+            System.err.println("[SERVER] AdminProcessorService: Failed to fetch logs: " + e.getMessage());
             return null;
         }
     }
@@ -50,25 +50,25 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     @Override
     public List<Reservation> getAllStudentReservations() throws RemoteException {
         try {
-            System.out.println("[DEBUG] AdminProcessorService: Fetching student reservations from: "
+            System.out.println("[SERVER] AdminProcessorService: Fetching student reservations from: "
                     + RESERVATIONS_FILE.getAbsolutePath());
 
             if (!RESERVATIONS_FILE.exists()) {
-                System.err.println("[ERROR] JSON file does not exist: " + RESERVATIONS_FILE.getAbsolutePath());
+                System.err.println("[SERVER] JSON file does not exist: " + RESERVATIONS_FILE.getAbsolutePath());
                 return new ArrayList<>();
             }
 
             List<Reservation> reservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             if (reservations == null || reservations.isEmpty()) {
-                System.out.println("[DEBUG] AdminProcessorService: No reservations found in JSON.");
+                System.out.println("[SERVER] AdminProcessorService: No reservations found in JSON.");
             } else {
-                System.out.println("[DEBUG] AdminProcessorService: Loaded " + reservations.size() + " reservations.");
+                System.out.println("[SERVER] AdminProcessorService: Loaded " + reservations.size() + " reservations.");
             }
 
             return reservations;
         } catch (Exception e) {
-            System.err.println("[ERROR] AdminProcessorService: Failed to fetch reservations: " + e.getMessage());
+            System.err.println("[SERVER] AdminProcessorService: Failed to fetch reservations: " + e.getMessage());
             return null;
         }
     }
@@ -76,10 +76,10 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     @Override
     public List<Terminal> getAllTerminals() throws RemoteException {
         try {
-            System.out.println("[DEBUG] AdminProcessorService: Fetching terminal data...");
+            System.out.println("[SERVER] AdminProcessorService: Fetching terminal data...");
             return JSONUtility.loadTerminals(TERMINALS_FILE);
         } catch (Exception e) {
-            System.err.println("[ERROR] AdminProcessorService: Failed to fetch terminals: " + e.getMessage());
+            System.err.println("[SERVER] AdminProcessorService: Failed to fetch terminals: " + e.getMessage());
             return null;
         }
     }
@@ -87,12 +87,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     @Override
     public void updateReservations(List<Reservation> updatedReservations) throws RemoteException {
         try {
-            System.out.println("[DEBUG] AdminProcessorService: Updating reservations...");
+            System.out.println("[SERVER] AdminProcessorService: Updating reservations...");
 
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             if (allReservations == null) {
-                System.err.println("[ERROR] AdminProcessorService: Failed to load existing reservations.");
+                System.err.println("[SERVER] AdminProcessorService: Failed to load existing reservations.");
                 return;
             }
 
@@ -103,17 +103,17 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                     if (allReservations.get(i).getReservationID().equals(updatedReservation.getReservationID())) {
                         allReservations.set(i, updatedReservation);
                         found = true;
-                        System.out.println("[DEBUG] AdminProcessorService: Updated reservation: " + updatedReservation.getReservationID());
+                        System.out.println("[SERVER] AdminProcessorService: Updated reservation: " + updatedReservation.getReservationID());
                         break;
                     }
                 }
                 if (!found) {
-                    System.err.println("[ERROR] AdminProcessorService: Reservation not found: " + updatedReservation.getReservationID());
+                    System.err.println("[SERVER] AdminProcessorService: Reservation not found: " + updatedReservation.getReservationID());
                 }
             }
 
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
-            System.out.println("[DEBUG] AdminProcessorService: Reservations saved successfully.");
+            System.out.println("[SERVER] AdminProcessorService: Reservations saved successfully.");
 
             // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
@@ -124,12 +124,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 StudentProcessors studentProc = (StudentProcessors) registry.lookup("student_processors");
                 // Use the new batch update method
                 studentProc.updateReservations(allReservations);
-                System.out.println("[DEBUG] AdminProcessorService: Pushed reservation update to student clients.");
+                System.out.println("[SERVER] AdminProcessorService: Pushed reservation update to student clients.");
             } catch (Exception e) {
-                System.err.println("[ERROR] AdminProcessorService: Failed to push reservation update to student clients: " + e.getMessage());
+                System.err.println("[SERVER] AdminProcessorService: Failed to push reservation update to student clients: " + e.getMessage());
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] AdminProcessorService: Failed to update reservations: " + e.getMessage());
+            System.err.println("[SERVER] AdminProcessorService: Failed to update reservations: " + e.getMessage());
         }
     }
 
@@ -139,7 +139,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             List<Terminal> terminals = JSONUtility.loadTerminals(TERMINALS_FILE);
             terminals.add(terminal);
             JSONUtility.saveTerminals(terminals, TERMINALS_FILE);
-            System.out.println("[DEBUG] AdminProcessorService: Terminal added successfully.");
+            System.out.println("[SERVER] AdminProcessorService: Terminal added successfully.");
 
             // Notify local callbacks asynchronously
             notifyTerminalUpdate(terminals);
@@ -149,19 +149,19 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 StudentProcessors studentProc = (StudentProcessors) registry.lookup("student_processors");
                 studentProc.updateTerminals(terminals);
-                System.out.println("[DEBUG] AdminProcessorService: Pushed terminal update to student clients.");
+                System.out.println("[SERVER] AdminProcessorService: Pushed terminal update to student clients.");
             } catch (Exception e) {
-                System.err.println("[ERROR] AdminProcessorService: Failed to push terminal update to student clients: " + e.getMessage());
+                System.err.println("[SERVER] AdminProcessorService: Failed to push terminal update to student clients: " + e.getMessage());
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] AdminProcessorService: Failed to save terminal: " + e.getMessage());
+            System.err.println("[SERVER] AdminProcessorService: Failed to save terminal: " + e.getMessage());
         }
     }
 
     @Override
     public void modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
         try {
-            System.out.println("[DEBUG] AdminProcessorService: Modifying terminal details...");
+            System.out.println("[SERVER] AdminProcessorService: Modifying terminal details...");
             List<Terminal> existingTerminals = JSONUtility.loadTerminals(TERMINALS_FILE);
 
             if (existingTerminals == null) {
@@ -175,21 +175,21 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 for (Terminal updated : updatedTerminals) {
                     if (existing.getTerminalID().equals(updated.getTerminalID())) {
                         existingTerminals.set(i, updated);
-                        System.out.println("[DEBUG] AdminProcessorService: Updated terminal: " + updated.getTerminalID());
+                        System.out.println("[SERVER] AdminProcessorService: Updated terminal: " + updated.getTerminalID());
                         found = true;
                         break;
                     }
                 }
 
                 if (!found) {
-                    System.err.println("[DEBUG] AdminProcessorService: Removing terminal: " + existing.getTerminalID());
+                    System.err.println("[SERVER] AdminProcessorService: Removing terminal: " + existing.getTerminalID());
                     existingTerminals.remove(i);
                     i--;
                 }
             }
 
             JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
-            System.out.println("[DEBUG] AdminProcessorService: Terminals updated successfully.");
+            System.out.println("[SERVER] AdminProcessorService: Terminals updated successfully.");
 
             // Notify local callbacks asynchronously
             notifyTerminalUpdate(existingTerminals);
@@ -199,12 +199,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 StudentProcessors studentProc = (StudentProcessors) registry.lookup("student_processors");
                 studentProc.updateTerminals(existingTerminals);
-                System.out.println("[DEBUG] AdminProcessorService: Pushed terminal update to student clients.");
+                System.out.println("[SERVER] AdminProcessorService: Pushed terminal update to student clients.");
             } catch (Exception e) {
-                System.err.println("[ERROR] AdminProcessorService: Failed to push terminal update to student clients: " + e.getMessage());
+                System.err.println("[SERVER] AdminProcessorService: Failed to push terminal update to student clients: " + e.getMessage());
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] AdminProcessorService: Failed to update terminals: " + e.getMessage());
+            System.err.println("[SERVER] AdminProcessorService: Failed to update terminals: " + e.getMessage());
         }
     }
 
@@ -212,28 +212,28 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     public void registerCallback(Broadcast callback) throws RemoteException {
         if (!callbacks.contains(callback)) {
             callbacks.add(callback);
-            System.out.println("[DEBUG] AdminProcessorService: Client callback registered. Total callbacks: " + callbacks.size());
+            System.out.println("[SERVER] AdminProcessorService: Client callback registered. Total callbacks: " + callbacks.size());
         }
     }
 
     @Override
     public void unregisterCallback(Broadcast callback) throws RemoteException {
         callbacks.remove(callback);
-        System.out.println("[DEBUG] AdminProcessorService: Client callback unregistered. Total callbacks: " + callbacks.size());
+        System.out.println("[SERVER] AdminProcessorService: Client callback unregistered. Total callbacks: " + callbacks.size());
     }
 
     /**
      * Notifies all registered callbacks about a reservation update asynchronously.
      */
     private void notifyReservationUpdate(List<Reservation> reservations) {
-        System.out.println("[DEBUG] AdminProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
+        System.out.println("[SERVER] AdminProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
             callbackExecutor.submit(() -> {
                 try {
-                    System.out.println("[DEBUG] AdminProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
+                    System.out.println("[SERVER] AdminProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
                     callback.updateReservationApproval(reservations);
                 } catch (RemoteException e) {
-                    System.err.println("[ERROR] AdminProcessorService: Failed to notify client ("
+                    System.err.println("[SERVER] AdminProcessorService: Failed to notify client ("
                             + callback.getClass().getName() + "): " + e.getMessage());
                     callbacks.remove(callback);
                 }
@@ -245,14 +245,14 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
      * Notifies all registered callbacks about a terminal update asynchronously.
      */
     private void notifyTerminalUpdate(List<Terminal> terminals) {
-        System.out.println("[DEBUG] AdminProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
+        System.out.println("[SERVER] AdminProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
             callbackExecutor.submit(() -> {
                 try {
-                    System.out.println("[DEBUG] AdminProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
+                    System.out.println("[SERVER] AdminProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
                     callback.updateTerminal(terminals);
                 } catch (RemoteException e) {
-                    System.err.println("[ERROR] AdminProcessorService: Failed to notify client ("
+                    System.err.println("[SERVER] AdminProcessorService: Failed to notify client ("
                             + callback.getClass().getName() + "): " + e.getMessage());
                     callbacks.remove(callback);
                 }

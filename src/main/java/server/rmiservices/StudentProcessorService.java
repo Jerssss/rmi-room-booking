@@ -33,23 +33,23 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
 
     public StudentProcessorService() throws RemoteException {
         super();
-        System.out.println("[DEBUG] StudentProcessorService instantiated.");
+        System.out.println("[SERVER] StudentProcessorService instantiated.");
     }
 
     @Override
     public List<Reservation> getReservations(String studentID) throws RemoteException {
         try {
-            System.out.println("[DEBUG] StudentProcessorService: Fetching reservations for student: " + studentID);
+            System.out.println("[SERVER] StudentProcessorService: Fetching reservations for student: " + studentID);
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             List<Reservation> userReservations = allReservations.stream()
                     .filter(reservation -> studentID.equals(reservation.getUserID()))
                     .collect(Collectors.toList());
 
-            System.out.println("[DEBUG] StudentProcessorService: Found " + userReservations.size() + " reservations for student " + studentID);
+            System.out.println("[SERVER] StudentProcessorService: Found " + userReservations.size() + " reservations for student " + studentID);
             return userReservations;
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: getReservations: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: getReservations: " + e.getMessage());
             throw new RemoteException("Error fetching reservations", e);
         }
     }
@@ -57,12 +57,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     @Override
     public List<Reservation> getAllReservations() throws RemoteException {
         try {
-            System.out.println("[DEBUG] StudentProcessorService: Fetching all reservations.");
+            System.out.println("[SERVER] StudentProcessorService: Fetching all reservations.");
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
-            System.out.println("[DEBUG] StudentProcessorService: Total reservations loaded: " + allReservations.size());
+            System.out.println("[SERVER] StudentProcessorService: Total reservations loaded: " + allReservations.size());
             return allReservations;
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: getAllReservations: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: getAllReservations: " + e.getMessage());
             throw new RemoteException("Error fetching all reservations", e);
         }
     }
@@ -70,12 +70,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     @Override
     public void setReservations(Reservation newReservation) throws RemoteException, ReservationException {
         try {
-            System.out.println("[DEBUG] StudentProcessorService: Adding reservation for user: " + newReservation.getUserID());
+            System.out.println("[SERVER] StudentProcessorService: Adding reservation for user: " + newReservation.getUserID());
             List<Reservation> allReservations = JSONUtility.loadReservations(RESERVATIONS_FILE);
 
             allReservations.add(newReservation);
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
-            System.out.println("[DEBUG] StudentProcessorService: Reservation added successfully.");
+            System.out.println("[SERVER] StudentProcessorService: Reservation added successfully.");
 
             // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
@@ -85,12 +85,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 AdminProcessors adminProc = (AdminProcessors) registry.lookup("admin_processors");
                 adminProc.updateReservations(allReservations);
-                System.out.println("[DEBUG] StudentProcessorService: Pushed reservation update to admin clients.");
+                System.out.println("[SERVER] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
-                System.err.println("[ERROR] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
+                System.err.println("[SERVER] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: setReservations: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: setReservations: " + e.getMessage());
             throw new ReservationException("Failed to add reservation", e);
         }
     }
@@ -105,7 +105,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
                 if (allReservations.get(i).getReservationID().equals(updatedReservation.getReservationID())) {
                     allReservations.set(i, updatedReservation);
                     updated = true;
-                    System.out.println("[DEBUG] StudentProcessorService: Updated reservation: " + updatedReservation.getReservationID());
+                    System.out.println("[SERVER] StudentProcessorService: Updated reservation: " + updatedReservation.getReservationID());
                     break;
                 }
             }
@@ -115,7 +115,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             }
 
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
-            System.out.println("[DEBUG] StudentProcessorService: Reservation updated successfully.");
+            System.out.println("[SERVER] StudentProcessorService: Reservation updated successfully.");
 
             // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
@@ -125,12 +125,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 AdminProcessors adminProc = (AdminProcessors) registry.lookup("admin_processors");
                 adminProc.updateReservations(allReservations);
-                System.out.println("[DEBUG] StudentProcessorService: Pushed reservation update to admin clients.");
+                System.out.println("[SERVER] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
-                System.err.println("[ERROR] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
+                System.err.println("[SERVER] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: updateReservation: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: updateReservation: " + e.getMessage());
             throw new ModifyReservationException("Failed to update reservation", e);
         }
     }
@@ -140,16 +140,16 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
      */
     @Override
     public void updateReservations(List<Reservation> reservations) throws RemoteException {
-        System.out.println("[DEBUG] StudentProcessorService: Received batch reservation update.");
+        System.out.println("[SERVER] StudentProcessorService: Received batch reservation update.");
         try {
             // Save the whole list to file
             JSONUtility.saveReservations(reservations, RESERVATIONS_FILE);
-            System.out.println("[DEBUG] StudentProcessorService: Reservations saved successfully via batch update.");
+            System.out.println("[SERVER] StudentProcessorService: Reservations saved successfully via batch update.");
 
             // Notify local callbacks asynchronously
             notifyReservationUpdate(reservations);
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: updateReservations: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: updateReservations: " + e.getMessage());
             throw new RemoteException("Batch update failed", e);
         }
     }
@@ -165,7 +165,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             }
 
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
-            System.out.println("[DEBUG] StudentProcessorService: Reservation cancelled successfully.");
+            System.out.println("[SERVER] StudentProcessorService: Reservation cancelled successfully.");
 
             // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
@@ -175,12 +175,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
                 Registry registry = LocateRegistry.getRegistry(1099); // Ensure correct RMI port
                 AdminProcessors adminProc = (AdminProcessors) registry.lookup("admin_processors");
                 adminProc.updateReservations(allReservations);
-                System.out.println("[DEBUG] StudentProcessorService: Pushed reservation update to admin clients.");
+                System.out.println("[SERVER] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
-                System.err.println("[ERROR] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
+                System.err.println("[SERVER] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: cancelReservation: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: cancelReservation: " + e.getMessage());
             throw new ReservationException("Failed to cancel reservation", e);
         }
     }
@@ -188,17 +188,17 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     @Override
     public List<Terminal> getActiveTerminals() throws RemoteException {
         try {
-            System.out.println("[DEBUG] StudentProcessorService: Fetching active terminals...");
+            System.out.println("[SERVER] StudentProcessorService: Fetching active terminals...");
             List<Terminal> terminals = JSONUtility.loadTerminals(TERMINALS_FILE);
 
             List<Terminal> activeTerminals = terminals.stream()
                     .filter(ter -> "Active".equalsIgnoreCase(ter.getStatus()))
                     .collect(Collectors.toList());
 
-            System.out.println("[DEBUG] StudentProcessorService: Loaded " + activeTerminals.size() + " active terminals.");
+            System.out.println("[SERVER] StudentProcessorService: Loaded " + activeTerminals.size() + " active terminals.");
             return activeTerminals;
         } catch (Exception e) {
-            System.err.println("[ERROR] StudentProcessorService: getActiveTerminals: " + e.getMessage());
+            System.err.println("[SERVER] StudentProcessorService: getActiveTerminals: " + e.getMessage());
             throw new RemoteException("Error fetching active terminals", e);
         }
     }
@@ -209,25 +209,25 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     public void registerCallback(Broadcast callback) throws RemoteException {
         if (!callbacks.contains(callback)) {
             callbacks.add(callback);
-            System.out.println("[DEBUG] StudentProcessorService: Client callback registered. Total clients: " + callbacks.size());
+            System.out.println("[SERVER] StudentProcessorService: Client callback registered. Total clients: " + callbacks.size());
         }
     }
 
     @Override
     public void unregisterCallback(Broadcast callback) throws RemoteException {
         callbacks.remove(callback);
-        System.out.println("[DEBUG] StudentProcessorService: Client callback unregistered. Remaining clients: " + callbacks.size());
+        System.out.println("[SERVER] StudentProcessorService: Client callback unregistered. Remaining clients: " + callbacks.size());
     }
 
     private void notifyReservationUpdate(List<Reservation> reservations) {
-        System.out.println("[DEBUG] StudentProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
+        System.out.println("[SERVER] StudentProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
             callbackExecutor.submit(() -> {
                 try {
-                    System.out.println("[DEBUG] StudentProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
+                    System.out.println("[SERVER] StudentProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
                     callback.updateReservationApproval(reservations);
                 } catch (RemoteException e) {
-                    System.err.println("[ERROR] StudentProcessorService: Removing unreachable callback ("
+                    System.err.println("[SERVER] StudentProcessorService: Removing unreachable callback ("
                             + callback.getClass().getName() + "): " + e.getMessage());
                     callbacks.remove(callback);
                 }
@@ -236,14 +236,14 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     }
 
     private void notifyTerminalUpdate(List<Terminal> terminals) {
-        System.out.println("[DEBUG] StudentProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
+        System.out.println("[SERVER] StudentProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
             callbackExecutor.submit(() -> {
                 try {
-                    System.out.println("[DEBUG] StudentProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
+                    System.out.println("[SERVER] StudentProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
                     callback.updateTerminal(terminals);
                 } catch (RemoteException e) {
-                    System.err.println("[ERROR] StudentProcessorService: Removing unreachable callback ("
+                    System.err.println("[SERVER] StudentProcessorService: Removing unreachable callback ("
                             + callback.getClass().getName() + "): " + e.getMessage());
                     callbacks.remove(callback);
                 }
@@ -253,7 +253,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
 
     @Override
     public void updateTerminals(List<Terminal> terminals) throws RemoteException {
-        System.out.println("[DEBUG] StudentProcessorService: Received terminal update. Notifying clients...");
+        System.out.println("[SERVER] StudentProcessorService: Received terminal update. Notifying clients...");
         notifyTerminalUpdate(terminals);
     }
 }
