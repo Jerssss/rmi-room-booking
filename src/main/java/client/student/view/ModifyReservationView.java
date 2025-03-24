@@ -36,7 +36,7 @@ public class ModifyReservationView implements Initializable {
     @FXML private TextField searchStudResTextField;
     @FXML private Button searchButton;
     @FXML private Button saveChangesButton;
-    @FXML private Button refreshButton;
+    @FXML private Button resetButton;
     @FXML private TableView<Reservation> modResTableView;
     @FXML private TableColumn<Reservation, String> roomNumberColumn;
     @FXML private TableColumn<Reservation, String> terminalIDColumn;
@@ -378,8 +378,8 @@ public class ModifyReservationView implements Initializable {
      *
      * @param event The event handler to be set for the refresh button.
      */
-    public void setRefreshButtonAction(EventHandler<javafx.event.ActionEvent> event) {
-        refreshButton.setOnAction(event);
+    public void setresetButtonAction(EventHandler<javafx.event.ActionEvent> event) {
+        resetButton.setOnAction(event);
     }
 
     /**
@@ -433,8 +433,8 @@ public class ModifyReservationView implements Initializable {
     /**
      * Animates the refresh button when the mouse exits.
      */
-    public void refreshButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
+    public void resetButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), resetButton);
         st.setToX(1.0);
         st.setToY(1.0);
         st.setCycleCount(1);
@@ -445,8 +445,8 @@ public class ModifyReservationView implements Initializable {
     /**
      * Animates the refresh button when the mouse hovers over it.
      */
-    public void refreshButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), refreshButton);
+    public void resetButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), resetButton);
         st.setToX(0.9);
         st.setToY(0.9);
         st.setCycleCount(1);
