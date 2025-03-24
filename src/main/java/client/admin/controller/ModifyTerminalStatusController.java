@@ -55,12 +55,12 @@ public class ModifyTerminalStatusController {
 
             @Override
             public void updateReservations(List<Reservation> reservations) {
-
+                System.out.println("[CLIENT] Reservation update received (not used in this view).");
             }
 
             @Override
             public void updateLogs(List<Log> logs) {
-
+                System.out.println("[CLIENT] Log update received (not used in this view).");
             }
         });
 
