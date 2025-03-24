@@ -74,12 +74,15 @@ public class AddNewTerminalWindowView implements Initializable {
                 LocalDate tomorrow = LocalDate.now().plusDays(1);
                 LocalDate maxDate = LocalDate.now().plusMonths(3);
 
-                if (date.isBefore(tomorrow) || date.isAfter(maxDate)) {
+                // ❌ Disable if before tomorrow, after 3 months, or a Sunday
+                if (date.isBefore(tomorrow) || date.isAfter(maxDate) || date.getDayOfWeek().getValue() == 7) {
                     setDisable(true);
-                    setStyle("-fx-background-color: #ffc0cb;");
+                    setStyle("-fx-background-color: #ff9999;"); // Light red for disabled
+                    setTooltip(new Tooltip("No school on Sundays!"));
                 }
             }
         });
+
         datePicker.setValue(LocalDate.now().plusDays(1));
 
         // Set ComboBox Options
