@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox fx:id="centerPane" prefHeight="573.0" prefWidth="805.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.student.view.ModifyReservationView">
+<VBox fx:id="centerPane" prefHeight="573.0" prefWidth="805.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.student.view.ModifyReservationView">
    <children>
       <VBox prefHeight="149.0" prefWidth="805.0">
          <children>
@@ -31,21 +25,16 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="78.0" prefWidth="205.0" spacing="10.0">
                      <children>
-                        <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0">
+                        <StackPane alignment="CENTER_RIGHT" prefHeight="75.0" prefWidth="187.0">
                            <children>
-                              <TextField fx:id="searchStudResTextField" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
-                              <Button fx:id="searchButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#searchButtonHovered" onMouseExited="#searchButtonExited" prefHeight="26.0" prefWidth="69.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Search" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="11.0" />
-                                 </font>
-                              </Button>
+                              <TextField fx:id="searchStudResTextField" prefHeight="29.0" prefWidth="195.0" promptText="Enter keywords..." styleClass="background-pane" stylesheets="@../../css/styles.css" />
                            </children>
                         </StackPane>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="56.0" prefWidth="76.0">
                      <children>
-                        <Button fx:id="resetButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#resetButtonHovered" onMouseExited="#resetButtonExited" prefHeight="26.0" prefWidth="85.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="reset" textFill="WHITE">
+                        <Button fx:id="resetButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#resetButtonHovered" onMouseExited="#resetButtonExited" prefHeight="26.0" prefWidth="85.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Reset" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="11.0" />
                            </font>
@@ -77,7 +66,7 @@
       </VBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="62.0" prefWidth="805.0">
          <children>
-            <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#handleSaveChanges" onMouseExited="#saveChangesButtonExited" onMouseEntered="#saveChangesButtonHovered" prefHeight="21.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Save Changes" textFill="WHITE">
+            <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#handleSaveChanges" onMouseEntered="#saveChangesButtonHovered" onMouseExited="#saveChangesButtonExited" prefHeight="21.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Save Changes" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>

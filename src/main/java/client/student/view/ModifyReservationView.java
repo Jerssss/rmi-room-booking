@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
  */
 public class ModifyReservationView implements Initializable {
     @FXML private TextField searchStudResTextField;
-    @FXML private Button searchButton;
     @FXML private Button saveChangesButton;
     @FXML private Button resetButton;
     @FXML private TableView<Reservation> modResTableView;
@@ -365,20 +364,11 @@ public class ModifyReservationView implements Initializable {
     }
 
     /**
-     * Sets the action for the search button.
-     *
-     * @param event The event handler to be set for the search button.
-     */
-    public void setSearchButtonAction(EventHandler<ActionEvent> event) {
-        searchButton.setOnAction(event);
-    }
-
-    /**
      * Sets the action for the refresh button.
      *
      * @param event The event handler to be set for the refresh button.
      */
-    public void setresetButtonAction(EventHandler<javafx.event.ActionEvent> event) {
+    public void setResetButtonAction(EventHandler<javafx.event.ActionEvent> event) {
         resetButton.setOnAction(event);
     }
 
@@ -399,30 +389,6 @@ public class ModifyReservationView implements Initializable {
      */
     public void saveChangesButtonHovered() {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
-        st.setToX(0.9);
-        st.setToY(0.9);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    /**
-     * Animates the search button when the mouse exits.
-     */
-    public void searchButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.setCycleCount(1);
-        st.setAutoReverse(false);
-        st.play();
-    }
-
-    /**
-     * Animates the search button when the mouse hovers over it.
-     */
-    public void searchButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), searchButton);
         st.setToX(0.9);
         st.setToY(0.9);
         st.setCycleCount(1);

@@ -61,8 +61,7 @@ public class ModifyReservationController {
 
         // Initial load of reservations
         loadReservations();
-        view.setSearchButtonAction(event -> view.searchReservations(query));
-        view.setresetButtonAction(event -> loadReservations());
+        view.setResetButtonAction(event -> loadReservations());
     }
 
     /**
