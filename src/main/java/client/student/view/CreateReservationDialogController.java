@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import shared.Reservation;
 import shared.Terminal;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,17 +36,30 @@ public class CreateReservationDialogController {
 
     @FXML
     public void initialize() {
+        // Disable dates that are before tomorrow, after one month from today, or on Sundays.
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                if (date.isBefore(LocalDate.now().plusDays(1))) {
+                LocalDate tomorrow = LocalDate.now().plusDays(1);
+                LocalDate maxDate = LocalDate.now().plusMonths(1);
+                if (empty || date == null) {
+                    setDisable(false);
+                } else if (date.isBefore(tomorrow) || date.isAfter(maxDate) || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
                     setDisable(true);
                     setStyle("-fx-background-color: #ffc0cb;");
                 }
             }
         });
-        datePicker.setValue(LocalDate.now().plusDays(1));
+        // Set default date: if tomorrow is Sunday, select the next available day.
+        LocalDate defaultDate = LocalDate.now().plusDays(1);
+        if (defaultDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            defaultDate = defaultDate.plusDays(1);
+        }
+        if (defaultDate.isAfter(LocalDate.now().plusMonths(1))) {
+            defaultDate = LocalDate.now().plusMonths(1);
+        }
+        datePicker.setValue(defaultDate);
 
         startTimeTextField.textProperty().addListener((obs, oldVal, newVal) -> validateTimeOverlap());
         endTimeTextField.textProperty().addListener((obs, oldVal, newVal) -> validateTimeOverlap());
@@ -79,8 +93,20 @@ public class CreateReservationDialogController {
             return;
         }
         LocalDate selectedDate = datePicker.getValue();
-        if (selectedDate.isBefore(LocalDate.now().plusDays(1))) {
+
+        // Validate date restrictions
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        LocalDate maxDate = LocalDate.now().plusMonths(1);
+        if (selectedDate.isBefore(tomorrow)) {
             showErrorAlert("Reservations must be made at least 1 day in advance.");
+            return;
+        }
+        if (selectedDate.isAfter(maxDate)) {
+            showErrorAlert("Reservations cannot be made more than 1 month in advance.");
+            return;
+        }
+        if (selectedDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            showErrorAlert("Reservations cannot be made on Sundays.");
             return;
         }
         String reservationDate = selectedDate.toString();
