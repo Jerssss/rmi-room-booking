@@ -52,6 +52,10 @@ public class ModifyTerminalStatusView {
     private ModifyTerminalStatusController controller;
     private ObservableList<Terminal> terminalData = FXCollections.observableArrayList();
 
+    /**
+     * Initializes the view by setting up the table columns, controller, and event listeners.
+     * This runs automatically when the FXML file is loaded.
+     */
     public void initialize() {
         initializeTableColumns();
         System.out.println("[CLIENT] Table columns initialized successfully.");
@@ -66,6 +70,9 @@ public class ModifyTerminalStatusView {
         setActionSaveChangesButton(event -> controller.saveChanges());
     }
 
+    /**
+     * Initializes the table columns and sets up how data should be displayed.
+     */
     public void initializeTableColumns() {
         terminalColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
         roomNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoom()));
@@ -78,6 +85,9 @@ public class ModifyTerminalStatusView {
         editColumn.setCellFactory(column -> createDeleteButtonCellFactory());
     }
 
+    /**
+     * Creates an instance of the controller and links it to this view.
+     */
     public void initializeController() {
         System.out.println("[CLIENT] Initializing ModifyTerminalStatusController...");
         this.controller = new ModifyTerminalStatusController(this);
@@ -92,18 +102,17 @@ public class ModifyTerminalStatusView {
         saveChangesButton.setOnAction(event);
     }
 
-    // Refresh the table with new data
+    /**
+     * Updates the table with new terminal data.
+     *
+     * @param data A list of terminals to be displayed in the table.
+     */
     public void updateTable(List<Terminal> data) {
         terminalData.setAll(data); // Update dataset
         modTerTableView.setItems(null); // Force reset
         modTerTableView.setItems(terminalData); // Reload table data
         modTerTableView.refresh(); // Force UI refresh
         System.out.println("[CLIENT] Terminal data updated. New table size: " + terminalData.size());
-    }
-
-    // Allow controller to access the current terminal data
-    public ObservableList<Terminal> getCurrentTerminalData() {
-        return terminalData;
     }
 
     private Callback<TableColumn<Terminal, String>, TableCell<Terminal, String>> createStyledStatusCellFactory() {
@@ -185,6 +194,11 @@ public class ModifyTerminalStatusView {
         };
     }
 
+    /**
+     * Shows a confirmation window when a user tries to remove a terminal.
+     *
+     * @param terminal The terminal that the user wants to remove.
+     */
     private void showConfirmationPane(Terminal terminal) {
         if (confirmationStage == null) {
             try {
@@ -231,7 +245,11 @@ public class ModifyTerminalStatusView {
         confirmationStage.showAndWait();
     }
 
-    // Apply uniform hover effect
+    /**
+     * Adds a hover effect to a button, making it shrink slightly when hovered over.
+     *
+     * @param button The button to which the effect should be applied.
+     */
     private void applyHoverEffect(Button button) {
         button.setOnMouseEntered(event -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), button);
