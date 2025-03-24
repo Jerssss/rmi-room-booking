@@ -43,7 +43,6 @@ public class AdminMainMenuController {
     private final String loggedInUserName;
     private Thread serverThread;
 
-    public static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
 
     /**
      * Constructs an `AdminMainMenuController` with the specified view, model, and logged-in username.
@@ -192,11 +191,12 @@ public class AdminMainMenuController {
      * @param event The event triggered by clicking the "Logout" button.
      */
     private void handleLogout(ActionEvent event) {
-        if (loggedInUserName != null) {
-            JSONUtility.logLogoutToJson(loggedInUserName, "Admin");
-        }
-
         try {
+            if (ClientMain.getAuthService() != null) {
+                ClientMain.getAuthService().logout(loggedInUserName);
+            }
+
+            // Load login page
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
             Parent root = loader.load();
 
@@ -206,10 +206,11 @@ public class AdminMainMenuController {
                 return;
             }
 
-            // Get authentication service
+            // Initialize login controller
             LoginModel loginModel = new LoginModel(ClientMain.getAuthService());
             new LoginController(loginView, loginModel);
 
+            // Switch to login page
             Platform.runLater(() -> {
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 if (stage == null) {
@@ -223,9 +224,11 @@ public class AdminMainMenuController {
                 stage.show();
             });
 
+        } catch (RemoteException e) {
+            System.err.println("[ERROR] Failed to communicate with AuthenticationService: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("[ERROR] Failed to load login page: " + e.getMessage());
-            e.printStackTrace();
         }
     }
+
 }

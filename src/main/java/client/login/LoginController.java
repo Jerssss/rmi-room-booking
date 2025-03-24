@@ -25,11 +25,11 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 public class LoginController {
     private final LoginView loginView;
     private final LoginModel loginModel;
-    private static final String LOGS_JSON_PATH = "src/main/resources/data/logs.json";
 
     public LoginController(LoginView loginView, LoginModel loginModel) {
         this.loginView = loginView;
@@ -69,7 +69,6 @@ public class LoginController {
             String userName = (String) loginResponse[2];
 
             if ("SUCCESS".equals(loginStatus)) {
-                JSONUtility.logLoginToJson(userID, userType, new File(LOGS_JSON_PATH));
                 loginView.setPromptLabel("Login successful!");
                 loginView.setPromptLabelVisible(true);
                 SessionManager.createSession(sessionToken, userID);
@@ -79,25 +78,34 @@ public class LoginController {
                 } else {
                     redirectToAdminMainMenu(event, userName);
                 }
-            } else if ("INVALID_CREDENTIALS".equals(loginStatus)) {
-                loginView.setPromptLabel("Invalid credentials. Please try again.");
-                loginView.setPromptLabelVisible(true);
-            } else if ("ALREADY_LOGGED_IN".equals(loginStatus)) {
-                loginView.setPromptLabel("Account already logged in.");
-                loginView.setPromptLabelVisible(true);
+            } else {
+                handleLoginFailure(loginStatus);
             }
         } catch (InvalidCredentialsException e) {
-            loginView.setPromptLabel("Invalid credentials. Please try again.");
-            loginView.setPromptLabelVisible(true);
+            handleLoginFailure("INVALID_CREDENTIALS");
         } catch (AccountAlreadyLoggedIn e) {
-            loginView.setPromptLabel("Account already logged in.");
-            loginView.setPromptLabelVisible(true);
+            handleLoginFailure("ALREADY_LOGGED_IN");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,
                     "A network error occurred while logging in. Please try again.",
                     "Login Error",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void handleLoginFailure(String status) {
+        switch (status) {
+            case "INVALID_CREDENTIALS":
+                loginView.setPromptLabel("Invalid credentials. Please try again.");
+                break;
+            case "ALREADY_LOGGED_IN":
+                loginView.setPromptLabel("Account already logged in.");
+                break;
+            default:
+                loginView.setPromptLabel("Login failed. Please try again.");
+                break;
+        }
+        loginView.setPromptLabelVisible(true);
     }
 
     private void redirectToAdminMainMenu(ActionEvent event, String loggedInUserName) {

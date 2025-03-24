@@ -18,8 +18,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static client.admin.controller.AdminMainMenuController.LOGS_JSON_FILE;
-
 public class JSONUtility {
 
     private static final Gson defaultGson = new GsonBuilder()
@@ -219,15 +217,15 @@ public class JSONUtility {
     }
 
     // Log logout event
-    public static void logLogoutToJson(String userID, String userType) {
-        List<Log> logs = loadLogs(LOGS_JSON_FILE);
+    public static void logLogoutToJson(String userID, String userType, File filePath) {
+        List<Log> logs = loadLogs(filePath);
 
         String date = LocalDate.now().toString();
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         logs.add(new Log(userID, userType, "Logout", date, time));
 
-        saveLogs(logs, LOGS_JSON_FILE);
+        saveLogs(logs, filePath);
         System.out.println("=====================================================");
         System.out.println("[LOGOUT] Successfully logged out: " + userID);
         System.out.println("=====================================================");
@@ -241,23 +239,22 @@ public class JSONUtility {
      * @param filePath the JSON file path
      */
     public static void saveLogs(List<Log> logList, File filePath) {
-        try {
-            try (FileWriter writer = new FileWriter(filePath, false)) { // Overwrite mode
-                Map<String, List<Log>> logMap = new LinkedHashMap<>();
-                logMap.put("Log", logList);
+        try (FileWriter writer = new FileWriter(filePath, false)) { // Overwrite mode
+            Map<String, List<Log>> logMap = new LinkedHashMap<>();
+            logMap.put("Log", logList);
 
-                Map<String, Map<String, List<Log>>> nestedStructure = new LinkedHashMap<>();
-                nestedStructure.put("Logs", logMap);
+            Map<String, Map<String, List<Log>>> nestedStructure = new LinkedHashMap<>();
+            nestedStructure.put("Logs", logMap);
 
-                defaultGson.toJson(nestedStructure, writer);
-                writer.flush(); // Ensure data is written immediately
-            }
-
+            defaultGson.toJson(nestedStructure, writer);
+            writer.flush(); // Ensure data is written immediately
+            System.out.println("[LOG] Logs successfully saved to file.");
         } catch (IOException ex) {
             System.err.println("[ERROR] Failed to save logs to file: " + ex.getMessage());
             throw new RuntimeException("Error saving log data: " + ex.getMessage(), ex);
         }
     }
+
 
 
 

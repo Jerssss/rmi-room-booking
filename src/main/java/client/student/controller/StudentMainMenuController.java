@@ -32,8 +32,6 @@ public class StudentMainMenuController {
     private final String loggedInUserName;
     private String studentID;
 
-    private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
-
     public StudentMainMenuController(StudentMainMenuView view, StudentMainMenuModel model, String loggedInUserName, String studentID) {
         this.view = view;
         this.model = model;
@@ -93,12 +91,13 @@ public class StudentMainMenuController {
 
 
     /** Handles Logout and logs the action. */
+    /** Handles Logout and logs the action. */
     private void handleLogout(ActionEvent event) {
-        if (loggedInUserName != null) {
-            JSONUtility.logLogoutToJson(loggedInUserName, "Student");
-        }
-
         try {
+            if (ClientMain.getAuthService() != null) {
+                ClientMain.getAuthService().logout(loggedInUserName); // Logs out on the server
+            }
+
             System.out.println("[DEBUG] Logging out and loading Login Page...");
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
@@ -127,44 +126,11 @@ public class StudentMainMenuController {
                 stage.show();
             });
 
+        } catch (RemoteException e) {
+            System.err.println("[ERROR] Failed to communicate with AuthenticationService: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("[ERROR] Failed to load login page: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-    
-    private void switchScene(ActionEvent event, String fxmlPath, String title) {
-        try {
-            System.out.println("[DEBUG] Loading Scene: " + fxmlPath);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            if (loader.getLocation() == null) {
-                System.err.println("[ERROR] FXML file path is incorrect: " + fxmlPath);
-                return;
-            }
-
-            Parent root = loader.load();
-            System.out.println("[DEBUG] Successfully loaded FXML: " + fxmlPath);
-
-            Platform.runLater(() -> {
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                if (stage == null) {
-                    System.err.println("[ERROR] Stage is NULL! Cannot change scene.");
-                    return;
-                }
-
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setTitle(title);
-                stage.centerOnScreen();
-                stage.show();
-                System.out.println("[DEBUG] Scene changed successfully to " + title);
-            });
-
-        } catch (IOException e) {
-            System.err.println("[ERROR] Failed to load " + fxmlPath);
-            e.printStackTrace();
-        }
-
     }
 }

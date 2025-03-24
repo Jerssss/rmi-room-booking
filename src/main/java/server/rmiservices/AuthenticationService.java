@@ -125,27 +125,46 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
      * @throws InvalidCredentialsException If the provided credentials are invalid.
      * @throws AccountAlreadyLoggedIn      If the user is already logged in.
      */
+
     @Override
     public Object[] login(String userID, String password, String userType, String clientIP)
             throws RemoteException, InvalidCredentialsException, AccountAlreadyLoggedIn {
-
         if (activeClients.containsKey(userID)) {
-            System.out.println("[DEBUG] User already logged in: " + userID);
             throw new AccountAlreadyLoggedIn("User is already logged in.");
         }
 
         Object[] response;
         if ("Admin".equalsIgnoreCase(userType)) {
-            response = authenticateAdmin(userID, password, clientIP);
+            response = authenticateAdmin(userID, password, clientIP); // Fixed: Added clientIP
         } else if ("Student".equalsIgnoreCase(userType)) {
-            response = authenticateStudent(userID, password, clientIP);
+            response = authenticateStudent(userID, password, clientIP); // Fixed: Added clientIP
         } else {
             throw new InvalidCredentialsException("Invalid user type.");
         }
 
-        System.out.println("[DEBUG] Returning login response: " + java.util.Arrays.toString(response));
+        logAction(userID, userType, "Login");
         return response;
     }
+
+
+
+    @Override
+    public void logout(String userID) throws RemoteException {
+        if (userID == null || userID.isEmpty()) {
+            return;
+        }
+
+        logAction(userID, "Student", "Logout"); // Log logout action
+
+        if (activeClients.containsKey(userID)) {
+            activeClients.remove(userID);
+            System.out.println("[DEBUG] Successfully logged out: " + userID);
+        } else {
+            System.err.println("[ERROR] Logout failed: User not found in active clients.");
+        }
+    }
+
+
 
     /**
      * Authenticates an Admin user.
@@ -227,23 +246,17 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         return new Object[]{"SUCCESS", sessionToken, student.getName()};
     }
 
-    /**
-     * Logs an action performed by a user.
-     *
-     * @param userID   The unique ID of the user.
-     * @param userType The type of user (e.g., "Admin" or "Student").
-     * @param action   The action performed by the user.
-     */
     private void logAction(String userID, String userType, String action) {
         List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
-
         String date = LocalDate.now().toString();
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         logs.add(new Log(userID, userType, action, date, time));
-
         JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
+
+        System.out.println("[LOG] " + action + " - User: " + userID + " | Type: " + userType + " | Date: " + date + " | Time: " + time);
     }
+
 
     /**
      * Logs a client connection.
@@ -284,16 +297,6 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         }
     }
 
-    /**
-     * Handles user logout.
-     *
-     * @param sessionToken The session token of the user.
-     * @throws RemoteException If a communication-related exception occurs during the remote method call.
-     */
-    @Override
-    public void logout(String sessionToken) throws RemoteException {
-        activeClients.remove(sessionToken);
-    }
 
     /**
      * Implements the heartbeat mechanism to check the server's availability.
