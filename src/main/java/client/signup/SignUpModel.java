@@ -21,11 +21,10 @@ public class SignUpModel {
      * @throws IllegalArgumentException If input data is invalid.
      * @throws RuntimeException If the user already exists.
      */
-    public void register(String userID, String name, String password, String userType, String courseYear, String facultyType)
+    public void register(String userID, String name, String password, String courseYear)
             throws RemoteException {
-        if (authService == null) {
-            throw new RemoteException("[ERROR] Authentication service is NULL. Server might be down.");
-        }
-        authService.signUp(userID, name, password, userType, courseYear, facultyType);
+        // Hardcode userType to "Student" and facultyType to empty
+        if (authService == null) throw new RemoteException("Server error");
+        authService.signUp(userID, name, password, "Student", courseYear, "");
     }
 }

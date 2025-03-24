@@ -17,11 +17,7 @@ public class SignUpView {
     @FXML
     private Button signInPageSignUpButton;
     @FXML
-    private ComboBox<String> signUpUserTypePicker;
-    @FXML
     private TextField signUpUserID;
-    @FXML
-    private TextField facultyTypeField;
     @FXML
     private TextField courseYearField;
     @FXML
@@ -31,43 +27,21 @@ public class SignUpView {
     @FXML
     private Label signUpPromptLabel;
     @FXML
-    private StackPane facultyTypeStackPane;
-    @FXML
     private StackPane courseYearStackPane;
 
     @FXML
     public void initialize() {
-        // Limit the ID field to 7 digits
+        // ID validation remains the same
         signUpUserID.setTextFormatter(new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d{0,7}")) {
-                return change; // Allow change
-            }
-            return null; // Reject change
+            if (change.getControlNewText().matches("\\d{0,7}")) return change;
+            return null;
         }));
 
-        signUpUserTypePicker.getItems().addAll("Student", "Admin");
-        signUpUserTypePicker.setValue("Student");
-        updateFormFields();
-        signUpUserTypePicker.setOnAction((event -> updateFormFields()));
+        // Force student fields to be always visible
+        courseYearStackPane.setVisible(true);
+        courseYearStackPane.setManaged(true);
     }
 
-
-    private void updateFormFields() {
-        String selectedType = signUpUserTypePicker.getValue();
-        boolean isStudent = "Student".equals(selectedType);
-
-        courseYearStackPane.setVisible(isStudent);
-        courseYearStackPane.setManaged(isStudent);
-
-        courseYearField.setVisible(isStudent);
-        courseYearField.setManaged(isStudent);
-
-        facultyTypeField.setVisible(!isStudent);
-        facultyTypeField.setManaged(!isStudent);
-
-        facultyTypeStackPane.setVisible(!isStudent);
-        facultyTypeStackPane.setManaged(!isStudent);
-    }
 
     // Adds action receiver to button landingPageSignInButton
     public void setActionSignInButton(EventHandler<ActionEvent> event) {
@@ -92,16 +66,8 @@ public class SignUpView {
         return courseYearField;
     }
 
-    public TextField getFacultyTypeField() {
-        return facultyTypeField;
-    }
-
     public PasswordField getPassField() {
         return signUpUserPass;
-    }
-
-    public ComboBox<String> getUserTypeBox() {
-        return signUpUserTypePicker;
     }
 
     public Label getPromptLabel() {

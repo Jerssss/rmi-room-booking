@@ -89,4 +89,6 @@ public interface StudentProcessors extends Remote {
      * @throws RemoteException If an RMI communication error occurs.
      */
     void updateTerminals(List<Terminal> terminals) throws RemoteException;
+
+    void updateReservations(List<Reservation> allReservations) throws RemoteException;
 }

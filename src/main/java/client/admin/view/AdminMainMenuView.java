@@ -26,28 +26,45 @@ public class AdminMainMenuView {
 
     @FXML
     private Button addNewTerminalButton;
+
     @FXML
-    private Button showStudentReservationButton;
+    private VBox centerPane;
+
     @FXML
-    private Button modifyTerminalButton;
-    @FXML
-    private Button resApprovalButton;
-    @FXML
-    private Button reportsButton;
-    @FXML
-    private Button logOutButton;
-    @FXML
-    private Label headerNameLabel;
+    private Button createAdminButton;
+
     @FXML
     private Label headerDateLabel;
+
+    @FXML
+    private Label headerNameLabel;
+
     @FXML
     private Label headerTimeLabel;
+
+    @FXML
+    private Button logOutButton;
+
+    @FXML
+    private Button modifyTerminalButton;
+
     @FXML
     private Label offlineLabel;
+
     @FXML
     private Label onlineLabel;
+
+    @FXML
+    private Button reportsButton;
+
+    @FXML
+    private Button resApprovalButton;
+
     @FXML
     private BorderPane rootPane;
+
+    @FXML
+    private Button showStudentReservationButton;
     private Button currentlyHighlightedButton;
 
 
@@ -187,6 +204,13 @@ public class AdminMainMenuView {
         reportsButton.setOnAction(event1 -> {
             highlightButton(reportsButton); //highlight the button when clicked
             loadView("/fxml/admin/reports_pane.fxml"); //load the view
+        });
+    }
+
+    public void setActionCreateAdminButton(EventHandler<ActionEvent> event) {
+        createAdminButton.setOnAction(event1 -> {
+            highlightButton(createAdminButton);
+            loadView("/fxml/admin/add_new_admin.fxml");
         });
     }
 

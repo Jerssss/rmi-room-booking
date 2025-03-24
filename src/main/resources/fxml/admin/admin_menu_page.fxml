@@ -170,6 +170,26 @@
                         </ImageView>
                      </children>
                   </StackPane>
+                  <StackPane alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="153.0">
+                     <children>
+                        <Button fx:id="createAdminButton" mnemonicParsing="false" style="-fx-border-color: transparent; -fx-background-color: transparent;" text="Create Admin" textFill="#0d3073" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                           <StackPane.margin>
+                              <Insets left="20.0" />
+                           </StackPane.margin>
+                        </Button>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: -140;">
+                           <image>
+                              <Image url="@../../images/client/create.png" />
+                           </image>
+                           <StackPane.margin>
+                              <Insets left="100.0" />
+                           </StackPane.margin>
+                        </ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </VBox>
             <VBox alignment="CENTER" prefHeight="100.0" prefWidth="232.0" spacing="40.0">
