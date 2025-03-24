@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="centerPane" prefHeight="573.0" prefWidth="805.0" styleClass="background-pane" stylesheets="@../../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.admin.view.AddAdminView">
+   <children>
+      <VBox prefHeight="121.0" prefWidth="805.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="105.0" prefWidth="805.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="56.0" prefWidth="500.0">
+                     <children>
+                        <Label fx:id="reportsLabel" prefHeight="43.0" prefWidth="322.0" text="Create an Admin" textFill="#0d3073">
+                           <font>
+                              <Font name="System Bold" size="29.0" />
+                           </font>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+
+      <!-- Report Tables -->
+      <VBox alignment="CENTER" prefHeight="521.0" prefWidth="805.0">
+         <children>
+            <StackPane prefHeight="150.0" prefWidth="200.0">
+               <children>
+                  <Rectangle arcHeight="40.0" arcWidth="45.0" fill="WHITE" height="476.0" opacity="0.26" stroke="TRANSPARENT" strokeType="INSIDE" styleClass="background-pane" width="774.0">
+                     <effect>
+                        <DropShadow offsetY="5.0">
+                           <color>
+                              <Color opacity="0.17175573110580444" />
+                           </color>
+                        </DropShadow>
+                     </effect>
+                  </Rectangle>
+                  <VBox alignment="CENTER" prefHeight="400.0" prefWidth="381.0" spacing="7.0" stylesheets="@../../css/styles.css">
+                     <children>
+                        <StackPane id="idStackPane" prefHeight="30.0" prefWidth="359.0">
+                           <children>
+                              <TextField id="idField" fx:id="adminIDField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="152.0" promptText="Institutional ID" style="-fx-pref-width: 250px;" styleClass="background-pane" stylesheets="@../../css/styles.css" />
+                              <ImageView id="idIcon" fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: -110;">
+                                 <image>
+                                    <Image url="@../../images/client/id_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane id="nameStackPane" fx:id="nameStackPane" prefHeight="30.0" prefWidth="359.0">
+                           <children>
+                              <TextField id="nameField" fx:id="nameField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="152.0" promptText="Name" style="-fx-pref-width: 250px;" styleClass="background-pane" stylesheets="@../../css/styles.css" />
+                              <ImageView id="idIcon" fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: -110;">
+                                 <image>
+                                    <Image url="@../../images/client/user_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane id="facultyTypeStackPane" fx:id="facultyTypeStackPane" prefHeight="30.0" prefWidth="359.0">
+                           <children>
+                              <TextField id="facultyTypeField" fx:id="facultyTypeField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="152.0" promptText="Faculty Type" style="-fx-pref-width: 250px;" styleClass="background-pane" stylesheets="@../../css/styles.css" />
+                              <ImageView id="idIcon" fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: -110;">
+                                 <image>
+                                    <Image url="@../../images/client/security-user.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane id="passStackPane" prefHeight="31.0" prefWidth="359.0">
+                           <children>
+                              <PasswordField id="passwordField" fx:id="adminPassField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="29.0" prefWidth="293.0" promptText="Password" style="-fx-pref-width: 250;" styleClass="background-pane" stylesheets="@../../css/styles.css" />
+                              <ImageView id="passIcon" fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: -110;">
+                                 <image>
+                                    <Image url="@../../images/client/lock_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <Label fx:id="signUpPromptLabel" textFill="#dd2c2c" />
+                        <Button fx:id="createButton" mnemonicParsing="false" onMouseEntered="#createButtonHovered" onMouseExited="#createButtonExited" prefHeight="22.0" prefWidth="145.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" stylesheets="@../../css/styles.css" text="Create" textFill="WHITE" />
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </children>
+</VBox>

@@ -1,9 +1,11 @@
 package client.admin.controller;
 
 import client.ClientMain;
+import client.admin.model.AddAdminModel;
 import client.admin.model.AddNewTerminalModel;
 import client.admin.model.AdminMainMenuModel;
 import client.admin.model.ViewStudentReservationsModel;
+import client.admin.view.AddAdminView;
 import client.admin.view.AddNewTerminalView;
 import client.admin.view.AdminMainMenuView;
 import client.admin.view.ViewStudentReservationsView;
@@ -66,8 +68,33 @@ public class AdminMainMenuController {
         this.view.setActionShowStudentReservationButton(this::handleViewStudentReservation);
         this.view.setActionResApprovalButton(event -> handleReservationApproval());
         this.view.setActionReportsButton(event -> handleReports());
+//        this.view.setActionCreateAdminButton(event -> handleCreateAdmin());
 
     }
+
+//    private void handleCreateAdmin() {
+//        System.out.println("=====================================================");
+//
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_new_admin.fxml"));
+//            VBox createAdminView = loader.load();
+//
+//            AddAdminView view = loader.getController();
+//            if (view == null) {
+//                System.err.println("[ERROR] AddNewTerminalView is NULL after FXML load!");
+//                return;
+//            }
+//
+//            // Inject Controller
+//            new AddAdminController(view, new AddAdminModel());
+//
+//            // Set new view in the center pane
+//            view.getRootPane().setCenter(createAdminView);
+//        } catch (IOException e) {
+//            System.err.println("[ERROR] Failed to load Add New Terminal: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Handles the action for adding a new terminal. Loads the Add New Terminal view
