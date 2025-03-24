@@ -16,6 +16,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class StudentProcessorService extends UnicastRemoteObject implements StudentProcessors {
@@ -25,6 +27,9 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
 
     // Thread-safe list to store registered callbacks
     private final List<Broadcast> callbacks = new CopyOnWriteArrayList<>();
+
+    // ExecutorService for asynchronous callback notifications
+    private final ExecutorService callbackExecutor = Executors.newCachedThreadPool();
 
     public StudentProcessorService() throws RemoteException {
         super();
@@ -72,7 +77,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
             System.out.println("[DEBUG] StudentProcessorService: Reservation added successfully.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
 
             // Notify admin clients about reservation update via RMI lookup
@@ -112,7 +117,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
             System.out.println("[DEBUG] StudentProcessorService: Reservation updated successfully.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
 
             // Notify admin clients about reservation update via RMI lookup
@@ -141,7 +146,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             JSONUtility.saveReservations(reservations, RESERVATIONS_FILE);
             System.out.println("[DEBUG] StudentProcessorService: Reservations saved successfully via batch update.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyReservationUpdate(reservations);
         } catch (Exception e) {
             System.err.println("[ERROR] StudentProcessorService: updateReservations: " + e.getMessage());
@@ -162,7 +167,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
             System.out.println("[DEBUG] StudentProcessorService: Reservation cancelled successfully.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
 
             // Notify admin clients about reservation update via RMI lookup
@@ -216,30 +221,34 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
 
     private void notifyReservationUpdate(List<Reservation> reservations) {
         System.out.println("[DEBUG] StudentProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
-        callbacks.removeIf(callback -> {
-            try {
-                System.out.println("[DEBUG] StudentProcessorService: Sending updateReservationApproval() to a callback.");
-                callback.updateReservationApproval(reservations);
-                return false; // Keep callback
-            } catch (RemoteException e) {
-                System.err.println("[ERROR] StudentProcessorService: Removing unreachable callback: " + e.getMessage());
-                return true; // Remove callback
-            }
-        });
+        for (Broadcast callback : callbacks) {
+            callbackExecutor.submit(() -> {
+                try {
+                    System.out.println("[DEBUG] StudentProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
+                    callback.updateReservationApproval(reservations);
+                } catch (RemoteException e) {
+                    System.err.println("[ERROR] StudentProcessorService: Removing unreachable callback ("
+                            + callback.getClass().getName() + "): " + e.getMessage());
+                    callbacks.remove(callback);
+                }
+            });
+        }
     }
 
     private void notifyTerminalUpdate(List<Terminal> terminals) {
         System.out.println("[DEBUG] StudentProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
-        callbacks.removeIf(callback -> {
-            try {
-                System.out.println("[DEBUG] StudentProcessorService: Sending updateTerminal() to a callback.");
-                callback.updateTerminal(terminals);
-                return false;
-            } catch (RemoteException e) {
-                System.err.println("[ERROR] StudentProcessorService: Removing unreachable callback: " + e.getMessage());
-                return true;
-            }
-        });
+        for (Broadcast callback : callbacks) {
+            callbackExecutor.submit(() -> {
+                try {
+                    System.out.println("[DEBUG] StudentProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
+                    callback.updateTerminal(terminals);
+                } catch (RemoteException e) {
+                    System.err.println("[ERROR] StudentProcessorService: Removing unreachable callback ("
+                            + callback.getClass().getName() + "): " + e.getMessage());
+                    callbacks.remove(callback);
+                }
+            });
+        }
     }
 
     @Override

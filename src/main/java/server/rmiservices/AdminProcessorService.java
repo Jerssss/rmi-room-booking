@@ -16,6 +16,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AdminProcessorService extends UnicastRemoteObject implements AdminProcessors {
 
@@ -25,6 +27,9 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     // Thread-safe list to store registered callbacks
     private final List<Broadcast> callbacks = new CopyOnWriteArrayList<>();
+
+    // ExecutorService for asynchronous callback notification.
+    private final ExecutorService callbackExecutor = Executors.newCachedThreadPool();
 
     public AdminProcessorService() throws RemoteException {
         super();
@@ -110,7 +115,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             JSONUtility.saveReservations(allReservations, RESERVATIONS_FILE);
             System.out.println("[DEBUG] AdminProcessorService: Reservations saved successfully.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyReservationUpdate(allReservations);
 
             // Notify student clients about reservation update via RMI lookup
@@ -136,7 +141,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             JSONUtility.saveTerminals(terminals, TERMINALS_FILE);
             System.out.println("[DEBUG] AdminProcessorService: Terminal added successfully.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyTerminalUpdate(terminals);
 
             // Notify student clients about terminal update via RMI lookup
@@ -186,7 +191,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
             System.out.println("[DEBUG] AdminProcessorService: Terminals updated successfully.");
 
-            // Notify local callbacks
+            // Notify local callbacks asynchronously
             notifyTerminalUpdate(existingTerminals);
 
             // Notify student clients about terminal update via RMI lookup
@@ -221,34 +226,40 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     }
 
     /**
-     * Notifies all registered callbacks about a reservation update.
+     * Notifies all registered callbacks about a reservation update asynchronously.
      */
     private void notifyReservationUpdate(List<Reservation> reservations) {
         System.out.println("[DEBUG] AdminProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
-            try {
-                System.out.println("[DEBUG] AdminProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
-                callback.updateReservationApproval(reservations);
-            } catch (RemoteException e) {
-                System.err.println("[ERROR] AdminProcessorService: Failed to notify client (" + callback.getClass().getName() + "): " + e.getMessage());
-                callbacks.remove(callback);
-            }
+            callbackExecutor.submit(() -> {
+                try {
+                    System.out.println("[DEBUG] AdminProcessorService: Sending updateReservationApproval() to callback: " + callback.getClass().getName());
+                    callback.updateReservationApproval(reservations);
+                } catch (RemoteException e) {
+                    System.err.println("[ERROR] AdminProcessorService: Failed to notify client ("
+                            + callback.getClass().getName() + "): " + e.getMessage());
+                    callbacks.remove(callback);
+                }
+            });
         }
     }
 
     /**
-     * Notifies all registered callbacks about a terminal update.
+     * Notifies all registered callbacks about a terminal update asynchronously.
      */
     private void notifyTerminalUpdate(List<Terminal> terminals) {
         System.out.println("[DEBUG] AdminProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
-            try {
-                System.out.println("[DEBUG] AdminProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
-                callback.updateTerminal(terminals);
-            } catch (RemoteException e) {
-                System.err.println("[ERROR] AdminProcessorService: Failed to notify client (" + callback.getClass().getName() + "): " + e.getMessage());
-                callbacks.remove(callback);
-            }
+            callbackExecutor.submit(() -> {
+                try {
+                    System.out.println("[DEBUG] AdminProcessorService: Sending updateTerminal() to callback: " + callback.getClass().getName());
+                    callback.updateTerminal(terminals);
+                } catch (RemoteException e) {
+                    System.err.println("[ERROR] AdminProcessorService: Failed to notify client ("
+                            + callback.getClass().getName() + "): " + e.getMessage());
+                    callbacks.remove(callback);
+                }
+            });
         }
     }
 }

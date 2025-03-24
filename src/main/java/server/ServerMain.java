@@ -17,8 +17,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-/**1
+/**
  * ServerMain initializes the RMI server and handles remote services.
  */
 public class ServerMain {
@@ -32,8 +34,11 @@ public class ServerMain {
     private static AdminProcessors adminProcessors;
     private static RMIServer rmiServer;
 
+    // ExecutorService for handling multiple threads concurrently.
+    private static final ExecutorService threadPool = Executors.newFixedThreadPool(1000);
+
     public static void main(String[] args) {
-        //shutdown hook to ensure that the server is entirely dead on 'exit'
+        // Shutdown hook to ensure that the server is entirely dead on 'exit'
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (running) {
                 stopServer();
@@ -80,6 +85,7 @@ public class ServerMain {
      * Starts the RMI server and binds services.
      */
     private static void startServer() {
+        // Use a new thread to start the server so that the main thread remains responsive.
         new Thread(() -> {
             try {
                 registry = LocateRegistry.createRegistry(PORT);
@@ -101,12 +107,32 @@ public class ServerMain {
                 System.out.println("[Server] Server IP Address: " + serverIP);
                 System.out.println("[Server] Available RMI Services: " + String.join(", ", registry.list()));
                 System.out.println("=====================================================");
+
+                // Start a heartbeat monitor in a separate thread.
+                startHeartbeatMonitor();
+
             } catch (RemoteException | AlreadyBoundException e) {
                 System.err.println("[Server ERROR] " + e.getMessage());
             }
         }).start();
     }
 
+    /**
+     * Starts a heartbeat monitor that logs server status every 30 seconds.
+     */
+    private static void startHeartbeatMonitor() {
+        threadPool.submit(() -> {
+            while (running) {
+                try {
+                    Thread.sleep(3000); // sleep for 30 seconds
+                    System.out.println("[Heartbeat] Server is running. Active clients: " + connectedClients.size());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("[Heartbeat] Monitor interrupted.");
+                }
+            }
+        });
+    }
 
     /**
      * Stops the RMI server.
@@ -144,6 +170,9 @@ public class ServerMain {
                 java.rmi.server.UnicastRemoteObject.unexportObject(registry, true);
                 System.out.println("[Server] Unexported RMI registry.");
 
+                // Shutdown the thread pool gracefully
+                threadPool.shutdownNow();
+
                 // Nullify references
                 registry = null;
                 authService = null;
@@ -162,7 +191,6 @@ public class ServerMain {
             System.out.println("[Server] Server is already stopped.");
         }
     }
-
 
     /**
      * Gets the server's actual IP address.
