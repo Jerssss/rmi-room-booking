@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import shared.Log;
 import util.JSONUtility;
 import util.exception.AccountAlreadyLoggedIn;
 import util.exception.InvalidCredentialsException;
@@ -26,10 +25,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class LoginController {
     private final LoginView loginView;
@@ -43,28 +38,6 @@ public class LoginController {
         this.loginView.setActionSignInButton(this::handleSignIn);
         this.loginView.setActionSignUpButton(this::redirectToSignUp);
     }
-
-    /**
-     * Logs a login action into logs.json while preserving the nested structure.
-     */
-    private void logLoginToJson(String userID, String userType) {
-        File file = new File(LOGS_JSON_PATH);  // Use correct path
-        List<Log> logs = JSONUtility.loadLogs(file);
-
-        String date = LocalDate.now().toString();
-        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
-        Log newLog = new Log(userID, userType, "Login", date, time);
-        logs.add(newLog);
-
-        JSONUtility.saveLogs(logs, file);  // Save logs to correct path
-
-        System.out.println("=====================================================");
-        System.out.println("[LOGIN] Successfully logged in and saved: " + userID);
-        System.out.println("=====================================================");
-    }
-
-
 
     private void handleSignIn(ActionEvent event) {
         String userID = loginView.getIDField().getText();
@@ -89,7 +62,6 @@ public class LoginController {
 
         try {
             String clientIP = java.net.InetAddress.getLocalHost().getHostAddress();
-
             Object[] loginResponse = ClientMain.getAuthService().login(userID, password, userType, clientIP);
 
             String loginStatus = (String) loginResponse[0];
@@ -97,7 +69,7 @@ public class LoginController {
             String userName = (String) loginResponse[2];
 
             if ("SUCCESS".equals(loginStatus)) {
-                logLoginToJson(userID, userType);  // Log successful login
+                JSONUtility.logLoginToJson(userID, userType, new File(LOGS_JSON_PATH));
                 loginView.setPromptLabel("Login successful!");
                 loginView.setPromptLabelVisible(true);
                 SessionManager.createSession(sessionToken, userID);
@@ -157,7 +129,6 @@ public class LoginController {
             System.err.println("[ERROR] Failed to load Student Main Menu!");
         }
     }
-
 
     private void redirectToSignUp(ActionEvent event) {
         try {

@@ -43,7 +43,7 @@ public class AdminMainMenuController {
     private final String loggedInUserName;
     private Thread serverThread;
 
-    private static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
+    public static final File LOGS_JSON_FILE = new File("src/main/resources/data/logs.json");
 
     /**
      * Constructs an `AdminMainMenuController` with the specified view, model, and logged-in username.
@@ -185,6 +185,7 @@ public class AdminMainMenuController {
         System.out.println("Navigating to Reservation Approval");
     }
 
+
     /**
      * Handles the logout action. Logs the logout event and navigates back to the login page.
      *
@@ -192,7 +193,7 @@ public class AdminMainMenuController {
      */
     private void handleLogout(ActionEvent event) {
         if (loggedInUserName != null) {
-            logLogoutToJson(loggedInUserName, "Admin");
+            JSONUtility.logLogoutToJson(loggedInUserName, "Admin");
         }
 
         try {
@@ -227,25 +228,4 @@ public class AdminMainMenuController {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Logs a logout action into the logs.json file.
-     *
-     * @param userID   The ID of the user logging out.
-     * @param userType The type of the user (e.g., "Admin").
-     */
-    private void logLogoutToJson(String userID, String userType) {
-        List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
-
-        String date = LocalDate.now().toString();
-        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
-        logs.add(new Log(userID, userType, "Logout", date, time));
-
-        JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
-        System.out.println("=====================================================");
-        System.out.println("[LOGOUT] Successfully logged out: " + userID);
-        System.out.println("=====================================================");
-    }
-
 }

@@ -13,7 +13,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static client.admin.controller.AdminMainMenuController.LOGS_JSON_FILE;
 
 public class JSONUtility {
 
@@ -196,6 +201,38 @@ public class JSONUtility {
             throw new RuntimeException("Error loading log data: " + ex.getMessage(), ex);
         }
     }
+
+    public static void logLoginToJson(String userID, String userType, File filePath) {
+        List<Log> logs = loadLogs(filePath);
+
+        String date = LocalDate.now().toString();
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+        Log newLog = new Log(userID, userType, "Login", date, time);
+        logs.add(newLog);
+
+        saveLogs(logs, filePath);
+
+        System.out.println("=====================================================");
+        System.out.println("[LOGIN] Successfully logged in and saved: " + userID);
+        System.out.println("=====================================================");
+    }
+
+    // Log logout event
+    public static void logLogoutToJson(String userID, String userType) {
+        List<Log> logs = loadLogs(LOGS_JSON_FILE);
+
+        String date = LocalDate.now().toString();
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+        logs.add(new Log(userID, userType, "Logout", date, time));
+
+        saveLogs(logs, LOGS_JSON_FILE);
+        System.out.println("=====================================================");
+        System.out.println("[LOGOUT] Successfully logged out: " + userID);
+        System.out.println("=====================================================");
+    }
+
 
 
     /**

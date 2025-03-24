@@ -95,7 +95,7 @@ public class StudentMainMenuController {
     /** Handles Logout and logs the action. */
     private void handleLogout(ActionEvent event) {
         if (loggedInUserName != null) {
-            logLogoutToJson(loggedInUserName, "Student");
+            JSONUtility.logLogoutToJson(loggedInUserName, "Student");
         }
 
         try {
@@ -132,26 +132,7 @@ public class StudentMainMenuController {
             e.printStackTrace();
         }
     }
-
-
-    /**
-     * Logs a logout action into logs.json.
-     */
-    private void logLogoutToJson(String userID, String userType) {
-        List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
-
-        String date = LocalDate.now().toString();
-        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
-        logs.add(new Log(userID, userType, "Logout", date, time));
-
-        JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
-        System.out.println("=====================================================");
-        System.out.println("[LOGOUT] Successfully logged out: " + userID);
-        System.out.println("=====================================================");
-    }
-
-
+    
     private void switchScene(ActionEvent event, String fxmlPath, String title) {
         try {
             System.out.println("[DEBUG] Loading Scene: " + fxmlPath);
