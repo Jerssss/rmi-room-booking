@@ -8,6 +8,7 @@ import shared.interfaces.student.StudentProcessors;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ViewReservationModel {
     private StudentProcessors studentProcessors;
@@ -20,18 +21,24 @@ public class ViewReservationModel {
 
     /** Fetch reservations for the logged-in student */
     public List<Reservation> fetchReservations() {
+        System.out.println("[CLIENT] fetchReservations() method called.");
+
         try {
             if (studentProcessors == null) {
-                System.err.println("[ERROR] StudentProcessors RMI service is NULL!");
+                System.err.println("[ERROR] AdminProcessors RMI service is NULL!");
                 return null;
             }
 
-            List<Reservation> reservations = studentProcessors.getReservations(studentID);
+            List<Reservation> reservations = studentProcessors.getAllReservations();
 
             if (reservations == null || reservations.isEmpty()) {
-                System.out.println("[CLIENT] No reservations found via RMI.");
+                System.out.println("[SERVER] No reservations found via RMI.");
             } else {
+                System.out.println("=====================================================");
                 System.out.println("[CLIENT] Loaded " + reservations.size() + " reservations via RMI.");
+                for (Reservation res : reservations) {
+                    System.out.println("[SERVER] " + res);
+                }
             }
 
             return reservations;
@@ -40,6 +47,7 @@ public class ViewReservationModel {
             return null;
         }
     }
+
 
     /** Registers the callback for real-time reservation updates */
     public void initCallback(UpdateTable updateTable) {

@@ -44,9 +44,7 @@ public class ViewReservationController {
             @Override
             public void updateReservations(List<Reservation> reservations) {
                 // Filter reservations so only those for the logged-in student are displayed.
-                List<Reservation> studentReservations = reservations.stream()
-                        .filter(reservation -> reservation.getUserID().equals(studentID))
-                        .collect(Collectors.toList());
+                List<Reservation> studentReservations = filterReservationsByStudentID(reservations);
                 Platform.runLater(() -> {
                     view.updateTable(studentReservations);
                     System.out.println("[CLIENT] Callback received. Table updated with "
@@ -73,18 +71,28 @@ public class ViewReservationController {
      */
     public void loadReservations() {
         System.out.println("[CLIENT] loadReservations() method called.");
+
         List<Reservation> reservations = model.fetchReservations();
+
         if (reservations != null) {
-            // Filter reservations by logged-in student's ID
-            List<Reservation> studentReservations = reservations.stream()
-                    .filter(reservation -> reservation.getUserID().equals(studentID))
-                    .collect(Collectors.toList());
             Platform.runLater(() -> {
-                view.updateTable(studentReservations);
-                System.out.println("[CLIENT] Table updated with " + studentReservations.size() + " reservations.");
+                view.updateTable(reservations);
+                System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
             });
         } else {
             System.err.println("[ERROR] Failed to load reservations.");
         }
+    }
+
+    /**
+     * Filters a list of reservations so that only reservations for the logged-in student are returned.
+     *
+     * @param reservations the list of reservations to filter
+     * @return the filtered list of reservations for the logged-in student
+     */
+    private List<Reservation> filterReservationsByStudentID(List<Reservation> reservations) {
+        return reservations.stream()
+                .filter(reservation -> reservation.getUserID().equals(studentID))
+                .collect(Collectors.toList());
     }
 }
