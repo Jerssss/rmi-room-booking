@@ -1,6 +1,7 @@
 // File: client/admin/view/AdminMainMenuView.java
 package client.admin.view;
 
+import client.ClientMain;
 import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -106,7 +107,7 @@ public class AdminMainMenuView {
      */
     private boolean checkServerStatus() {
         try {
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            Registry registry = LocateRegistry.getRegistry(ClientMain.getServerIP(), 1099);
             registry.lookup("authentication"); // Try to lookup a service
             return true; // Server is online
         } catch (RemoteException | NotBoundException e) {
