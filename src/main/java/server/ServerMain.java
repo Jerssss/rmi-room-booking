@@ -124,8 +124,8 @@ public class ServerMain {
         threadPool.submit(() -> {
             while (running) {
                 try {
-                    Thread.sleep(3000); // sleep for 30 seconds
-                    System.out.println("[Heartbeat] Server is running. Active clients: " + connectedClients.size());
+                    Thread.sleep(30000); // sleep for 30 seconds
+                   // System.out.println("[Heartbeat] Server is running. Active clients: " + connectedClients.size());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     System.err.println("[Heartbeat] Monitor interrupted.");
