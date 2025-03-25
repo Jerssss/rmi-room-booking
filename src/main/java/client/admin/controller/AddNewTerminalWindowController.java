@@ -2,9 +2,16 @@ package client.admin.controller;
 
 
 import client.admin.model.AddNewTerminalModel;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import shared.Terminal;
 
 
+import javax.swing.*;
+import java.io.IOException;
 import java.util.List;
 
 /**

@@ -128,7 +128,7 @@
    <bottom>
       <HBox alignment="CENTER" prefHeight="67.0" prefWidth="266.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="saveChangesButton" mnemonicParsing="false" onMouseEntered="#saveChangesButtonHovered" onMouseExited="#saveChangesButtonExited" prefHeight="21.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Save Terminal" textFill="WHITE">
+            <Button fx:id="saveTerminalButton" mnemonicParsing="false" onMouseEntered="#saveTerminalButtonHovered" onMouseExited="#saveTerminalButtonExited" prefHeight="21.0" prefWidth="150.0" style="-fx-background-color: #0d3073; -fx-border-color: #ffffff; -fx-border-radius: 30px; -fx-background-radius: 30px;" text="Save Terminal" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

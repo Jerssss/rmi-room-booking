@@ -1,6 +1,5 @@
 package client.admin.view;
 
-
 import client.admin.controller.AddNewTerminalWindowController;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
@@ -9,11 +8,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import shared.Terminal;
-
-
 import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
@@ -21,31 +19,21 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 public class AddNewTerminalWindowView implements Initializable {
-
-
     private AddNewTerminalWindowController controller;
-
-
     @FXML private TextField terminalNoTextField;
     @FXML private ComboBox<String> terminalOSComboBox;
     @FXML private ComboBox<String> roomNumberComboBox;
     @FXML private ComboBox<String> statusComboBox;
     @FXML private ComboBox<String> timeComboBox;
     @FXML private DatePicker datePicker;
-    @FXML private Button saveChangesButton;
-
-
+    @FXML private Button saveTerminalButton;
     private String startTime;
     private String endTime;
-
-
     public void showWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_terminal_window.fxml"));
             Parent root = loader.load();
-
 
             Stage stage = new Stage();
             stage.setTitle("Add New Terminal");
@@ -57,12 +45,9 @@ public class AddNewTerminalWindowView implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("=====================================================");
-
-
         controller = new AddNewTerminalWindowController();
 
         // Disable dates before tomorrow and after 3 months in the DatePicker
@@ -74,7 +59,7 @@ public class AddNewTerminalWindowView implements Initializable {
                 LocalDate tomorrow = LocalDate.now().plusDays(1);
                 LocalDate maxDate = LocalDate.now().plusMonths(3);
 
-                // ❌ Disable if before tomorrow, after 3 months, or a Sunday
+                // Disable if before tomorrow, after 3 months, or a Sunday
                 if (date.isBefore(tomorrow) || date.isAfter(maxDate) || date.getDayOfWeek().getValue() == 7) {
                     setDisable(true);
                     setStyle("-fx-background-color: #ff9999;"); // Light red for disabled
@@ -106,7 +91,7 @@ public class AddNewTerminalWindowView implements Initializable {
         });
 
         // Save button action
-        saveChangesButton.setOnAction(event -> handleSave());
+        saveTerminalButton.setOnAction(event -> handleSave());
     }
 
     private void handleSave() {
@@ -122,17 +107,39 @@ public class AddNewTerminalWindowView implements Initializable {
         }
 
         // Pass data to the controller to save to JSON
-        boolean isSuccess = controller.addNewTerminal("PC" + terminalID, os, room, status, startTime, endTime, date);
+        boolean success = controller.addNewTerminal("PC" + terminalID, os, room, status, startTime, endTime, date);
 
-        if (isSuccess) {
-            JOptionPane.showMessageDialog(null, "Terminal Successfully Added!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            System.out.println("[CLIENT] Terminal Successfully Added!");
-            Stage stage = (Stage) saveChangesButton.getScene().getWindow();
-            stage.close(); // Close the window only if successful
+        if (!success) {
+            JOptionPane.showMessageDialog(null,
+                    "Failed to add terminal                                 .",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
         } else {
-            JOptionPane.showMessageDialog(null, "Failed to add terminal! Duplicate date or time detected.", "Error", JOptionPane.ERROR_MESSAGE);
-            System.out.println("[CLIENT] Terminal was not Saved!");
+            try {
+                // Load the "Saved Notifier" FXML
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/added_notifier_window.fxml"));
+                Parent root = loader.load();
+
+                // Create a new Stage (pop-up window)
+                Stage notifierStage = new Stage();
+                notifierStage.setTitle("Terminal Saved Successfully");
+                System.out.println("[CLIENT] Terminal Successfully Added!");
+                notifierStage.setScene(new Scene(root));
+                notifierStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with the main window
+                notifierStage.setResizable(false);
+                notifierStage.showAndWait(); // Wait until the user closes it
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Error loading the saved notification window.",
+                        "Load Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
+
+        closeWindow();
     }
 
     private boolean validateTerminalNumber(String terminalNumber) {
@@ -179,16 +186,23 @@ public class AddNewTerminalWindowView implements Initializable {
         }
         return true;
     }
-    public void saveChangesButtonExited() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
+
+    private void closeWindow() {
+        Stage stage = (Stage) saveTerminalButton.getScene().getWindow();
+        stage.close();
+    }
+
+    public void saveTerminalButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveTerminalButton);
         st.setToX(1.0);
         st.setToY(1.0);
         st.setCycleCount(1);
         st.setAutoReverse(false);
         st.play();
     }
-    public void saveChangesButtonHovered() {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveChangesButton);
+
+    public void saveTerminalButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), saveTerminalButton);
         st.setToX(0.9);
         st.setToY(0.9);
         st.setCycleCount(1);
