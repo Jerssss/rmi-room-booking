@@ -102,7 +102,12 @@ public class AddNewTerminalWindowView implements Initializable {
         String date = (datePicker.getValue() != null) ? datePicker.getValue().toString() : "";
 
         // Input Validations
-        if (!validateTerminalNumber(terminalID) || !validateDate(date)) {
+        if (!validateTerminalNumber(terminalID) ||
+                !validateOS(os) ||
+                !validateRoom(room) ||
+                !validateStatus(status) ||
+                !validateTimeSlot(timeComboBox.getValue()) ||
+                !validateDate(date)) {
             return; // Stops the saving process if validation fails
         }
 
@@ -144,26 +149,59 @@ public class AddNewTerminalWindowView implements Initializable {
 
     private boolean validateTerminalNumber(String terminalNumber) {
         try {
+            if (terminalNumber == null || terminalNumber.isEmpty()) {
+                showAlert("Invalid Input", "Please input terminal number.", terminalNoTextField);
+                return false;
+            }
             int terminalNum = Integer.parseInt(terminalNumber);
 
             if (terminalNum < 1 || terminalNum > 50) {
-                JOptionPane.showMessageDialog(null, "Terminal number must be between 1 to 50 only.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-                System.out.println("[CLIENT] Terminal was not Saved!");
+                showAlert("Invalid Input", "Terminal number must be between 1 to 50 only.", terminalNoTextField);
                 return false;
             }
 
             // Check if terminal number already exists
             List<Terminal> terminals = controller.getAllTerminals();
             for (Terminal terminal : terminals) {
-                if (terminal.getTerminalID().equals("PC-" + terminalNumber)) {
-                    JOptionPane.showMessageDialog(null, "Terminal number already exists.", "Duplicate Terminal", JOptionPane.ERROR_MESSAGE);
-                    System.out.println("[CLIENT] Terminal was not Saved!");
+                if (terminal.getTerminalID().equals("PC" + terminalNumber)) {
+                    showAlert("Duplicate Terminal", "Terminal number already exists.", terminalNoTextField);
                     return false;
                 }
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Terminal number must be numbers only.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-            System.out.println("[CLIENT] Terminal was not Saved!");
+            showAlert("Invalid Input", "Terminal number must be numbers only.", terminalNoTextField);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateOS(String os) {
+        if (os == null || os.isEmpty()) {
+            showAlert("Invalid Input", "Please select an Operating System.", terminalOSComboBox);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateRoom(String room) {
+        if (room == null || room.isEmpty()) {
+            showAlert("Invalid Input", "Please select a Room Number.", roomNumberComboBox);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateStatus(String status) {
+        if (status == null || status.isEmpty()) {
+            showAlert("Invalid Input", "Please select a Terminal Status.", statusComboBox);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateTimeSlot(String timeSlot) {
+        if (timeSlot == null || timeSlot.isEmpty()) {
+            showAlert("Invalid Input", "Please select a Time Slot.", timeComboBox);
             return false;
         }
         return true;
@@ -171,20 +209,63 @@ public class AddNewTerminalWindowView implements Initializable {
 
     private boolean validateDate(String date) {
         if (date == null || date.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select a date.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-            System.out.println("[CLIENT] Terminal was not Saved!");
+            showAlert("Invalid Input", "Please select a Date.", datePicker);
             return false;
         }
+
         // Check for duplicate date and time for the same terminal
         List<Terminal> terminals = controller.getAllTerminals();
         for (Terminal terminal : terminals) {
-            if (terminal.getReservationDate().equals(date) && terminal.getStartTime().equals(startTime) && terminal.getTerminalID().equals(terminalNoTextField.getText())) {
-                JOptionPane.showMessageDialog(null, "This terminal already has a reservation at this time and date.", "Duplicate Reservation", JOptionPane.ERROR_MESSAGE);
-                System.out.println("[CLIENT] Terminal was not Saved!");
+            if (terminal.getReservationDate().equals(date) && terminal.getStartTime().equals(startTime) &&
+                    terminal.getTerminalID().equals(terminalNoTextField.getText())) {
+                showAlert("Duplicate Reservation", "This terminal already has a reservation at this time and date.", datePicker);
                 return false;
             }
         }
         return true;
+    }
+
+    private void showAlert(String title, String message, Control invalidField) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        // Keep the window on top
+        Stage stage = (Stage) saveTerminalButton.getScene().getWindow();
+        alert.initOwner(stage);
+        alert.showAndWait();
+
+        if (invalidField != null) {
+            if (invalidField instanceof TextField textField) {
+                if (textField.getText().trim().isEmpty()) {
+                    textField.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                } else {
+                    textField.setStyle("-fx-text-fill: red;");
+                }
+                textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!newValue.trim().isEmpty()) {
+                        textField.setStyle("");
+                    }
+                });
+            }
+            else if (invalidField instanceof ComboBox<?> comboBox) {
+                comboBox.setStyle("-fx-background-color: #EBC7C7;");
+                comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        comboBox.setStyle("");
+                    }
+                });
+            }
+            else if (invalidField instanceof DatePicker datePicker) {
+                datePicker.setStyle("-fx-background-color: red;");
+                datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        datePicker.setStyle("");
+                    }
+                });
+            }
+        }
     }
 
     private void closeWindow() {
