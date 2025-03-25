@@ -18,8 +18,16 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Utility class for handling JSON operations, including loading and saving data
+ * for Admins, Students, Logs, Terminals, and Reservations.
+ */
 public class JSONUtility {
 
+    /**
+     * A Gson instance configured with pretty printing, null serialization,
+     * and exclusion of fields without the {@code @Expose} annotation.
+     */
     private static final Gson defaultGson = new GsonBuilder()
             .setPrettyPrinting()
             .excludeFieldsWithoutExposeAnnotation()
@@ -28,9 +36,11 @@ public class JSONUtility {
             .create();
 
     /**
-     * Loads Admins from a JSON file (admin.json).
+     * Loads Admins from a JSON file.
+     *
      * @param filePath the path to the JSON file containing the admin list
-     * @return a HashMap representing the loaded admins
+     * @return a {@code LinkedHashMap} of Admins, where the key is the Admin ID
+     * @throws RuntimeException if there is an error reading the file or parsing the JSON
      */
     public static LinkedHashMap<String, Admin> loadAdmins(File filePath) {
         if (!filePath.exists()) {
@@ -40,7 +50,6 @@ public class JSONUtility {
         }
 
         try (FileReader reader = new FileReader(filePath)) {
-            // Parse the JSON structure
             JsonElement jsonElement = JsonParser.parseReader(reader);
             if (jsonElement == null || !jsonElement.isJsonObject()) {
                 System.err.println("[ERROR] Invalid JSON format. Resetting file.");
@@ -53,11 +62,9 @@ public class JSONUtility {
                 return new LinkedHashMap<>();
             }
 
-            // Extract the "Admin" array
             JsonArray adminArray = root.getAsJsonObject("Admins").getAsJsonArray("Admin");
             LinkedHashMap<String, Admin> adminMap = new LinkedHashMap<>();
 
-            // Convert each JSON admin object to an Admin instance
             for (JsonElement element : adminArray) {
                 Admin admin = defaultGson.fromJson(element, Admin.class);
                 if (admin.getId() != null) {
@@ -71,25 +78,23 @@ public class JSONUtility {
         }
     }
 
-
     /**
-     * Saves Admins to a JSON file (admin.json).
+     * Saves Admins to a JSON file.
+     *
      * @param adminMap the admin data to be saved
      * @param filePath the destination JSON file
+     * @throws RuntimeException if there is an error writing to the file
      */
     public static void saveAdmins(LinkedHashMap<String, Admin> adminMap, File filePath) {
         try {
-            // Ensure the directory exists
             if (!filePath.getParentFile().exists()) {
                 filePath.getParentFile().mkdirs();
             }
 
-            // Create the nested JSON structure
             JsonObject root = new JsonObject();
             JsonObject adminsWrapper = new JsonObject();
             JsonArray adminArray = new JsonArray();
 
-            // Add all admins to the array
             for (Admin admin : adminMap.values()) {
                 JsonElement adminJson = defaultGson.toJsonTree(admin);
                 adminArray.add(adminJson);
@@ -98,7 +103,6 @@ public class JSONUtility {
             adminsWrapper.add("Admin", adminArray);
             root.add("Admins", adminsWrapper);
 
-            // Write to file
             try (FileWriter writer = new FileWriter(filePath)) {
                 defaultGson.toJson(root, writer);
                 System.out.println("[DEBUG] Admins saved successfully.");
@@ -108,17 +112,17 @@ public class JSONUtility {
         }
     }
 
-
-
     /**
-     * Loads Students from a JSON file (student.json).
-     * @param filePath the JSON file path
-     * @return a HashMap of students
+     * Loads Students from a JSON file.
+     *
+     * @param filePath the path to the JSON file containing the student list
+     * @return a {@code LinkedHashMap} of Students, where the key is the Student ID
+     * @throws RuntimeException if there is an error reading the file or parsing the JSON
      */
     public static LinkedHashMap<String, Student> loadStudents(File filePath) {
         if (!filePath.exists()) {
             System.out.println("Student file not found. Creating a new one.");
-            saveStudents(new LinkedHashMap<>(), filePath); // Create an empty file
+            saveStudents(new LinkedHashMap<>(), filePath);
             return new LinkedHashMap<>();
         }
 
@@ -135,7 +139,7 @@ public class JSONUtility {
             LinkedHashMap<String, Student> studentMap = new LinkedHashMap<>();
 
             for (Student student : students) {
-                if (student.getId() != null) {  // Ensure no null students
+                if (student.getId() != null) {
                     studentMap.put(student.getId(), student);
                 }
             }
@@ -145,42 +149,38 @@ public class JSONUtility {
         }
     }
 
-
-
     /**
-     * Saves Students to a JSON file (student.json).
+     * Saves Students to a JSON file.
+     *
      * @param studentMap the student data to save
-     * @param filePath the JSON file path
+     * @param filePath the destination JSON file
+     * @throws RuntimeException if there is an error writing to the file
      */
     public static void saveStudents(LinkedHashMap<String, Student> studentMap, File filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
             List<Student> studentList = new ArrayList<>(studentMap.values());
 
-            // Debug: Ensure all Student objects are correct
             for (Student student : studentList) {
                 System.out.println("[DEBUG] Saving Student: " + student);
             }
 
-            // Wrap the list in the nested structure
             Map<String, Map<String, List<Student>>> nestedData = new LinkedHashMap<>();
             Map<String, List<Student>> studentsMap = new LinkedHashMap<>();
             studentsMap.put("Student", studentList);
             nestedData.put("Students", studentsMap);
 
-            // Save in expected JSON structure
             defaultGson.toJson(nestedData, writer);
-
         } catch (IOException ex) {
             throw new RuntimeException("Error saving student data: " + ex.getMessage(), ex);
         }
     }
 
-
-
     /**
-     * Loads Logs from a JSON file (logs.json).
-     * @param filePath the JSON file path
-     * @return a List of Log objects
+     * Loads Logs from a JSON file.
+     *
+     * @param filePath the path to the JSON file containing the logs
+     * @return a {@code List} of Log objects
+     * @throws RuntimeException if there is an error reading the file or parsing the JSON
      */
     public static List<Log> loadLogs(File filePath) {
         if (!filePath.exists()) {
@@ -216,6 +216,13 @@ public class JSONUtility {
         }
     }
 
+    /**
+     * Logs a login event to a JSON file.
+     *
+     * @param userID the ID of the user logging in
+     * @param userType the type of the user (e.g., Admin, Student)
+     * @param filePath the path to the JSON file where the log will be saved
+     */
     public static void logLoginToJson(String userID, String userType, File filePath) {
         List<Log> logs = loadLogs(filePath);
 
@@ -232,7 +239,13 @@ public class JSONUtility {
         System.out.println("=====================================================");
     }
 
-    // Log logout event
+    /**
+     * Logs a logout event to a JSON file.
+     *
+     * @param userID the ID of the user logging out
+     * @param userType the type of the user (e.g., Admin, Student)
+     * @param filePath the path to the JSON file where the log will be saved
+     */
     public static void logLogoutToJson(String userID, String userType, File filePath) {
         List<Log> logs = loadLogs(filePath);
 
@@ -247,15 +260,15 @@ public class JSONUtility {
         System.out.println("=====================================================");
     }
 
-
-
     /**
-     * Saves Logs to a JSON file (logs.json).
+     * Saves Logs to a JSON file.
+     *
      * @param logList the log data to save
-     * @param filePath the JSON file path
+     * @param filePath the destination JSON file
+     * @throws RuntimeException if there is an error writing to the file
      */
     public static void saveLogs(List<Log> logList, File filePath) {
-        try (FileWriter writer = new FileWriter(filePath, false)) { // Overwrite mode
+        try (FileWriter writer = new FileWriter(filePath, false)) {
             Map<String, List<Log>> logMap = new LinkedHashMap<>();
             logMap.put("Log", logList);
 
@@ -263,7 +276,7 @@ public class JSONUtility {
             nestedStructure.put("Logs", logMap);
 
             defaultGson.toJson(nestedStructure, writer);
-            writer.flush(); // Ensure data is written immediately
+            writer.flush();
             System.out.println("[LOG] Logs successfully saved to file.");
         } catch (IOException ex) {
             System.err.println("[ERROR] Failed to save logs to file: " + ex.getMessage());
@@ -271,15 +284,12 @@ public class JSONUtility {
         }
     }
 
-
-
-
-
-
     /**
-     * Loads Terminals from a JSON file (terminal.json).
-     * @param filePath the JSON file path
-     * @return a List of Terminal objects
+     * Loads Terminals from a JSON file.
+     *
+     * @param filePath the path to the JSON file containing the terminals
+     * @return a {@code List} of Terminal objects
+     * @throws RuntimeException if there is an error reading the file or parsing the JSON
      */
     public static List<Terminal> loadTerminals(File filePath) {
         if (!filePath.exists()) {
@@ -311,9 +321,11 @@ public class JSONUtility {
     }
 
     /**
-     * Saves Terminals to a JSON file (terminal.json).
+     * Saves Terminals to a JSON file.
+     *
      * @param terminalList the terminal data to save
-     * @param filePath the JSON file path
+     * @param filePath the destination JSON file
+     * @throws RuntimeException if there is an error writing to the file
      */
     public static void saveTerminals(List<Terminal> terminalList, File filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
@@ -329,9 +341,11 @@ public class JSONUtility {
     }
 
     /**
-     * Loads Reservations from a JSON file (reservation_approval.json).
-     * @param filePath the JSON file path
-     * @return a List of Reservation objects
+     * Loads Reservations from a JSON file.
+     *
+     * @param filePath the path to the JSON file containing the reservations
+     * @return a {@code List} of Reservation objects
+     * @throws RuntimeException if there is an error reading the file or parsing the JSON
      */
     public static List<Reservation> loadReservations(File filePath) {
         if (!filePath.exists()) {
@@ -363,9 +377,11 @@ public class JSONUtility {
     }
 
     /**
-     * Saves Reservations to a JSON file (reservation_approval.json).
+     * Saves Reservations to a JSON file.
+     *
      * @param reservationList the reservation data to save
-     * @param filePath the JSON file path
+     * @param filePath the destination JSON file
+     * @throws RuntimeException if there is an error writing to the file
      */
     public static void saveReservations(List<Reservation> reservationList, File filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
@@ -380,9 +396,10 @@ public class JSONUtility {
     }
 
     /**
-     * Converts a list of Admins or Students into a HashMap for easier lookup by ID
+     * Converts a list of Admins or Students into a HashMap for easier lookup by ID.
+     *
      * @param list List of Admin or Student objects
-     * @return a HashMap of ID to Admin or Student
+     * @return a {@code HashMap} of ID to Admin or Student
      */
     private static <T> HashMap<String, T> toMap(List<T> list) {
         HashMap<String, T> map = new HashMap<>();
