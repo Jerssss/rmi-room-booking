@@ -27,10 +27,20 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+/**
+ * Controller for the login functionality of the application.
+ * Handles user authentication and navigation to the appropriate main menu based on user type.
+ */
 public class LoginController {
-    private final LoginView loginView;
-    private final LoginModel loginModel;
+    private final LoginView loginView; // The associated view for the login page
+    private final LoginModel loginModel; // The associated model for the login page
 
+    /**
+     * Constructs a LoginController and initializes button handlers.
+     *
+     * @param loginView the LoginView instance to associate with this controller
+     * @param loginModel the LoginModel instance to associate with this controller
+     */
     public LoginController(LoginView loginView, LoginModel loginModel) {
         this.loginView = loginView;
         this.loginModel = loginModel;
@@ -39,6 +49,12 @@ public class LoginController {
         this.loginView.setActionSignUpButton(this::redirectToSignUp);
     }
 
+    /**
+     * Handles the "Sign In" button click event.
+     * Validates user credentials and redirects to the appropriate main menu upon successful login.
+     *
+     * @param event the ActionEvent triggered by the button click
+     */
     private void handleSignIn(ActionEvent event) {
         String userID = loginView.getIDField().getText();
         String password = loginView.getPassField().getText();
@@ -93,6 +109,11 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles login failures by displaying appropriate error messages.
+     *
+     * @param status the status of the login attempt
+     */
     private void handleLoginFailure(String status) {
         switch (status) {
             case "INVALID_CREDENTIALS":
@@ -108,6 +129,12 @@ public class LoginController {
         loginView.setPromptLabelVisible(true);
     }
 
+    /**
+     * Redirects the user to the admin main menu upon successful login.
+     *
+     * @param event the ActionEvent triggered by the button click
+     * @param loggedInUserName the name of the logged-in user
+     */
     private void redirectToAdminMainMenu(ActionEvent event, String loggedInUserName) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/admin/admin_menu_page.fxml"));
@@ -121,23 +148,35 @@ public class LoginController {
         }
     }
 
+    /**
+     * Redirects the user to the student main menu upon successful login.
+     *
+     * @param event the ActionEvent triggered by the button click
+     * @param loggedInUserName the name of the logged-in user
+     * @param userID the ID of the logged-in user
+     */
     private void redirectToStudentMainMenu(ActionEvent event, String loggedInUserName, String userID) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/client/student_main_menu.fxml"));
             Parent root = fxmlLoader.load();
             StudentMainMenuView studentMainMenuView = fxmlLoader.getController();
             if (studentMainMenuView == null) {
-                System.err.println("[ERROR] StudentMainMenuView is NULL after loading FXML!");
+                System.err.println("[CLIENT] StudentMainMenuView is NULL after loading FXML!");
                 return;
             }
             new StudentMainMenuController(studentMainMenuView, new StudentMainMenuModel(), loggedInUserName, userID);
             changeScene(event, root);
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("[ERROR] Failed to load Student Main Menu!");
+            System.err.println("[CLIENT] Failed to load Student Main Menu!");
         }
     }
 
+    /**
+     * Redirects the user to the sign-up page.
+     *
+     * @param event the ActionEvent triggered by the button click
+     */
     private void redirectToSignUp(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/client/sign_up_page.fxml"));
@@ -151,6 +190,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * Changes the current scene to the specified root node.
+     *
+     * @param event the ActionEvent triggered by the button click
+     * @param root the root node of the new scene
+     */
     private void changeScene(ActionEvent event, Parent root) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);

@@ -7,13 +7,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
 
+/**
+ * View class for the landing page of the application.
+ * Handles UI elements and animations for the login and sign-up buttons.
+ */
 public class LandingPageView {
 
     @FXML
-    private Button landingPageLogInButton;
+    private Button landingPageLogInButton; // Button for logging in
     @FXML
-    private Button landingPageSignUpButton;
+    private Button landingPageSignUpButton; // Button for signing up
 
+    /**
+     * Initializes the view and checks if the buttons are properly loaded.
+     * Logs an error if any button is null.
+     */
     public void initialize() {
         if (landingPageLogInButton == null) {
             System.err.println("[ERROR] landingPageLogInButton is NULL! Check FXML fx:id.");
@@ -23,6 +31,11 @@ public class LandingPageView {
         }
     }
 
+    /**
+     * Sets the action handler for the "Sign In" button.
+     *
+     * @param event the event handler to be triggered when the button is clicked
+     */
     public void setActionSignInButton(EventHandler<ActionEvent> event) {
         if (landingPageLogInButton != null) {
             landingPageLogInButton.setOnAction(event);
@@ -31,6 +44,11 @@ public class LandingPageView {
         }
     }
 
+    /**
+     * Sets the action handler for the "Sign Up" button.
+     *
+     * @param event the event handler to be triggered when the button is clicked
+     */
     public void setActionSignUpButton(EventHandler<ActionEvent> event) {
         if (landingPageSignUpButton != null) {
             landingPageSignUpButton.setOnAction(event);
@@ -39,7 +57,9 @@ public class LandingPageView {
         }
     }
 
-    // Hover effect for Log In Button
+    /**
+     * Applies a hover effect to the "Log In" button by scaling it down.
+     */
     @FXML
     public void logInButtonHovered() {
         if (landingPageLogInButton != null) {
@@ -54,6 +74,9 @@ public class LandingPageView {
         }
     }
 
+    /**
+     * Resets the "Log In" button to its original size when the hover ends.
+     */
     @FXML
     public void logInButtonExited() {
         if (landingPageLogInButton != null) {
@@ -68,7 +91,9 @@ public class LandingPageView {
         }
     }
 
-    // Hover effect for Sign Up Button
+    /**
+     * Applies a hover effect to the "Sign Up" button by scaling it down.
+     */
     @FXML
     public void signUpButtonHovered() {
         if (landingPageSignUpButton != null) {
@@ -83,6 +108,9 @@ public class LandingPageView {
         }
     }
 
+    /**
+     * Resets the "Sign Up" button to its original size when the hover ends.
+     */
     @FXML
     public void signUpButtonExited() {
         if (landingPageSignUpButton != null) {

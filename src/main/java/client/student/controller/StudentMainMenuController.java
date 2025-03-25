@@ -26,16 +26,30 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Controller for the student main menu of the application.
+ * Handles navigation to create, view, and modify reservations, as well as logout functionality.
+ */
 public class StudentMainMenuController {
-    private final StudentMainMenuView view;
-    private final StudentMainMenuModel model;
-    private final String loggedInUserName;
-    private String studentID;
+    private final StudentMainMenuView view; // The associated view for the student main menu
+    private final StudentMainMenuModel model; // The associated model for the student main menu
+    private final String loggedInUserName; // The name of the logged-in user
+    private String studentID; // The ID of the logged-in student
 
+    /**
+     * Constructs a StudentMainMenuController and initializes button handlers.
+     *
+     * @param view the StudentMainMenuView instance to associate with this controller
+     * @param model the StudentMainMenuModel instance to associate with this controller
+     * @param loggedInUserName the name of the logged-in user
+     * @param studentID the ID of the logged-in student
+     */
     public StudentMainMenuController(StudentMainMenuView view, StudentMainMenuModel model, String loggedInUserName, String studentID) {
         this.view = view;
         this.model = model;
         this.loggedInUserName = loggedInUserName;
+        this.studentID = studentID;
+
         this.view.setActionLogoutButton(this::handleLogout);
         this.view.setActionCreateReservationButton(event -> handleCreateReservation());
         this.view.setActionViewReservationButton(this::handleViewReservation);
@@ -44,30 +58,38 @@ public class StudentMainMenuController {
         this.view.initializeDateTime();
     }
 
-
-
+    /**
+     * Handles the "Create Reservation" button click event.
+     * (Currently a placeholder for future implementation.)
+     */
     private void handleCreateReservation() {
         System.out.println("Navigating to Create Reservations...");
     }
 
+    /**
+     * Handles the "View Reservation" button click event.
+     * Loads the view reservation page and switches the scene to it.
+     *
+     * @param event the ActionEvent triggered by the button click
+     */
     private void handleViewReservation(ActionEvent event) {
-        System.out.println("[DEBUG] Navigating to View Student Reservations...");
+        System.out.println("[CLIENT] Navigating to View Student Reservations...");
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/view_reservation_pane.fxml"));
             Parent root = loader.load();
 
-            //  Ensure View is loaded
+            // Ensure View is loaded
             ViewReservationView reservationView = loader.getController();
             if (reservationView == null) {
                 System.err.println("[ERROR] ViewReservationView is NULL after FXML load!");
                 return;
             }
-            System.out.println("[DEBUG] ViewReservationView successfully loaded.");
+            System.out.println("[CLIENT] ViewReservationView successfully loaded.");
 
             // Create MVC Components
             ViewReservationModel reservationModel = new ViewReservationModel(studentID);
-            ViewReservationController reservationController = new ViewReservationController(reservationView, reservationModel,studentID);
+            ViewReservationController reservationController = new ViewReservationController(reservationView, reservationModel, studentID);
 
             // Switch Scene
             Platform.runLater(() -> {
@@ -85,20 +107,27 @@ public class StudentMainMenuController {
         }
     }
 
+    /**
+     * Handles the "Modify Reservation" button click event.
+     * (Currently a placeholder for future implementation.)
+     */
     private void handleModifyReservation() {
         System.out.println("Navigating to Modify Reservations");
     }
 
-
-    /** Handles Logout and logs the action. */
-    /** Handles Logout and logs the action. */
+    /**
+     * Handles the "Logout" button click event.
+     * Logs out the user and redirects to the login page.
+     *
+     * @param event the ActionEvent triggered by the button click
+     */
     private void handleLogout(ActionEvent event) {
         try {
             if (ClientMain.getAuthService() != null) {
                 ClientMain.getAuthService().logout(loggedInUserName); // Logs out on the server
             }
 
-            System.out.println("[DEBUG] Logging out and loading Login Page...");
+            System.out.println("[CLIENT] Logging out and loading Login Page...");
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/login_page.fxml"));
             Parent root = loader.load();
