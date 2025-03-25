@@ -1,6 +1,7 @@
 package client.admin.view;
 
 import client.admin.model.AddAdminModel;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,55 +13,55 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
 
+/**
+ * The view controller for the Add Admin interface.
+ * Handles user interactions and UI updates for admin creation functionality.
+ */
 public class AddAdminView {
 
     @FXML
     private TextField adminIDField;
-
     @FXML
     private PasswordField adminPassField;
-
     @FXML
     private VBox centerPane;
-
     @FXML
     private Button createButton;
-
     @FXML
     private TextField facultyTypeField;
-
     @FXML
     private StackPane facultyTypeStackPane;
-
     @FXML
     private TextField nameField;
-
     @FXML
     private StackPane nameStackPane;
-
     @FXML
     private Label reportsLabel;
-
     @FXML
     private Label signUpPromptLabel;
 
     private final AddAdminModel addAdminModel = new AddAdminModel();
 
-
-
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the FXML file has been loaded.
+     */
     @FXML
     public void initialize() {
-        System.out.println("AddAdminView initialized"); // Debug
-        createButton.setOnAction(event -> {
-            System.out.println("Create button clicked"); // Debug
-        });
         createButton.setOnAction(this::handleCreateButton);
     }
 
+    /**
+     * Handles the create button action event.
+     * Validates inputs, shows confirmation dialog, and attempts to register a new admin.
+     *
+     * @param event The action event triggered by the button click
+     */
     @FXML
     private void handleCreateButton(ActionEvent event) {
         String adminID = adminIDField.getText();
@@ -74,8 +75,6 @@ public class AddAdminView {
             signUpPromptLabel.setStyle("-fx-text-fill: red;");
             return;
         }
-
-        System.out.println("Create button clicked");
 
         // Show confirmation dialog
         int choice = JOptionPane.showConfirmDialog(
@@ -121,16 +120,39 @@ public class AddAdminView {
         }
     }
 
+    /**
+     * Handles the button exit animation.
+     * Returns the button to its original size when mouse exits.
+     */
     @FXML
-    void createButtonExited(MouseEvent event) {
-
+    public void createButtonExited() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), createButton);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
     }
 
+    /**
+     * Handles the button hover animation.
+     * Scales down the button slightly when mouse hovers over it.
+     */
     @FXML
-    void createButtonHovered(MouseEvent event) {
-
+    public void createButtonHovered() {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), createButton);
+        st.setToX(0.9);
+        st.setToY(0.9);
+        st.setCycleCount(1);
+        st.setAutoReverse(false);
+        st.play();
     }
 
+    /**
+     * Sets a custom action handler for the create button.
+     *
+     * @param event The event handler to be set for the create button
+     */
     public void setActionCreateButton(EventHandler<ActionEvent> event) {
         System.out.println("Setting action for createButton"); // Debug
         createButton.setOnAction(event);

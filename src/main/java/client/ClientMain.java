@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -22,10 +23,12 @@ import shared.interfaces.IPInputHandler;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * ClientMain initializes the client application and connects to the RMI server.
@@ -50,8 +53,21 @@ public class ClientMain extends Application implements IPInputHandler {
 
     @Override
     public void start(Stage stage) {
-        Platform.setImplicitExit(false); // Keep the JavaFX thread alive
+        Platform.setImplicitExit(false);
         primaryStage = stage;
+
+        // Set application icon
+        try {
+            URL iconUrl = ClientMain.class.getResource("/images/client/app_icon.png");
+            if (iconUrl == null) {
+                throw new RuntimeException("Icon file not found!");
+            }
+            primaryStage.getIcons().add(new Image(iconUrl.openStream()));
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to load icon: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         showIPInputView();
     }
 
@@ -143,6 +159,18 @@ public class ClientMain extends Application implements IPInputHandler {
             ipInputStage.setScene(new Scene(root));
             ipInputStage.setResizable(false);
             ipInputStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
+
+            // Set application icon
+            try {
+                URL iconUrl = ClientMain.class.getResource("/images/client/app_icon.png");
+                if (iconUrl == null) {
+                    throw new RuntimeException("Icon file not found!");
+                }
+                primaryStage.getIcons().add(new Image(iconUrl.openStream()));
+            } catch (Exception e) {
+                System.err.println("[ERROR] Failed to load icon: " + e.getMessage());
+                e.printStackTrace();
+            }
 
             // Show the IP input view and wait for user input
             ipInputStage.showAndWait();
@@ -348,6 +376,18 @@ public class ClientMain extends Application implements IPInputHandler {
                 // Set the FXML content to the Stage
                 Scene scene = new Scene(serverErrorWindow);
                 currentPopupStage.setScene(scene);
+
+                // Set application icon
+                try {
+                    URL iconUrl = ClientMain.class.getResource("/images/client/app_icon.png");
+                    if (iconUrl == null) {
+                        throw new RuntimeException("Icon file not found!");
+                    }
+                    primaryStage.getIcons().add(new Image(iconUrl.openStream()));
+                } catch (Exception e) {
+                    System.err.println("[ERROR] Failed to load icon: " + e.getMessage());
+                    e.printStackTrace();
+                }
 
                 // Handle the popup window's close event
                 currentPopupStage.setOnCloseRequest(event -> {

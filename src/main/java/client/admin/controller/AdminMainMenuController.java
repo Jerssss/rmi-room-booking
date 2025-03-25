@@ -70,30 +70,15 @@ public class AdminMainMenuController {
         this.view.setActionCreateAdminButton(this::handleCreateAdmin);
     }
 
-//    private void handleCreateAdmin() {
-//        System.out.println("=====================================================");
-//
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_new_admin.fxml"));
-//            VBox createAdminView = loader.load();
-//
-//            AddAdminView view = loader.getController();
-//            if (view == null) {
-//                System.err.println("[ERROR] AddNewTerminalView is NULL after FXML load!");
-//                return;
-//            }
-//
-//            // Inject Controller
-//            new AddAdminController(view, new AddAdminModel());
-//
-//            // Set new view in the center pane
-//            view.getRootPane().setCenter(createAdminView);
-//        } catch (IOException e) {
-//            System.err.println("[ERROR] Failed to load Add New Terminal: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
-
+    /**
+     * Handles the event for creating a new admin by loading the Add New Admin view.
+     * This method loads the FXML file for the admin creation form, initializes the controller,
+     * and displays the form in the center pane of the application.
+     *
+     * @param event The ActionEvent that triggered this method (typically from a button click)
+     * @throws RuntimeException If there's an error loading the FXML file, though most errors
+     *         are caught and handled internally by printing error messages
+     */
     private void handleCreateAdmin(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_new_admin.fxml"));

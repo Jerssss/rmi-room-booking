@@ -42,6 +42,7 @@ public class SetIPView {
      */
     @FXML
     public void initialize() {
+
         // Initialize the ComboBox with predefined IPs if any
         serversComboBox.getItems().addAll("192.168.191.28","192.168.100.13", "192.168.1.3", "192.168.1.100", "192.168.1.6", null);
 

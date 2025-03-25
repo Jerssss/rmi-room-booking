@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class for managing terminal administration view.
+ * Handles displaying, searching, and managing computer terminals in the system.
+ * Implements real-time search functionality and provides UI animations.
+ */
 public class AddNewTerminalView implements Initializable {
 
     @FXML private TableColumn<Terminal, String> terminalColumn;
@@ -39,6 +44,13 @@ public class AddNewTerminalView implements Initializable {
     private AddNewTerminalController controller;
     private BorderPane rootPane;
 
+    /**
+     * Initializes the controller after FXML loading.
+     * Sets up table columns, controller, terminal data loading, and search functionality.
+     *
+     * @param location The location used to resolve relative paths for the root object
+     * @param resources The resources used to localize the root object
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
@@ -48,6 +60,9 @@ public class AddNewTerminalView implements Initializable {
         redirectAddTerminalWindowButton.setOnAction(event -> openAddTerminalWindow());
     }
 
+    /**
+     * Configures table column value factories to display terminal properties.
+     */
     private void initializeTableColumns() {
         terminalColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerminalID()));
         roomNumberColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoom()));
@@ -58,17 +73,32 @@ public class AddNewTerminalView implements Initializable {
         reservationDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReservationDate()));
     }
 
+    /**
+     * Gets the root border pane of this view.
+     *
+     * @return The root BorderPane container
+     */
     public BorderPane getRootPane() {
         return rootPane;
     }
 
+    /**
+     * Sets the controller for this view.
+     *
+     * @param controller The AddNewTerminalController instance to set
+     */
     public void setController(AddNewTerminalController controller) {
         this.controller = controller;
         System.out.println("=====================================================");
         System.out.println("[CLIENT] Controller has been set in AddNewTerminalView.");
     }
 
-    /** Updates Table with new terminal data */
+    /**
+     * Updates the table with new terminal data.
+     * Logs errors if the input list is empty or null.
+     *
+     * @param terminals List of Terminal objects to display in the table
+     */
     public void updateTable(List<Terminal> terminals) {
         System.out.println("=====================================================");
         if (terminals == null || terminals.isEmpty()) {
@@ -81,14 +111,22 @@ public class AddNewTerminalView implements Initializable {
         System.out.println("[CLIENT] allTerminals now contains " + allTerminals.size() + " items.");
     }
 
-    /** Activates Real-Time Search Listener */
+    /**
+     * Initializes the real-time search listener on the search text field.
+     * Filters terminals as the user types.
+     */
     public void initializeSearchListener() {
         searchTerminalTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             searchTerminals(newValue.toLowerCase().trim());
         });
     }
 
-    /** Searches terminals without modifying the full list. */
+    /**
+     * Filters terminals based on search query.
+     * Searches across all terminal properties and updates the table view.
+     *
+     * @param query The search string to filter terminals by
+     */
     public void searchTerminals(String query) {
         if (allTerminals.isEmpty()) {
             return;
@@ -109,6 +147,9 @@ public class AddNewTerminalView implements Initializable {
         addTerminalTableView.setItems(FXCollections.observableArrayList(filteredList));
     }
 
+    /**
+     * Opens a new window for adding terminals.
+     */
     private void openAddTerminalWindow() {
         AddNewTerminalWindowView windowView = new AddNewTerminalWindowView();
         windowView.showWindow();
