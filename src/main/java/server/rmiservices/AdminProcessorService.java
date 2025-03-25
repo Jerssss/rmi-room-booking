@@ -1,5 +1,6 @@
 package server.rmiservices;
 
+import shared.Admin;
 import shared.Log;
 import shared.Reservation;
 import shared.Terminal;
@@ -14,6 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +26,7 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
     private static final File TERMINALS_FILE = new File("src/main/resources/data/terminal.json");
     private static final File LOGS_FILE = new File("src/main/resources/data/logs.json");
+    private static final File ADMIN_JSON_FILE = new File("src/main/resources/data/admin.json");
 
     // Thread-safe list to store registered callbacks
     private final List<Broadcast> callbacks = new CopyOnWriteArrayList<>();
@@ -45,6 +48,26 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
             System.err.println("[SERVER] AdminProcessorService: Failed to fetch logs: " + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public void registerAdmin(Admin admin) throws RemoteException {
+        System.out.println("[SERVER] Attempting to register new admin: " + admin);
+
+        // Load existing admins
+        LinkedHashMap<String, Admin> adminMap = JSONUtility.loadAdmins(ADMIN_JSON_FILE);
+
+        // Prevent duplicate admins
+        if (adminMap.containsKey(admin.getId())) {
+            System.err.println("[SERVER] Admin ID already exists: " + admin.getId());
+            throw new RemoteException("Admin ID already exists.");
+        }
+
+        // Add the new admin
+        adminMap.put(admin.getId(), admin);
+        JSONUtility.saveAdmins(adminMap, ADMIN_JSON_FILE);
+
+        System.out.println("[SERVER] Admin successfully registered: " + admin);
     }
 
     @Override

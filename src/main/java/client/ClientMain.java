@@ -111,6 +111,13 @@ public class ClientMain extends Application implements IPInputHandler {
         }).start();
     }
 
+    public static AdminProcessors getAdminService() {
+        if (adminProcessors == null) {
+            System.err.println("[CLIENT] Warning: AdminProcessorService is NULL! Ensure RMI is initialized.");
+        }
+        return adminProcessors;
+    }
+
     /**
      * Terminates the application gracefully.
      */
