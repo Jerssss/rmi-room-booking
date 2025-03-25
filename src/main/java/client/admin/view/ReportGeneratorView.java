@@ -32,55 +32,38 @@ public class ReportGeneratorView implements Initializable {
 
     @FXML
     public Label reportsLabel;
-
     @FXML
     public TextField searchReportTextField;
-
     @FXML
     public Button exportButton;
-
     @FXML
     public TabPane reportsTabPane;
-
     @FXML
     public Tab logReportTab;
-
     @FXML
     public TableView<Log> logReportTableView;
-
     @FXML
     public TableColumn<Log, String> userIDColumn;
-
     @FXML
     public TableColumn<Log, String> userTypeColumn;
-
     @FXML
     public TableColumn<Log, String> actionsColumn;
-
     @FXML
     public TableColumn<Log, String> dateColumn;
-
     @FXML
     public TableColumn<Log, String> timeColumn;
-
     @FXML
     public Tab reservationReportTab;
-
     @FXML
     public TableView<Reservation> reservationReportTableView;
-
     @FXML
     public TableColumn<Reservation, String> resIDColumn;
-
     @FXML
     public TableColumn<Reservation, String> terminalColumn;
-
     @FXML
     public TableColumn<Reservation, String> roomNumberColumn;
-
     @FXML
     public TableColumn<Reservation, String> resStatusColumn;
-
     @FXML
     public TableColumn<Reservation, String> TerStatusColumn;
 

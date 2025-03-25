@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
- * Controller class for managing terminal administration view.
+ * View controller class for managing terminal administration view.
  * Handles displaying, searching, and managing computer terminals in the system.
  * Implements real-time search functionality and provides UI animations.
  */

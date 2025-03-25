@@ -21,9 +21,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-
+/**
+ * View controller class for the Student Reservations view.
+ * Provides functionality for viewing and searching student reservation records.
+ * Displays reservations in a table with filtering capabilities.
+ */
 public class ViewStudentReservationsView implements Initializable {
-
 
     @FXML
     private TableView<Reservation> studResTableView;
@@ -55,7 +58,13 @@ public class ViewStudentReservationsView implements Initializable {
     // Store controller instance
     private ViewStudentReservationsController controller;
 
-    /** JavaFX calls this method automatically after loading FXML */
+    /**
+     * Initializes the controller after FXML loading.
+     * Sets up table columns, controller, and search functionality.
+     *
+     * @param location The location used to resolve relative paths
+     * @param resources The resources used to localize the root object
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
@@ -66,14 +75,21 @@ public class ViewStudentReservationsView implements Initializable {
         initializeSearchListener();
     }
 
-    /** Forcefully create and initialize the controller */
+    /**
+     * Initializes the controller with model and view references.
+     * Creates a new instance of ViewStudentReservationsController.
+     */
     public void initializeController() {
         System.out.println("=====================================================");
         ViewStudentReservationsModel model = new ViewStudentReservationsModel();
         this.controller = new ViewStudentReservationsController(this, model);
     }
 
-    /** Properly initializes TableView columns */
+
+    /**
+     * Initializes table columns with their respective data bindings.
+     * Configures cell value factories for each column.
+     */
     private void initializeTableColumns() {
         reservationIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReservationID()));
         userIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserID()));
@@ -85,7 +101,10 @@ public class ViewStudentReservationsView implements Initializable {
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
     }
 
-    /** Updates TableView with new reservations */
+    /**
+     * Updates the table with new reservation data.
+     * @param reservations The list of reservations to display
+     */
     public void updateTable(List<Reservation> reservations) {
         System.out.println("=====================================================");
         if (reservations == null || reservations.isEmpty()) {
@@ -97,14 +116,20 @@ public class ViewStudentReservationsView implements Initializable {
         System.out.println("[CLIENT] Table updated with " + reservations.size() + " reservations.");
     }
 
-    /** Real-Time Search for Reservations */
+    /**
+     * Initializes the search text field listener.
+     * Filters reservations in real-time as the user types.
+     */
     public void initializeSearchListener() {
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterReservations(newValue.toLowerCase().trim());
         });
     }
 
-    /** Filter Reservations Based on Search Text */
+    /**
+     * Filters reservations based on search text.
+     * @param searchText The text to filter reservations by
+     */
     private void filterReservations(String searchText) {
         if (searchText.isEmpty()) {
             studResTableView.setItems(allReservations); // Show all if search is empty

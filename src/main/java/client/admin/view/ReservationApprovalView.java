@@ -23,6 +23,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * View controller class for the Report Generator view.
+ * Provides functionality for viewing and exporting system logs and reservation reports.
+ * Includes search capabilities and CSV export functionality.
+ */
 public class ReservationApprovalView implements Initializable {
 
     @FXML
@@ -38,6 +43,13 @@ public class ReservationApprovalView implements Initializable {
     private ReservationApprovalController controller;
     private final ObservableList<Reservation> allReservations = FXCollections.observableArrayList();
 
+    /**
+     * Initializes the view controller after FXML loading.
+     * Sets up table columns, search functionality, and controller.
+     *
+     * @param location The location used to resolve relative paths
+     * @param resources The resources used to localize the root object
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTableColumns();
@@ -45,6 +57,10 @@ public class ReservationApprovalView implements Initializable {
         System.out.println("[CLIENT] ReservationApprovalView initialized successfully.");
     }
 
+    /**
+     * Initializes the table columns with their respective data bindings.
+     * Configures cell value factories and custom cell factories for the status column.
+     */
     private void initializeTableColumns() {
         reservationIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getReservationID()));
         userIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserID()));
@@ -56,6 +72,10 @@ public class ReservationApprovalView implements Initializable {
         statusColumn.setCellFactory(createStyledStatusCellFactory());
     }
 
+    /**
+     * Creates a styled cell factory for the status column with a ComboBox.
+     * @return Callback that creates styled TableCells for the status column
+     */
     private Callback<TableColumn<Reservation, String>, TableCell<Reservation, String>> createStyledStatusCellFactory() {
         return column -> new TableCell<Reservation, String>() {
             private final ComboBox<String> statusComboBox = new ComboBox<>();
@@ -106,18 +126,34 @@ public class ReservationApprovalView implements Initializable {
         };
     }
 
+    /**
+     * Gets the reservation table view.
+     * @return The TableView containing reservation data
+     */
     public TableView<Reservation> getApproveResTableView() {
         return approveResTableView;
     }
 
+    /**
+     * Sets the action handler for the save changes button.
+     * @param event The event handler to be executed when the button is clicked
+     */
     public void setActionSaveChangesButton(EventHandler<ActionEvent> event) {
         saveChangesButton.setOnAction(event);
     }
 
+    /**
+     * Gets the search text field.
+     * @return The TextField used for searching reservations
+     */
     public TextField getSearchStudResTextField() {
         return searchStudResTextField;
     }
 
+    /**
+     * Sets the reservation data in the table.
+     * @param data The ObservableList of reservations to display
+     */
     public void setReservationData(ObservableList<Reservation> data) {
         allReservations.setAll(data);
         approveResTableView.setItems(allReservations);
@@ -125,6 +161,10 @@ public class ReservationApprovalView implements Initializable {
         System.out.println("[CLIENT] Table updated with " + allReservations.size() + " reservations.");
     }
 
+    /**
+     * Updates the table with new reservation data.
+     * @param reservations The list of reservations to display
+     */
     public void updateTable(List<Reservation> reservations) {
         if (reservations != null && !reservations.isEmpty()) {
             approveResTableView.getItems().setAll(reservations);
@@ -134,7 +174,11 @@ public class ReservationApprovalView implements Initializable {
         }
     }
 
-    /** Button Animations */
+    /**
+     * Applies animation to a button.
+     * @param button The button to animate
+     * @param scale The target scale (1.0 for normal, 0.9 for hover)
+     */
     private void animateButton(Button button, double scale) {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), button);
         st.setToX(scale);

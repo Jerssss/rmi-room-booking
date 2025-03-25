@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * Controller class for the admin addition success notification window.
+ * View controller class for the admin addition success notification window.
  * Provides functionality to display and close a notification window
  * that confirms successful admin registration.
  */

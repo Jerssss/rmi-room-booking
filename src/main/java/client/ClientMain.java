@@ -2,8 +2,6 @@ package client;
 
 import client.landingpage.LandingPageController;
 import client.landingpage.LandingPageView;
-import client.landingpage.pickserver.SetIPController;
-import client.landingpage.pickserver.SetIPModel;
 import client.landingpage.pickserver.SetIPView;
 import client.student.view.ServerErrorWindowView;
 import javafx.application.Application;
@@ -20,7 +18,6 @@ import shared.interfaces.student.StudentProcessors;
 import shared.interfaces.admin.AdminProcessors;
 import shared.interfaces.IPInputHandler;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
@@ -28,7 +25,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * ClientMain initializes the client application and connects to the RMI server.

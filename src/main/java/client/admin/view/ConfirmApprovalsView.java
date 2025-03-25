@@ -4,6 +4,11 @@ import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
+/**
+ * View controller class for the confirmation dialog view.
+ * Provides interactive buttons with hover animations for confirming or canceling actions.
+ * Handles visual feedback for user interactions with confirmation dialog buttons.
+ */
 
 public class ConfirmApprovalsView {
 

@@ -26,6 +26,11 @@ import shared.Terminal;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * View controller class for the Terminal Status Modification view.
+ * Provides functionality for viewing, searching, and modifying terminal statuses,
+ * including removing terminals and updating their status through a table interface.
+ */
 public class ModifyTerminalStatusView {
 
     @FXML private Button saveChangesButton;

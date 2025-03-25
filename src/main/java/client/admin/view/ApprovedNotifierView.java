@@ -5,6 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
 
+
+/**
+ * View controller class for the approval notification popup window.
+ * Provides visual feedback when an admin action is approved,
+ * including button hover animations for better user interaction.
+ */
 public class ApprovedNotifierView {
 
     @FXML

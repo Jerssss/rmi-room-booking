@@ -13,11 +13,20 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+/**
+ * View controller class for the Saved Notification popup window.
+ * Provides visual confirmation when an operation completes successfully,
+ * with interactive close button and hover animations.
+ */
 public class SavedNotifierView {
 
     @FXML
     private Button closeButton;
 
+    /**
+     * Initializes the controller after FXML loading.
+     * Sets up the close button action handler.
+     */
     @FXML
     public void initialize() {
         closeButton.setOnAction(event -> closeWindow());

@@ -22,6 +22,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Controller class for the Admin Main Menu view.
+ * Handles navigation between different admin functionalities,
+ * server status monitoring, and UI interactions.
+ */
 public class AdminMainMenuView {
 
     @FXML
@@ -71,13 +76,19 @@ public class AdminMainMenuView {
     // Timer to periodically check server status
     private Timer serverStatusTimer;
 
-    /** Initialize the view */
+    /**
+     * Initializes the view controller.
+     * Sets up date/time display and starts server status monitoring.
+     */
     public void initialize() {
         initializeDateTime();
         startServerStatusChecker();
     }
 
-    /** Start a timer to periodically check the server status */
+    /**
+     * Starts a timer to periodically check server connection status.
+     * Updates UI labels based on server availability.
+     */
     private void startServerStatusChecker() {
         serverStatusTimer = new Timer(true);
         serverStatusTimer.scheduleAtFixedRate(new TimerTask() {
@@ -89,7 +100,10 @@ public class AdminMainMenuView {
         }, 0, 5000); // Check every 5 seconds
     }
 
-    /** Check if the server is online */
+    /**
+     * Checks if the server is reachable via RMI.
+     * @return true if server is online, false otherwise
+     */
     private boolean checkServerStatus() {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
@@ -100,7 +114,10 @@ public class AdminMainMenuView {
         }
     }
 
-    /** Update the server status labels */
+    /**
+     * Updates the server status indicators in the UI.
+     * @param isServerOnline Current server connection status
+     */
     private void updateServerStatusLabels(boolean isServerOnline) {
         javafx.application.Platform.runLater(() -> {
             if (isServerOnline) {
@@ -117,7 +134,10 @@ public class AdminMainMenuView {
         });
     }
 
-    /** Load a new view inside the main menu */
+    /**
+     * Loads a new view into the main content area.
+     * @param fxmlFile Path to the FXML file to load
+     */
     private void loadView(String fxmlFile) {
         try {
             System.out.println("[SERVER] Loading FXML: " + fxmlFile);
@@ -134,12 +154,17 @@ public class AdminMainMenuView {
     }
 
 
-    /** Set the name of the logged-in user */
+    /**
+     * Sets the name of the logged-in admin in the header.
+     * @param name The admin's name to display
+     */
     public void setLoggedInUserName(String name) {
         headerNameLabel.setText(name);
     }
 
-    /** Initialize the date and time labels */
+    /**
+     * Initializes and starts updating the date/time display.
+     */
     public void initializeDateTime() {
         updateDateTime();
         Timer timer = new Timer(true);
@@ -151,7 +176,9 @@ public class AdminMainMenuView {
         }, 0, 1000);
     }
 
-    /** Helper method to update the date and time labels */
+    /**
+     * Updates the date and time display labels.
+     */
     private void updateDateTime() {
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
@@ -165,7 +192,10 @@ public class AdminMainMenuView {
         });
     }
 
-    /** Event handler for Add Terminal Button */
+    /**
+     * Sets action handler for Add Terminal button.
+     * @param event The event handler to set
+     */
     public void setActionAddNewTerminalButton(EventHandler<ActionEvent> event) {
         addNewTerminalButton.setOnAction(event1 -> {
             highlightButton(addNewTerminalButton); //highlight the button when clicked
@@ -173,7 +203,10 @@ public class AdminMainMenuView {
         });
     }
 
-    /** Event handler for View Student Reservations Button */
+    /**
+     * Sets action handler for View Student Reservations button.
+     * @param event The event handler to set
+     */
     public void setActionShowStudentReservationButton(EventHandler<ActionEvent> event) {
         showStudentReservationButton.setOnAction(event1 -> {
             highlightButton(showStudentReservationButton); //highlight the button when clicked
@@ -181,7 +214,10 @@ public class AdminMainMenuView {
         });
     }
 
-    /** Event handler for Modify Terminal Button */
+    /**
+     * Sets action handler for Modify Terminal button.
+     * @param event The event handler to set
+     */
     public void setActionModifyTerminalButton(EventHandler<ActionEvent> event) {
         modifyTerminalButton.setOnAction(event1 -> {
             highlightButton(modifyTerminalButton); //highlight the button when clicked
@@ -189,9 +225,10 @@ public class AdminMainMenuView {
         });
     }
 
-
-
-    /** Event handler for Reservation Approval Button */
+    /**
+     * Sets action handler for Reservation Approval button.
+     * @param event The event handler to set
+     */
     public void setActionResApprovalButton(EventHandler<ActionEvent> event) {
         resApprovalButton.setOnAction(event1 -> {
             highlightButton(resApprovalButton); //highlight the button when clicked
@@ -199,7 +236,10 @@ public class AdminMainMenuView {
         });
     }
 
-    /** Event handler for Reports Button */
+    /**
+     * Sets action handler for Reports button.
+     * @param event The event handler to set
+     */
     public void setActionReportsButton(EventHandler<ActionEvent> event) {
         reportsButton.setOnAction(event1 -> {
             highlightButton(reportsButton); //highlight the button when clicked
@@ -207,6 +247,10 @@ public class AdminMainMenuView {
         });
     }
 
+    /**
+     * Sets action handler for Create Admin button.
+     * @param event The event handler to set
+     */
     public void setActionCreateAdminButton(EventHandler<ActionEvent> event) {
         createAdminButton.setOnAction(event1 -> {
             highlightButton(createAdminButton);
@@ -214,18 +258,26 @@ public class AdminMainMenuView {
         });
     }
 
-    /** Event handler for Logout Button */
+    /**
+     * Sets action handler for Logout button.
+     * @param event The event handler to set
+     */
     public void setActionLogoutButton(EventHandler<ActionEvent> event) {
         logOutButton.setOnAction(event);
     }
 
-    /** Show Reservation Approval View */
+    /**
+     * Shows the Reservation Approval view.
+     */
     public void showReservationApprovalView() {
         loadView("/fxml/admin/reservation_approval_pane.fxml");
     }
 
 
-    /** Show Error Dialog */
+    /**
+     * Displays an error alert dialog.
+     * @param message The error message to display
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -234,6 +286,10 @@ public class AdminMainMenuView {
         alert.showAndWait();
     }
 
+    /**
+     * Highlights the currently selected navigation button.
+     * @param button The button to highlight
+     */
     private void highlightButton(Button button) {
         //remove the highlight from the previously highlighted button
 

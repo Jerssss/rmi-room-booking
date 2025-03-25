@@ -8,6 +8,13 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * View controller class for the modification confirmation dialog.
+ * Provides a confirmation interface with visual feedback when
+ * modifying terminal statuses or approving reservations.
+ * Handles user confirmation/cancellation and delegates actions
+ * to the appropriate controllers.
+ */
 public class ConfirmModificationsView {
     @FXML
     private Button cancelButton;
@@ -17,20 +24,37 @@ public class ConfirmModificationsView {
     private ModifyTerminalStatusController modifyController; // Reference to main controller
     private ReservationApprovalController reservationController;
 
+    /**
+     * Sets the ModifyTerminalStatusController reference.
+     * @param controller The controller to handle terminal status modifications
+     */
     public void setModifyTerminalStatusController(ModifyTerminalStatusController controller) {
         this.modifyController = controller;
     }
 
+    /**
+     * Sets the ReservationApprovalController reference.
+     * @param controller The controller to handle reservation approvals
+     */
     public void setReservationApprovalController(ReservationApprovalController controller) {
         this.reservationController = controller;
     }
 
+    /**
+     * Initializes the view controller.
+     * Sets up button event handlers for confirmation and cancellation.
+     */
     @FXML
     private void initialize() {
         cancelButton.setOnAction(event -> closeWindow());
         confirmButton.setOnAction(event -> confirmChanges());
     }
 
+    /**
+     * Handles the confirmation action.
+     * Closes the window and delegates to the appropriate controller
+     * based on which controller reference is set.
+     */
     private void confirmChanges() {
         // Close confirmation window
         closeWindow();
@@ -45,6 +69,9 @@ public class ConfirmModificationsView {
         }
     }
 
+    /**
+     * Closes the confirmation window.
+     */
     private void closeWindow() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
