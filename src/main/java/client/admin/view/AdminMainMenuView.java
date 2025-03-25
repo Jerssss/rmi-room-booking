@@ -108,7 +108,7 @@ public class AdminMainMenuView {
     private boolean checkServerStatus() {
         try {
             Registry registry = LocateRegistry.getRegistry(ClientMain.getServerIP(), 1099);
-            registry.lookup("authentication"); // Try to lookup a service
+            registry.lookup("authentication"); // Try to look-up a service
             return true; // Server is online
         } catch (RemoteException | NotBoundException e) {
             return false; // Server is offline
