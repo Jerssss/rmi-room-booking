@@ -67,8 +67,7 @@ public class AdminMainMenuController {
         this.view.setActionShowStudentReservationButton(this::handleViewStudentReservation);
         this.view.setActionResApprovalButton(event -> handleReservationApproval());
         this.view.setActionReportsButton(event -> handleReports());
-//        this.view.setActionCreateAdminButton(event -> handleCreateAdmin());
-
+        this.view.setActionCreateAdminButton(this::handleCreateAdmin);
     }
 
 //    private void handleCreateAdmin() {
@@ -94,6 +93,29 @@ public class AdminMainMenuController {
 //            e.printStackTrace();
 //        }
 //    }
+
+    private void handleCreateAdmin(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/add_new_admin.fxml"));
+            VBox addAdminViewRoot = loader.load(); // This is the actual VBox root node from FXML
+
+            AddAdminView view = loader.getController();
+            if (view == null) {
+                System.err.println("[ERROR] AddAdminView is NULL after FXML load!");
+                return;
+            }
+
+            new AddAdminController(view, new AddAdminModel());
+
+            // Set new view in the center pane
+            view.getCenterPane().getChildren().setAll(addAdminViewRoot);
+        } catch (IOException e) {
+            System.err.println("[ERROR] Failed to load Add New Admin: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
 
     /**
      * Handles the action for adding a new terminal. Loads the Add New Terminal view

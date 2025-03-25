@@ -77,6 +77,7 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
      * @return True if registration is successful, false otherwise.
      */
     private void registerAdmin(String id, String name, String password, String facultyType) {
+        System.out.println("[SERVER] Registering admin: " + id);
         LinkedHashMap<String, Admin> admins = JSONUtility.loadAdmins(ADMIN_JSON_FILE);
 
         if (admins.containsKey(id)) {
@@ -84,8 +85,10 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         }
 
         Admin newAdmin = new Admin(id, name, "Admin", password, facultyType);
+        System.out.println("[SERVER] New admin: " + newAdmin); // Debug
         admins.put(id, newAdmin);
         JSONUtility.saveAdmins(admins, ADMIN_JSON_FILE);
+        System.out.println("[SERVER] Admin saved to JSON.");
     }
 
     /**

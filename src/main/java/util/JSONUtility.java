@@ -35,27 +35,36 @@ public class JSONUtility {
     public static LinkedHashMap<String, Admin> loadAdmins(File filePath) {
         if (!filePath.exists()) {
             System.out.println("Admin file not found. Creating a new one.");
-            saveAdmins(new LinkedHashMap<>(), filePath); // Create an empty file
+            saveAdmins(new LinkedHashMap<>(), filePath);
             return new LinkedHashMap<>();
         }
 
         try (FileReader reader = new FileReader(filePath)) {
-            Type type = new TypeToken<Map<String, Map<String, List<Admin>>>>() {}.getType();
-            Map<String, Map<String, List<Admin>>> data = defaultGson.fromJson(reader, type);
-
-            if (data == null || data.get("Admins") == null || data.get("Admins").get("Admin") == null) {
-                System.out.println("Invalid or empty JSON file. Initializing with empty data.");
+            // Parse the JSON structure
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            if (jsonElement == null || !jsonElement.isJsonObject()) {
+                System.err.println("[ERROR] Invalid JSON format. Resetting file.");
                 return new LinkedHashMap<>();
             }
 
-            List<Admin> adminList = data.get("Admins").get("Admin");
+            JsonObject root = jsonElement.getAsJsonObject();
+            if (!root.has("Admins") || !root.getAsJsonObject("Admins").has("Admin")) {
+                System.err.println("[ERROR] Missing 'Admins' or 'Admin' key.");
+                return new LinkedHashMap<>();
+            }
+
+            // Extract the "Admin" array
+            JsonArray adminArray = root.getAsJsonObject("Admins").getAsJsonArray("Admin");
             LinkedHashMap<String, Admin> adminMap = new LinkedHashMap<>();
 
-            for (Admin admin : adminList) {
-                if (admin.getId() != null) {  // Ensure no null admins
+            // Convert each JSON admin object to an Admin instance
+            for (JsonElement element : adminArray) {
+                Admin admin = defaultGson.fromJson(element, Admin.class);
+                if (admin.getId() != null) {
                     adminMap.put(admin.getId(), admin);
                 }
             }
+
             return adminMap;
         } catch (IOException ex) {
             throw new RuntimeException("Error loading admin data: " + ex.getMessage(), ex);
@@ -69,24 +78,31 @@ public class JSONUtility {
      * @param filePath the destination JSON file
      */
     public static void saveAdmins(LinkedHashMap<String, Admin> adminMap, File filePath) {
-        try (FileWriter writer = new FileWriter(filePath)) {
-            List<Admin> adminList = new ArrayList<>(adminMap.values());
-
-            // Debug: Ensure all Admin objects are correct
-            for (Admin admin : adminList) {
-                System.out.println("[DEBUG] Saving Admin: " + admin);
+        try {
+            // Ensure the directory exists
+            if (!filePath.getParentFile().exists()) {
+                filePath.getParentFile().mkdirs();
             }
 
-            // Wrap the list in the nested structure
-            Map<String, Map<String, List<Admin>>> nestedData = new LinkedHashMap<>();
-            Map<String, List<Admin>> adminsMap = new LinkedHashMap<>();
-            adminsMap.put("Admin", adminList);
-            nestedData.put("Admins", adminsMap);
+            // Create the nested JSON structure
+            JsonObject root = new JsonObject();
+            JsonObject adminsWrapper = new JsonObject();
+            JsonArray adminArray = new JsonArray();
 
-            // Save in expected JSON structure
-            defaultGson.toJson(nestedData, writer);
+            // Add all admins to the array
+            for (Admin admin : adminMap.values()) {
+                JsonElement adminJson = defaultGson.toJsonTree(admin);
+                adminArray.add(adminJson);
+            }
 
-            System.out.println("[DEBUG] Admins successfully saved to: " + filePath.getAbsolutePath());
+            adminsWrapper.add("Admin", adminArray);
+            root.add("Admins", adminsWrapper);
+
+            // Write to file
+            try (FileWriter writer = new FileWriter(filePath)) {
+                defaultGson.toJson(root, writer);
+                System.out.println("[DEBUG] Admins saved successfully.");
+            }
         } catch (IOException ex) {
             throw new RuntimeException("Error saving admin data: " + ex.getMessage(), ex);
         }
