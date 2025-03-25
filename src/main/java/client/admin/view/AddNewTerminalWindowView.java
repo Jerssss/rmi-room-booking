@@ -118,6 +118,13 @@ public class AddNewTerminalWindowView implements Initializable {
             return;
         }
 
+        // Check for duplicate terminal reservation
+        if (isDuplicateTerminal(terminalID, room, invalidFields)) {
+            showAlert("Duplicate Terminal", "• A terminal with the same number already exists in this room.", invalidFields);
+            return;
+        }
+
+
         // Pass data to the controller to save to JSON
         boolean success = controller.addNewTerminal("PC" + terminalID, os, room, status, startTime, endTime, date);
 
@@ -154,60 +161,42 @@ public class AddNewTerminalWindowView implements Initializable {
         closeWindow();
     }
 
-    private boolean validateTerminalNumber(String terminalNumber, StringBuilder errors, List<Control> invalidFields) {
+    private void validateTerminalNumber(String terminalNumber, StringBuilder errors, List<Control> invalidFields) {
         try {
             if (terminalNumber == null || terminalNumber.isEmpty()) {
                 errors.append("• Please input a terminal number.\n");
                 invalidFields.add(terminalNoTextField);
-                return false;
             }
             int terminalNum = Integer.parseInt(terminalNumber);
             if (terminalNum < 1 || terminalNum > 50) {
                 errors.append("• Terminal number must be between 1 to 50.\n");
                 invalidFields.add(terminalNoTextField);
-                return false;
-            }
-            // Check for duplicates
-            for (Terminal terminal : controller.getAllTerminals()) {
-                if (terminal.getTerminalID().equals("PC" + terminalNumber)) {
-                    errors.append("• Terminal number already exists.\n");
-                    invalidFields.add(terminalNoTextField);
-                    return false;
-                }
             }
         } catch (NumberFormatException e) {
             errors.append("• Terminal number must be a number.\n");
             invalidFields.add(terminalNoTextField);
-            return false;
         }
-        return true;
     }
 
-    private boolean validateOS(String os, StringBuilder errors, List<Control> invalidFields) {
+    private void validateOS(String os, StringBuilder errors, List<Control> invalidFields) {
         if (os == null || os.isEmpty()) {
             errors.append("• Please select an Operating System.\n");
             invalidFields.add(terminalOSComboBox);
-            return false;
         }
-        return true;
     }
 
-    private boolean validateRoom(String room, StringBuilder errors, List<Control> invalidFields) {
+    private void validateRoom(String room, StringBuilder errors, List<Control> invalidFields) {
         if (room == null || room.isEmpty()) {
             errors.append("• Please select a Room Number.\n");
             invalidFields.add(roomNumberComboBox);
-            return false;
         }
-        return true;
     }
 
-    private boolean validateStatus(String status, StringBuilder errors, List<Control> invalidFields) {
+    private void validateStatus(String status, StringBuilder errors, List<Control> invalidFields) {
         if (status == null || status.isEmpty()) {
             errors.append("• Please select a Terminal Status.\n");
             invalidFields.add(statusComboBox);
-            return false;
         }
-        return true;
     }
 
     private void validateDateTime(String date, String startTime, StringBuilder errors, List<Control> invalidFields) {
@@ -220,32 +209,22 @@ public class AddNewTerminalWindowView implements Initializable {
             errors.append("• Please select a Time Slot.\n");
             invalidFields.add(timeComboBox);
         }
-
-        if (!errors.isEmpty()) {
-            return;
-        }
-
-        // Check for duplicate reservation
-        List<Terminal> terminals = controller.getAllTerminals();
-        for (Terminal terminal : terminals) {
-            String existingDate = terminal.getReservationDate();
-            String existingStartTime = terminal.getStartTime();
-
-            if (existingDate != null && existingDate.equals(date) &&
-                    existingStartTime != null && existingStartTime.equals(startTime) &&
-                    terminal.getTerminalID().equals(terminalNoTextField.getText())) {
-
-                errors.append("• This terminal already has a reservation at this time and date.\n");
-                invalidFields.add(datePicker);
-                invalidFields.add(timeComboBox);
-                return;
-            }
-        }
     }
 
+    private boolean isDuplicateTerminal(String terminalID, String room, List<Control> invalidFields) {
+        List<Terminal> terminals = controller.getAllTerminals();
 
-
-
+        for (Terminal terminal : terminals) {
+            // Check if terminal ID and room match
+            if (terminal.getTerminalID().trim().equals("PC" + terminalID.trim()) &&
+                    terminal.getRoom().trim().equals(room.trim())) {
+                invalidFields.add(terminalNoTextField);
+                invalidFields.add(roomNumberComboBox);
+                return true;  // Duplicate found
+            }
+        }
+        return false;  // No duplicate
+    }
 
     private void showAlert(String title, String message, List<Control> invalidFields) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -261,7 +240,7 @@ public class AddNewTerminalWindowView implements Initializable {
         // Highlight all invalid fields
         for (Control field : invalidFields) {
             if (field instanceof TextField textField) {
-                textField.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                textField.setStyle("-fx-background-color: red;");
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
                     if (!newValue.trim().isEmpty()) {
                         textField.setStyle("");
