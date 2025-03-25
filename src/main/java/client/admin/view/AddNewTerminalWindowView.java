@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -101,14 +102,20 @@ public class AddNewTerminalWindowView implements Initializable {
         String status = statusComboBox.getValue();
         String date = (datePicker.getValue() != null) ? datePicker.getValue().toString() : "";
 
-        // Input Validations
-        if (!validateTerminalNumber(terminalID) ||
-                !validateOS(os) ||
-                !validateRoom(room) ||
-                !validateStatus(status) ||
-                !validateTimeSlot(timeComboBox.getValue()) ||
-                !validateDate(date)) {
-            return; // Stops the saving process if validation fails
+        StringBuilder errors = new StringBuilder();
+        List<Control> invalidFields = new ArrayList<>();
+
+        validateTerminalNumber(terminalID, errors, invalidFields);
+        validateOS(os, errors, invalidFields);
+        validateRoom(room, errors, invalidFields);
+        validateStatus(status, errors, invalidFields);
+        validateDateTime(date, timeComboBox.getValue(), errors, invalidFields);
+
+        // If there are errors, show the alert and highlight fields
+        if (!errors.isEmpty()) {
+            String errorMessage = errors.toString().trim(); // Remove trailing newline
+            showAlert("Validation Error", errors.toString(), invalidFields);
+            return;
         }
 
         // Pass data to the controller to save to JSON
@@ -147,85 +154,100 @@ public class AddNewTerminalWindowView implements Initializable {
         closeWindow();
     }
 
-    private boolean validateTerminalNumber(String terminalNumber) {
+    private boolean validateTerminalNumber(String terminalNumber, StringBuilder errors, List<Control> invalidFields) {
         try {
             if (terminalNumber == null || terminalNumber.isEmpty()) {
-                showAlert("Invalid Input", "Please input terminal number.", terminalNoTextField);
+                errors.append("• Please input a terminal number.\n");
+                invalidFields.add(terminalNoTextField);
                 return false;
             }
             int terminalNum = Integer.parseInt(terminalNumber);
-
             if (terminalNum < 1 || terminalNum > 50) {
-                showAlert("Invalid Input", "Terminal number must be between 1 to 50 only.", terminalNoTextField);
+                errors.append("• Terminal number must be between 1 to 50.\n");
+                invalidFields.add(terminalNoTextField);
                 return false;
             }
-
-            // Check if terminal number already exists
-            List<Terminal> terminals = controller.getAllTerminals();
-            for (Terminal terminal : terminals) {
+            // Check for duplicates
+            for (Terminal terminal : controller.getAllTerminals()) {
                 if (terminal.getTerminalID().equals("PC" + terminalNumber)) {
-                    showAlert("Duplicate Terminal", "Terminal number already exists.", terminalNoTextField);
+                    errors.append("• Terminal number already exists.\n");
+                    invalidFields.add(terminalNoTextField);
                     return false;
                 }
             }
         } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Terminal number must be numbers only.", terminalNoTextField);
+            errors.append("• Terminal number must be a number.\n");
+            invalidFields.add(terminalNoTextField);
             return false;
         }
         return true;
     }
 
-    private boolean validateOS(String os) {
+    private boolean validateOS(String os, StringBuilder errors, List<Control> invalidFields) {
         if (os == null || os.isEmpty()) {
-            showAlert("Invalid Input", "Please select an Operating System.", terminalOSComboBox);
+            errors.append("• Please select an Operating System.\n");
+            invalidFields.add(terminalOSComboBox);
             return false;
         }
         return true;
     }
 
-    private boolean validateRoom(String room) {
+    private boolean validateRoom(String room, StringBuilder errors, List<Control> invalidFields) {
         if (room == null || room.isEmpty()) {
-            showAlert("Invalid Input", "Please select a Room Number.", roomNumberComboBox);
+            errors.append("• Please select a Room Number.\n");
+            invalidFields.add(roomNumberComboBox);
             return false;
         }
         return true;
     }
 
-    private boolean validateStatus(String status) {
+    private boolean validateStatus(String status, StringBuilder errors, List<Control> invalidFields) {
         if (status == null || status.isEmpty()) {
-            showAlert("Invalid Input", "Please select a Terminal Status.", statusComboBox);
+            errors.append("• Please select a Terminal Status.\n");
+            invalidFields.add(statusComboBox);
             return false;
         }
         return true;
     }
 
-    private boolean validateTimeSlot(String timeSlot) {
-        if (timeSlot == null || timeSlot.isEmpty()) {
-            showAlert("Invalid Input", "Please select a Time Slot.", timeComboBox);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateDate(String date) {
+    private void validateDateTime(String date, String startTime, StringBuilder errors, List<Control> invalidFields) {
         if (date == null || date.isEmpty()) {
-            showAlert("Invalid Input", "Please select a Date.", datePicker);
-            return false;
+            errors.append("• Please select a Date.\n");
+            invalidFields.add(datePicker);
         }
 
-        // Check for duplicate date and time for the same terminal
+        if (startTime == null || startTime.isEmpty()) {
+            errors.append("• Please select a Time Slot.\n");
+            invalidFields.add(timeComboBox);
+        }
+
+        if (!errors.isEmpty()) {
+            return;
+        }
+
+        // Check for duplicate reservation
         List<Terminal> terminals = controller.getAllTerminals();
         for (Terminal terminal : terminals) {
-            if (terminal.getReservationDate().equals(date) && terminal.getStartTime().equals(startTime) &&
+            String existingDate = terminal.getReservationDate();
+            String existingStartTime = terminal.getStartTime();
+
+            if (existingDate != null && existingDate.equals(date) &&
+                    existingStartTime != null && existingStartTime.equals(startTime) &&
                     terminal.getTerminalID().equals(terminalNoTextField.getText())) {
-                showAlert("Duplicate Reservation", "This terminal already has a reservation at this time and date.", datePicker);
-                return false;
+
+                errors.append("• This terminal already has a reservation at this time and date.\n");
+                invalidFields.add(datePicker);
+                invalidFields.add(timeComboBox);
+                return;
             }
         }
-        return true;
     }
 
-    private void showAlert(String title, String message, Control invalidField) {
+
+
+
+
+    private void showAlert(String title, String message, List<Control> invalidFields) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -236,28 +258,23 @@ public class AddNewTerminalWindowView implements Initializable {
         alert.initOwner(stage);
         alert.showAndWait();
 
-        if (invalidField != null) {
-            if (invalidField instanceof TextField textField) {
-                if (textField.getText().trim().isEmpty()) {
-                    textField.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                } else {
-                    textField.setStyle("-fx-text-fill: red;");
-                }
+        // Highlight all invalid fields
+        for (Control field : invalidFields) {
+            if (field instanceof TextField textField) {
+                textField.setStyle("-fx-background-color: red; -fx-text-fill: white;");
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
                     if (!newValue.trim().isEmpty()) {
                         textField.setStyle("");
                     }
                 });
-            }
-            else if (invalidField instanceof ComboBox<?> comboBox) {
+            } else if (field instanceof ComboBox<?> comboBox) {
                 comboBox.setStyle("-fx-background-color: #EBC7C7;");
                 comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue != null) {
                         comboBox.setStyle("");
                     }
                 });
-            }
-            else if (invalidField instanceof DatePicker datePicker) {
+            } else if (field instanceof DatePicker datePicker) {
                 datePicker.setStyle("-fx-background-color: red;");
                 datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue != null) {
@@ -267,6 +284,7 @@ public class AddNewTerminalWindowView implements Initializable {
             }
         }
     }
+
 
     private void closeWindow() {
         Stage stage = (Stage) saveTerminalButton.getScene().getWindow();
