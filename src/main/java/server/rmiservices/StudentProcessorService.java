@@ -20,6 +20,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ * The StudentProcessorService class provides remote methods for managing student reservations
+ * and terminals. It implements the StudentProcessors interface and allows students to create,
+ * update, retrieve, and cancel reservations, as well as manage callbacks for reservation updates.
+ */
 public class StudentProcessorService extends UnicastRemoteObject implements StudentProcessors {
 
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
@@ -31,11 +36,23 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     // ExecutorService for asynchronous callback notifications
     private final ExecutorService callbackExecutor = Executors.newCachedThreadPool();
 
+    /**
+     * Constructs a new StudentProcessorService instance.
+     *
+     * @throws RemoteException if a remote communication error occurs
+     */
     public StudentProcessorService() throws RemoteException {
         super();
         System.out.println("[SERVER] StudentProcessorService instantiated.");
     }
 
+    /**
+     * Retrieves a list of reservations for a specific student.
+     *
+     * @param studentID the ID of the student whose reservations are to be fetched
+     * @return a list of reservations associated with the specified student
+     * @throws RemoteException if a remote communication error occurs
+     */
     @Override
     public List<Reservation> getReservations(String studentID) throws RemoteException {
         try {
@@ -54,6 +71,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Retrieves all reservations.
+     *
+     * @return a list of all reservations
+     * @throws RemoteException if a remote communication error occurs
+     */
     @Override
     public List<Reservation> getAllReservations() throws RemoteException {
         try {
@@ -67,6 +90,13 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Adds a new reservation.
+     *
+     * @param newReservation the reservation to be added
+     * @throws RemoteException if a remote communication error occurs
+     * @throws ReservationException if there is an error adding the reservation
+     */
     @Override
     public void setReservations(Reservation newReservation) throws RemoteException, ReservationException {
         try {
@@ -87,7 +117,7 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
                 adminProc.updateReservations(allReservations);
                 System.out.println("[SERVER] StudentProcessorService: Pushed reservation update to admin clients.");
             } catch (Exception e) {
-                System.err.println("[SERVER] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
+                System.err.println("[ SERVER] StudentProcessorService: Failed to push reservation update to admin clients: " + e.getMessage());
             }
         } catch (Exception e) {
             System.err.println("[SERVER] StudentProcessorService: setReservations: " + e.getMessage());
@@ -95,6 +125,13 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Updates an existing reservation.
+     *
+     * @param updatedReservation the reservation with updated details
+     * @throws RemoteException if a remote communication error occurs
+     * @throws ModifyReservationException if there is an error modifying the reservation
+     */
     @Override
     public void updateReservation(Reservation updatedReservation) throws RemoteException, ModifyReservationException {
         try {
@@ -136,7 +173,10 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
     }
 
     /**
-     * New method for handling batch reservation updates.
+     * Updates multiple reservations in a batch.
+     *
+     * @param reservations the list of reservations to be updated
+     * @throws RemoteException if a remote communication error occurs
      */
     @Override
     public void updateReservations(List<Reservation> reservations) throws RemoteException {
@@ -154,6 +194,13 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Cancels a reservation by its ID.
+     *
+     * @param reservationID the ID of the reservation to be canceled
+     * @throws RemoteException if a remote communication error occurs
+     * @throws ReservationException if there is an error canceling the reservation
+     */
     @Override
     public void cancelReservation(String reservationID) throws RemoteException, ReservationException {
         try {
@@ -185,6 +232,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Retrieves a list of active terminals.
+     *
+     * @return a list of active terminals
+     * @throws RemoteException if a remote communication error occurs
+     */
     @Override
     public List<Terminal> getActiveTerminals() throws RemoteException {
         try {
@@ -205,6 +258,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
 
     // --- Callback Management Methods ---
 
+    /**
+     * Registers a callback for reservation updates.
+     *
+     * @param callback the callback to be registered
+     * @throws RemoteException if a remote communication error occurs
+     */
     @Override
     public void registerCallback(Broadcast callback) throws RemoteException {
         if (!callbacks.contains(callback)) {
@@ -213,12 +272,23 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Unregisters a callback for reservation updates.
+     *
+     * @param callback the callback to be unregistered
+     * @throws RemoteException if a remote communication error occurs
+     */
     @Override
     public void unregisterCallback(Broadcast callback) throws RemoteException {
         callbacks.remove(callback);
         System.out.println("[SERVER] StudentProcessorService: Client callback unregistered. Remaining clients: " + callbacks.size());
     }
 
+    /**
+     * Notifies all registered callbacks about reservation updates.
+     *
+     * @param reservations the list of updated reservations
+     */
     private void notifyReservationUpdate(List<Reservation> reservations) {
         System.out.println("[SERVER] StudentProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
@@ -235,6 +305,11 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Notifies all registered callbacks about terminal updates.
+     *
+     * @param terminals the list of updated terminals
+     */
     private void notifyTerminalUpdate(List<Terminal> terminals) {
         System.out.println("[SERVER] StudentProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
         for (Broadcast callback : callbacks) {
@@ -251,6 +326,12 @@ public class StudentProcessorService extends UnicastRemoteObject implements Stud
         }
     }
 
+    /**
+     * Updates the list of terminals and notifies clients.
+     *
+     * @param terminals the list of terminals to be updated
+     * @throws RemoteException if a remote communication error occurs
+     */
     @Override
     public void updateTerminals(List<Terminal> terminals) throws RemoteException {
         System.out.println("[SERVER] StudentProcessorService: Received terminal update. Notifying clients...");
