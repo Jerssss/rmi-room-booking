@@ -595,6 +595,62 @@
         "Action": "Login",
         "Date": "2025-03-24",
         "Time": "19:05:12"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-25",
+        "Time": "10:38:28"
+      },
+      {
+        "UserID": "Admin Test",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-25",
+        "Time": "10:38:57"
+      },
+      {
+        "UserID": "1",
+        "UserType": "Student",
+        "Action": "Login",
+        "Date": "2025-03-25",
+        "Time": "10:39:17"
+      },
+      {
+        "UserID": "Test Student",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-25",
+        "Time": "10:39:24"
+      },
+      {
+        "UserID": "1883",
+        "UserType": "Student",
+        "Action": "Login",
+        "Date": "2025-03-25",
+        "Time": "10:39:40"
+      },
+      {
+        "UserID": "Yana",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-25",
+        "Time": "10:39:45"
+      },
+      {
+        "UserID": "0116",
+        "UserType": "Admin",
+        "Action": "Login",
+        "Date": "2025-03-25",
+        "Time": "10:39:53"
+      },
+      {
+        "UserID": "Seb",
+        "UserType": "Student",
+        "Action": "Logout",
+        "Date": "2025-03-25",
+        "Time": "10:39:55"
       }
     ]
   }
