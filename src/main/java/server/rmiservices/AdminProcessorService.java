@@ -21,6 +21,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Implementation of AdminProcessors that handles administrative operations such as managing reservations,
+ * terminals, and logs. It also supports broadcasting updates to registered clients.
+ */
 public class AdminProcessorService extends UnicastRemoteObject implements AdminProcessors {
 
     private static final File RESERVATIONS_FILE = new File("src/main/resources/data/reservation_approval.json");
@@ -34,11 +38,22 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
     // ExecutorService for asynchronous callback notification.
     private final ExecutorService callbackExecutor = Executors.newCachedThreadPool();
 
+    /**
+     * Constructs an instance of AdminProcessorService.
+     *
+     * @throws RemoteException If an RMI-related error occurs.
+     */
     public AdminProcessorService() throws RemoteException {
         super();
         System.out.println("[SERVER] AdminProcessorService instantiated.");
     }
 
+    /**
+     * Retrieves all system logs.
+     *
+     * @return A list of Log objects containing system logs, or null if an error occurs.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public List<Log> getAllLogs() throws RemoteException {
         try {
@@ -50,6 +65,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Registers a new admin in the system.
+     *
+     * @param admin The admin to be registered.
+     * @throws RemoteException If the admin ID already exists or if a communication-related error occurs.
+     */
     @Override
     public void registerAdmin(Admin admin) throws RemoteException {
         System.out.println("[SERVER] Attempting to register new admin: " + admin);
@@ -70,6 +91,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         System.out.println("[SERVER] Admin successfully registered: " + admin);
     }
 
+    /**
+     * Retrieves all student reservations.
+     *
+     * @return A list of reservations, or an empty list if none are found.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public List<Reservation> getAllStudentReservations() throws RemoteException {
         try {
@@ -96,6 +123,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Retrieves all terminals.
+     *
+     * @return A list of terminals, or null if an error occurs.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public List<Terminal> getAllTerminals() throws RemoteException {
         try {
@@ -107,6 +140,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Updates reservations and notifies clients of the changes.
+     *
+     * @param updatedReservations The list of updated reservations.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public void updateReservations(List<Reservation> updatedReservations) throws RemoteException {
         try {
@@ -156,6 +195,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Adds a new terminal and notifies clients.
+     *
+     * @param terminal The terminal to be added.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public void addNewTerminal(Terminal terminal) throws RemoteException {
         try {
@@ -181,6 +226,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Modifies terminal statuses based on the provided updated list.
+     *
+     * @param updatedTerminals The list of updated terminal statuses.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public void modifyTerminalStatus(List<Terminal> updatedTerminals) throws RemoteException {
         try {
@@ -231,6 +282,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Registers a callback for receiving updates.
+     *
+     * @param callback The callback to register.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public void registerCallback(Broadcast callback) throws RemoteException {
         if (!callbacks.contains(callback)) {
@@ -239,6 +296,12 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
         }
     }
 
+    /**
+     * Unregisters a previously registered callback.
+     *
+     * @param callback The callback to unregister.
+     * @throws RemoteException If a communication-related error occurs.
+     */
     @Override
     public void unregisterCallback(Broadcast callback) throws RemoteException {
         callbacks.remove(callback);
@@ -247,6 +310,8 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     /**
      * Notifies all registered callbacks about a reservation update asynchronously.
+     *
+     * @param reservations The updated list of reservations.
      */
     private void notifyReservationUpdate(List<Reservation> reservations) {
         System.out.println("[SERVER] AdminProcessorService: Notifying reservation update to " + callbacks.size() + " callbacks.");
@@ -266,6 +331,8 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
 
     /**
      * Notifies all registered callbacks about a terminal update asynchronously.
+     *
+     * @param terminals The updated list of terminals.
      */
     private void notifyTerminalUpdate(List<Terminal> terminals) {
         System.out.println("[SERVER] AdminProcessorService: Notifying terminal update to " + callbacks.size() + " callbacks.");
