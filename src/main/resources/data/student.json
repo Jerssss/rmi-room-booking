@@ -60,6 +60,12 @@
         "Name": "Kristelle",
         "Password": "2240841",
         "CourseYear": "BSIT 2"
+      },
+      {
+        "Student_ID": "1883",
+        "Name": "Yana",
+        "Password": "123",
+        "CourseYear": "BSIT"
       }
     ]
   }
