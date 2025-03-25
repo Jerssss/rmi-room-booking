@@ -26,23 +26,11 @@ public class ClientController {
     private void handleCloseRequest(WindowEvent event) {
         System.out.println("[INFO] Close request received. Terminating the application...");
 
-        // Terminate all background threads (if any)
-        terminateBackgroundThreads();
-
         // Exit the JavaFX application
         javafx.application.Platform.exit();
 
         // Ensure the JVM exits
         System.exit(0);
-    }
-
-    private void terminateBackgroundThreads() {
-        // Add logic to terminate any background threads here
-        System.out.println("[INFO] Terminating background threads...");
-
-        // Example: If you have a Timer or ExecutorService, shut it down here
-        // timer.cancel();
-        // executorService.shutdownNow();
     }
 }
 
