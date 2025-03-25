@@ -1,5 +1,6 @@
 package shared.interfaces.admin;
 
+import shared.Admin;
 import shared.Log;
 import shared.Reservation;
 import shared.Terminal;
@@ -60,6 +61,14 @@ public interface AdminProcessors extends Remote {
      * @throws RemoteException If an RMI communication error occurs.
      */
     void modifyTerminalStatus(List<Terminal> terminal) throws RemoteException;
+
+    /**
+     * Registers a new admin in the system and saves it to JSON.
+     *
+     * @param admin The admin object to be added.
+     * @throws RemoteException If an RMI communication error occurs.
+     */
+    void registerAdmin(Admin admin) throws RemoteException;
 
     /**
      * Registers a client callback to receive updates from the server.

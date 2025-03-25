@@ -1,9 +1,12 @@
 package shared;
 
+import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Admin {
+public class Admin implements Serializable { // Add Serializable
+    private static final long serialVersionUID = 1L; // Add serialVersionUID
+
     @Expose
     @SerializedName("Admin_ID")
     private String id;
