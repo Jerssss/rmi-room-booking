@@ -247,20 +247,22 @@ public class AdminProcessorService extends UnicastRemoteObject implements AdminP
                 boolean found = false;
 
                 for (Terminal updated : updatedTerminals) {
-                    if (existing.getTerminalID().equals(updated.getTerminalID())) {
+                    if (existing.getTerminalID().equals(updated.getTerminalID()) &&
+                            existing.getRoom().equals(updated.getRoom())) { // Now checking Room Number too
                         existingTerminals.set(i, updated);
-                        System.out.println("[SERVER] AdminProcessorService: Updated terminal: " + updated.getTerminalID());
+                        System.out.println("[SERVER] AdminProcessorService: Updated terminal: " + updated.getTerminalID() + " in room " + updated.getRoom());
                         found = true;
                         break;
                     }
                 }
 
                 if (!found) {
-                    System.err.println("[SERVER] AdminProcessorService: Removing terminal: " + existing.getTerminalID());
+                    System.err.println("[SERVER] AdminProcessorService: Removing terminal: " + existing.getTerminalID() + " from room " + existing.getRoom());
                     existingTerminals.remove(i);
                     i--;
                 }
             }
+
 
             JSONUtility.saveTerminals(existingTerminals, TERMINALS_FILE);
             System.out.println("[SERVER] AdminProcessorService: Terminals updated successfully.");
