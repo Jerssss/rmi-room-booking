@@ -163,7 +163,7 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
             activeClients.remove(userID);
             System.out.println("[DEBUG] Successfully logged out: " + userID);
         } else {
-            System.err.println("[ERROR] Logout failed: User not found in active clients.");
+            System.err.println("OOKAY");
         }
     }
 
@@ -205,6 +205,7 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         System.out.println("[Server] IP Address: " + clientIP);
         System.out.println("[Server] Session Token: " + sessionToken);
         System.out.println("=====================================================");
+        printLogContents();
 
         return new Object[]{"SUCCESS", sessionToken, admin.getName()};
     }
@@ -245,6 +246,7 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         System.out.println("[Server] IP Address: " + clientIP);
         System.out.println("[Server] Session Token: " + sessionToken);
         System.out.println("=====================================================");
+        printLogContents();
 
         return new Object[]{"SUCCESS", sessionToken, student.getName()};
     }
@@ -258,8 +260,23 @@ public class AuthenticationService extends UnicastRemoteObject implements Authen
         JSONUtility.saveLogs(logs, LOGS_JSON_FILE);
 
         System.out.println("[LOG] " + action + " - User: " + userID + " | Type: " + userType + " | Date: " + date + " | Time: " + time);
+
     }
 
+
+    /**
+     * Reads and prints the entire content of logs.json
+     */
+    private void printLogContents() {
+        List<Log> logs = JSONUtility.loadLogs(LOGS_JSON_FILE);
+        System.out.println("========== LOG HISTORY ==========");
+        for (Log log : logs) {
+            System.out.println("User: " + log.getUserID() + " | Type: " + log.getUserType() +
+                    " | Action: " + log.getAction() + " | Date: " + log.getDate() +
+                    " | Time: " + log.getTime());
+        }
+        System.out.println("=================================");
+    }
 
     /**
      * Logs a client connection.
